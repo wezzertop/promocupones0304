@@ -1,0 +1,687 @@
+
+'use client'
+
+import { useState, useEffect, useRef } from 'react'
+import { createClient } from '@/lib/supabase/client'
+import { useRouter } from 'next/navigation'
+import { Upload, DollarSign, Tag, Type, Link as LinkIcon, Image as ImageIcon, FileText, Loader2, X, Calendar, MapPin, Percent, ShoppingBag, Truck, Globe, HelpCircle } from 'lucide-react'
+import { compressImage } from '@/lib/utils'
+import Image from 'next/image'
+import Map from '@/components/DynamicMap'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { isReferralUrl, canUserPostReferral, checkForbiddenWords } from '@/lib/moderation'
+
+interface Category {
+  id: string
+  name: string
+}
+
+const COUNTRIES = [
+  "México", "Estados Unidos", "China", "España", "Internacional", "Otro"
+]
+
+export default function CreateDealPage() {
+  const [loading, setLoading] = useState(false)
+  const [categories, setCategories] = useState<Category[]>([])
+  const [imageFiles, setImageFiles] = useState<File[]>([])
+  const [previewUrls, setPreviewUrls] = useState<string[]>([])
+  const [location, setLocation] = useState<[number, number] | null>(null)
+  const [titleLength, setTitleLength] = useState(0)
+  const [descLength, setDescLength] = useState(0)
+  const MAX_TITLE = 100
+  const MAX_DESC = 2000
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  
+  const router = useRouter()
+  const supabase = createClient()
+
+  useEffect(() => {
+    async function fetchCategories() {
+      const { data, error } = await supabase.from('categories').select('id, name').order('name')
+      if (data) {
+        setCategories(data as unknown as Category[])
+      }
+    }
+    fetchCategories()
+  }, [supabase])
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
+
+    // Validar y procesar cada archivo
+    const newFiles: File[] = []
+    const newPreviews: string[] = []
+
+    for (const file of files) {
+      if (!file.type.startsWith('image/')) {
+        continue
+      }
+
+      try {
+        const objectUrl = URL.createObjectURL(file)
+        newPreviews.push(objectUrl)
+        
+        const compressedBlob = await compressImage(file)
+        newFiles.push(new File([compressedBlob], file.name, { type: 'image/jpeg' }))
+      } catch (error) {
+        console.error('Error procesando imagen:', error)
+      }
+    }
+
+    setImageFiles(prev => [...prev, ...newFiles])
+    setPreviewUrls(prev => [...prev, ...newPreviews])
+  }
+
+  const removeImage = (index: number) => {
+    setImageFiles(prev => prev.filter((_, i) => i !== index))
+    setPreviewUrls(prev => {
+      const newPreviews = [...prev]
+      URL.revokeObjectURL(newPreviews[index]) // Limpiar memoria
+      return newPreviews.filter((_, i) => i !== index)
+    })
+  }
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setLoading(true)
+    
+    // Capturar datos del formulario antes de operaciones asíncronas
+    const formData = new FormData(e.currentTarget)
+    const title = formData.get('title')
+    const description = formData.get('description')
+    const price = formData.get('price')
+    const original_price = formData.get('original_price')
+    const url = formData.get('url')
+    const categoryId = formData.get('category')
+    const expires_at = formData.get('expires_at')
+    const start_date = formData.get('start_date')
+    const coupon_code = formData.get('coupon_code')
+    const availability = formData.get('availability')
+    const shipping_cost = formData.get('shipping_cost')
+    const shipping_country = formData.get('shipping_country')
+
+    try {
+      // Verificar sesión
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        alert('Debes iniciar sesión para publicar una oferta')
+        router.push('/login')
+        return
+      }
+
+      // Validaciones básicas
+      if (!title || !price || !url || !categoryId) {
+        throw new Error('Por favor completa todos los campos obligatorios')
+      }
+
+      // MODERATION CHECK: Forbidden Words
+      const titleCheck = await checkForbiddenWords(title.toString())
+      if (titleCheck.hasForbidden) {
+        throw new Error(`El título contiene palabras prohibidas: ${titleCheck.word}`)
+      }
+      
+      const descCheck = await checkForbiddenWords(description?.toString() || '')
+      if (descCheck.hasForbidden) {
+         throw new Error(`La descripción contiene palabras prohibidas: ${descCheck.word}`)
+      }
+
+      // MODERATION CHECK: Referral Links
+      const { isReferral, reason } = await isReferralUrl(url.toString())
+      if (isReferral) {
+        // Check if user is allowed to post referrals
+        const canPost = await canUserPostReferral(session.user.id)
+        if (!canPost) {
+           throw new Error(`No puedes publicar enlaces de referidos aún. ${reason}`)
+        }
+      }
+
+      const uploadedImageUrls: string[] = []
+
+      // Subir imágenes
+      if (imageFiles.length > 0) {
+        for (const file of imageFiles) {
+          const fileExt = 'jpg'
+          const fileName = `${session.user.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
+          
+          const { error: uploadError } = await supabase.storage
+            .from('deals')
+            .upload(fileName, file, {
+              contentType: 'image/jpeg',
+              upsert: false
+            })
+
+          if (uploadError) {
+            console.error('Error subiendo imagen:', uploadError)
+            continue
+          }
+
+          const { data: { publicUrl } } = supabase.storage
+            .from('deals')
+            .getPublicUrl(fileName)
+            
+          uploadedImageUrls.push(publicUrl)
+        }
+      } else {
+        throw new Error('Debes subir al menos una imagen')
+      }
+
+      // Calcular porcentaje de descuento si hay precio original
+      let discount_percentage = null
+      if (original_price && Number(original_price) > Number(price)) {
+        discount_percentage = Math.round(((Number(original_price) - Number(price)) / Number(original_price)) * 100)
+      }
+
+      // Get User Role to determine status
+      // Modificación: Todos los usuarios publican directamente como 'active' para visibilidad inmediata
+      // const { data: userProfile } = await supabase
+      //   .from('users')
+      //   .select('role')
+      //   .eq('id', session.user.id)
+      //   .single()
+      
+      // const userRole = userProfile?.role || 'user'
+      // const initialStatus = ['admin', 'moderator'].includes(userRole) ? 'active' : 'pending'
+      const initialStatus = 'active'
+
+      // Preparar payload
+      const deal = {
+        user_id: session.user.id,
+        category_id: categoryId,
+        title,
+        description,
+        deal_price: Number(price),
+        original_price: original_price ? Number(original_price) : null,
+        discount_percentage,
+        deal_url: url,
+        image_urls: uploadedImageUrls,
+        deal_type: coupon_code ? 'coupon' : 'deal',
+        status: initialStatus,
+        expires_at: expires_at ? new Date(expires_at as string).toISOString() : null,
+        // New fields
+        coupon_code: coupon_code || null,
+        availability: availability || null,
+        shipping_cost: shipping_cost ? Number(shipping_cost) : 0,
+        shipping_country: shipping_country || null,
+        start_date: start_date ? new Date(start_date as string).toISOString() : null
+      }
+
+      const { error } = await supabase.from('deals').insert(deal)
+
+      if (error) {
+        throw new Error(`Error al guardar la oferta: ${error.message}`)
+      }
+
+      alert('¡Oferta publicada exitosamente!')
+
+      router.push('/')
+      router.refresh()
+
+    } catch (error: any) {
+      console.error('Error:', error)
+      alert(error.message || 'Ocurrió un error inesperado')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <TooltipProvider>
+      <div className="max-w-2xl mx-auto pb-20">
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold text-white mb-2">Publicar Oferta</h1>
+          <p className="text-zinc-400">Comparte una nueva oferta con la comunidad</p>
+        </div>
+
+        <div className="glass-panel p-8 rounded-2xl border border-white/10">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-4">
+              
+              {/* Titulo */}
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium text-zinc-300 mb-1.5 ml-1">
+                  Título de la oferta
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Escribe un título claro y descriptivo del producto o servicio.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Type className="h-5 w-5 text-zinc-500" />
+                  </div>
+                  <input
+                    name="title"
+                    required
+                    type="text"
+                    maxLength={MAX_TITLE}
+                    onChange={(e) => setTitleLength(e.target.value.length)}
+                    placeholder="Ej: MacBook Air M2 15 pulgadas"
+                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-16 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600"
+                  />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-zinc-500 font-medium">
+                    {titleLength}/{MAX_TITLE}
+                  </div>
+                </div>
+                <p className="text-xs text-zinc-500 mt-1.5 ml-1">
+                  Sugerido: Título | Marca | Modelo | Versión
+                </p>
+              </div>
+
+              {/* Precios */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium text-zinc-300 mb-1.5 ml-1">
+                    Precio Oferta
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>El precio final con el descuento aplicado.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <DollarSign className="h-4 w-4 text-[#2BD45A]" />
+                  </div>
+                  <input
+                    name="price"
+                    required
+                    type="number"
+                    step="0.01"
+                    placeholder="0.00"
+                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-9 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600"
+                  />
+                  </div>
+                </div>
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium text-zinc-300 mb-1.5 ml-1">
+                    Precio Original
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>El precio regular sin descuento. Calcularemos el % de ahorro automáticamente.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <DollarSign className="h-4 w-4 text-zinc-500" />
+                  </div>
+                  <input
+                    name="original_price"
+                    type="number"
+                    step="0.01"
+                    placeholder="0.00"
+                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-9 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600"
+                  />
+                  </div>
+                </div>
+              </div>
+
+              {/* Cupón y URL */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium text-zinc-300 mb-1.5 ml-1">
+                    Cupón (Opcional)
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Código necesario para obtener el descuento.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Tag className="h-4 w-4 text-zinc-500" />
+                    </div>
+                    <input
+                      name="coupon_code"
+                      type="text"
+                      placeholder="Ej: AHORRO20"
+                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600 uppercase"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium text-zinc-300 mb-1.5 ml-1">
+                    URL de la oferta
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Enlace directo al producto o servicio.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <LinkIcon className="h-5 w-5 text-zinc-500" />
+                    </div>
+                    <input
+                      name="url"
+                      required
+                      type="url"
+                      placeholder="https://tienda.com/producto"
+                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Disponibilidad y Envío */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium text-zinc-300 mb-1.5 ml-1">
+                    Disponibilidad
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>¿Dónde se puede comprar esta oferta?</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <ShoppingBag className="h-4 w-4 text-zinc-500" />
+                    </div>
+                    <select
+                      name="availability"
+                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all appearance-none cursor-pointer"
+                    >
+                      <option value="online" className="bg-zinc-900">Online</option>
+                      <option value="in_store" className="bg-zinc-900">Tienda Física</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium text-zinc-300 mb-1.5 ml-1">
+                    Costo de Envío
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Deja en 0 si el envío es gratis.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Truck className="h-4 w-4 text-zinc-500" />
+                    </div>
+                    <input
+                      name="shipping_cost"
+                      type="number"
+                      step="0.01"
+                      placeholder="0.00"
+                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* País y Fechas */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                 <div>
+                  <label className="flex items-center gap-2 text-sm font-medium text-zinc-300 mb-1.5 ml-1">
+                    Enviado desde
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>País de origen del envío.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Globe className="h-4 w-4 text-zinc-500" />
+                    </div>
+                    <select
+                      name="shipping_country"
+                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all appearance-none cursor-pointer"
+                    >
+                      {COUNTRIES.map(country => (
+                        <option key={country} value={country} className="bg-zinc-900">{country}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium text-zinc-300 mb-1.5 ml-1">
+                    Empieza
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Fecha de inicio de la oferta.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </label>
+                  <input
+                    name="start_date"
+                    type="datetime-local"
+                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600 [color-scheme:dark]"
+                  />
+                </div>
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium text-zinc-300 mb-1.5 ml-1">
+                    Termina
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Fecha de expiración de la oferta.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </label>
+                  <input
+                    name="expires_at"
+                    type="datetime-local"
+                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600 [color-scheme:dark]"
+                  />
+                </div>
+              </div>
+
+              {/* Imágenes Múltiples */}
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium text-zinc-300 mb-1.5 ml-1">
+                  Imágenes de la oferta
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Puedes subir múltiples imágenes. La primera será la principal.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </label>
+                <div className="relative">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageChange}
+                    className="hidden"
+                    id="image-upload"
+                  />
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                    {previewUrls.map((url, index) => (
+                      <div key={url} className="relative w-full aspect-square rounded-xl overflow-hidden border border-white/10 bg-black/40 group">
+                        <img 
+                          src={url} 
+                          alt={`Preview ${index + 1}`} 
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <button
+                            type="button"
+                            onClick={() => removeImage(index)}
+                            className="p-2 bg-red-500/20 hover:bg-red-500/40 text-red-400 rounded-full transition-colors"
+                            title="Eliminar imagen"
+                          >
+                            <X className="w-5 h-5" />
+                          </button>
+                        </div>
+                        {index === 0 && (
+                          <span className="absolute bottom-2 left-2 bg-[#2BD45A] text-black text-[10px] font-bold px-2 py-0.5 rounded">Principal</span>
+                        )}
+                      </div>
+                    ))}
+                    
+                    <label 
+                      htmlFor="image-upload"
+                      className="w-full aspect-square bg-black/20 border border-white/10 text-zinc-400 hover:text-white hover:border-[#2BD45A]/50 rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all group gap-2"
+                    >
+                      <div className="p-3 rounded-full bg-zinc-800/50 group-hover:bg-[#2BD45A]/20 transition-colors">
+                        <ImageIcon className="h-6 w-6 text-zinc-500 group-hover:text-[#2BD45A]" />
+                      </div>
+                      <span className="text-xs text-zinc-500 group-hover:text-zinc-300 text-center px-2">Agregar imágenes</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Categoría */}
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium text-zinc-300 mb-1.5 ml-1">
+                  Categoría
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Selecciona la categoría que mejor describa tu oferta.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Tag className="h-5 w-5 text-zinc-500" />
+                  </div>
+                  <select
+                    name="category"
+                    required
+                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all appearance-none cursor-pointer"
+                  >
+                    <option value="" className="bg-zinc-900">Selecciona una categoría</option>
+                    {categories.map((cat) => (
+                      <option key={cat.id} value={cat.id} className="bg-zinc-900">
+                        {cat.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Ubicación */}
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium text-zinc-300 mb-1.5 ml-1">
+                  Ubicación de la oferta (Opcional)
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Si es una oferta física, marca la ubicación en el mapa.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </label>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-xs text-zinc-500 mb-2">
+                    <MapPin className="h-4 w-4" />
+                    <span>Haz clic en el mapa para seleccionar la ubicación</span>
+                  </div>
+                  <Map position={location} setPosition={setLocation} />
+                  {location && (
+                    <button
+                      type="button"
+                      onClick={() => setLocation(null)}
+                      className="text-xs text-red-400 hover:text-red-300 transition-colors"
+                    >
+                      Eliminar ubicación seleccionada
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Descripción */}
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium text-zinc-300 mb-1.5 ml-1">
+                  Descripción
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Detalla características, condiciones y por qué es una buena oferta.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </label>
+                <div className="relative">
+                  <div className="absolute top-3 left-3 pointer-events-none">
+                    <FileText className="h-5 w-5 text-zinc-500" />
+                  </div>
+                  <textarea
+                    name="description"
+                    required
+                    rows={4}
+                    maxLength={MAX_DESC}
+                    onChange={(e) => setDescLength(e.target.value.length)}
+                    placeholder="Describe los detalles de la oferta..."
+                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 pb-8 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600 resize-none"
+                  />
+                  <div className="absolute bottom-2 right-3 text-xs text-zinc-500 font-medium bg-black/40 px-2 py-0.5 rounded">
+                    {descLength}/{MAX_DESC}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-[#2BD45A] hover:bg-[#25b84e] text-black font-bold py-4 rounded-xl shadow-lg shadow-[#2BD45A]/20 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Publicando...
+                </>
+              ) : (
+                <>
+                  <Upload className="w-5 h-5" />
+                  Publicar Oferta
+                </>
+              )}
+            </button>
+          </form>
+        </div>
+      </div>
+    </TooltipProvider>
+  )
+}
