@@ -410,8 +410,8 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
           </div>
 
           {/* Left Column: Image & Comments (8 cols) - Mobile: Order N/A (contents), Desktop: Order 1 (Left) */}
-          <div className="contents lg:block lg:col-span-8 lg:space-y-4 lg:order-1">
-             <div className="glass-panel p-4 relative group overflow-hidden rounded-2xl order-1 flex flex-col gap-3">
+          <div className="flex flex-col gap-4 lg:block lg:col-span-8 lg:space-y-4 lg:order-1 w-full min-w-0">
+             <div className="glass-panel p-4 relative group overflow-hidden rounded-2xl order-1 flex flex-col gap-3 w-full">
                 
                 {/* Countdown Banner - Moved to top to avoid overlap */}
                 {timeLeft && !isExpired && (
@@ -486,7 +486,7 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
                    </div>
                    
                    {/* Image Container */}
-                   <div className="relative flex-1 rounded-xl overflow-hidden bg-zinc-900/50 flex items-center justify-center min-h-[300px] md:min-h-[400px] aspect-video group/image order-1 md:order-2 border border-white/5">
+                   <div className="relative flex-1 rounded-xl overflow-hidden bg-zinc-900/50 flex items-center justify-center w-full aspect-square sm:aspect-video group/image order-1 md:order-2 border border-white/5">
                       <img
                           src={imageUrl}
                           alt={deal.title}
@@ -596,7 +596,7 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
                 </div>
              )}
 
-             <div className="glass-panel p-5 rounded-2xl space-y-4 border border-white/5 order-3">
+             <div className="glass-panel p-5 rounded-2xl space-y-4 border border-white/5 order-3 w-full overflow-hidden">
                 <CommentsSection dealId={id} />
              </div>
           </div>
