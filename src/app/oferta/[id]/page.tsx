@@ -274,7 +274,7 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
 
        <div className="flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-6">
           {/* Right Column: Info (4 cols) - Mobile: Order 2, Desktop: Order 2 (Right) */}
-          <div className="lg:col-span-4 space-y-4 order-2 lg:order-2">
+          <div className="lg:col-span-4 space-y-4 order-2 lg:order-2 w-full min-w-0">
              <div className="glass-panel rounded-2xl lg:sticky lg:top-24 border border-white/5 flex flex-col md:flex-row overflow-hidden">
                 
                 {/* Main Content Info */}
@@ -410,7 +410,7 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
           </div>
 
           {/* Left Column: Image & Comments (8 cols) - Mobile: Order N/A (contents), Desktop: Order 1 (Left) */}
-          <div className="flex flex-col gap-4 lg:block lg:col-span-8 lg:space-y-4 lg:order-1 w-full min-w-0">
+          <div className="contents lg:block lg:col-span-8 lg:space-y-4 lg:order-1">
              <div className="glass-panel p-4 relative group overflow-hidden rounded-2xl order-1 flex flex-col gap-3 w-full">
                 
                 {/* Countdown Banner - Moved to top to avoid overlap */}
