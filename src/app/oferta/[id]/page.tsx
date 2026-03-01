@@ -265,7 +265,7 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
   const longitude = deal.longitude
   
   return (
-    <div className="max-w-6xl mx-auto space-y-4 pb-12">
+    <div className="max-w-6xl mx-auto space-y-4 pb-12 px-4 sm:px-6">
        {/* Back button */}
        <Link href="/" className="inline-flex items-center text-zinc-400 hover:text-white transition-colors group text-sm">
           <ChevronLeft className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" />
@@ -289,9 +289,9 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
                          {deal.title}
                       </h1>
                       
-                      <div className="flex items-center justify-between mb-5 bg-black/20 p-3 rounded-xl border border-white/5">
-                         <div className="flex flex-col">
-                            <span className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+                      <div className="flex flex-wrap items-center justify-between gap-3 mb-5 bg-black/20 p-3 rounded-xl border border-white/5">
+                         <div className="flex flex-col min-w-0">
+                            <span className="text-2xl md:text-3xl font-bold text-white tracking-tight truncate">
                                ${dealPrice.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                             </span>
                             {originalPrice > 0 && (
@@ -351,18 +351,18 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
                          </div>
                       )}
 
-                      <div className="flex items-center justify-between text-sm">
-                         <div className="flex items-center gap-2.5">
-                            <div className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center overflow-hidden ring-2 ring-black">
+                      <div className="flex items-center justify-between text-sm gap-2">
+                         <div className="flex items-center gap-2.5 min-w-0 overflow-hidden">
+                            <div className="shrink-0 w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center overflow-hidden ring-2 ring-black">
                                {userAvatar ? (
                                   <img src={userAvatar} alt={userName} className="w-full h-full object-cover" />
                                ) : (
                                   <span className="font-bold text-zinc-400 text-xs">{userName?.[0] || 'U'}</span>
                                )}
                             </div>
-                            <div className="flex flex-col">
-                               <span className="text-[10px] text-zinc-500 uppercase tracking-wider">Publicado por</span>
-                               <span className="text-white font-medium text-xs md:text-sm">{userName}</span>
+                            <div className="flex flex-col min-w-0 overflow-hidden">
+                               <span className="text-[10px] text-zinc-500 uppercase tracking-wider truncate">Publicado por</span>
+                               <span className="text-white font-medium text-xs md:text-sm truncate">{userName}</span>
                             </div>
                          </div>
                          
