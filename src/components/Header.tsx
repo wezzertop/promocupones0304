@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { Search, Bell, User, LogOut, Settings, Menu } from 'lucide-react'
-import { useState } from 'react'
+import { Search, Bell, User as UserIcon, LogOut, Settings, Menu, BadgeCheck } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { User as SupabaseUser } from '@supabase/supabase-js'
@@ -18,23 +18,29 @@ interface HeaderProps {
 
 export default function Header({ user }: HeaderProps) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const [userLevel, setUserLevel] = useState<number | null>(null)
   const router = useRouter()
   const supabase = createClient()
   useScrollDirection() // Initialize scroll listener
   const { isHeaderVisible, toggleSidebar } = useUIStore()
   
-  // Real-time avatar update check (optional, or rely on page refresh)
-  // For now we use the user metadata provided by the prop, which comes from server session.
-  // If user updates profile, they usually refresh or we need a client-side context for user profile.
-  // Let's assume user prop is relatively fresh or handled by layout.
-  
-  // Actually, Supabase user metadata might be stale if updated via 'users' table but not 'auth.users'.
-  // Our settings page updates 'users' table AND should ideally update auth metadata or we should fetch from 'users' table.
-  // The layout fetches from auth.getUser().
-  
-  // Let's fetch the latest profile data for the avatar if possible, or just use what we have.
-  // Ideally, we should use a React Context for the User Profile to keep it in sync.
-  // For this fix, we will just fix the Image component usage.
+  useEffect(() => {
+    async function fetchLevel() {
+      if (!user) return
+      
+      const { data } = await supabase
+        .from('gamification_profiles')
+        .select('current_level')
+        .eq('user_id', user.id)
+        .single()
+        
+      if (data) {
+        setUserLevel(data.current_level)
+      }
+    }
+    
+    fetchLevel()
+  }, [user, supabase])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -80,9 +86,16 @@ export default function Header({ user }: HeaderProps) {
                 <p className="text-sm font-medium text-white leading-none mb-1">
                   {user.user_metadata?.username || user.email?.split('@')[0]}
                 </p>
-                <p className="text-xs text-[#2BD45A]">Miembro Pro</p>
+                <div className="flex items-center justify-end gap-1">
+                  <p className="text-xs text-[#2BD45A]">
+                    {userLevel ? `Nivel ${userLevel}` : 'Miembro Pro'}
+                  </p>
+                  {userLevel && userLevel >= 50 && (
+                    <BadgeCheck size={14} className="text-blue-400" fill="currentColor" stroke="black" />
+                  )}
+                </div>
               </div>
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#2BD45A] to-[#25b84e] flex items-center justify-center text-black font-bold shadow-lg shadow-[#2BD45A]/20 overflow-hidden relative border-2 border-[#2BD45A]/30">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#2BD45A] to-[#25b84e] flex items-center justify-center text-black font-bold shadow-lg shadow-[#2BD45A]/20 overflow-hidden relative border-2 border-[#2BD45A]/30 group">
                 {user.user_metadata?.avatar_url ? (
                   <Image 
                     src={user.user_metadata.avatar_url} 
@@ -94,6 +107,8 @@ export default function Header({ user }: HeaderProps) {
                 ) : (
                   (user.user_metadata?.username?.[0] || user.email?.[0] || 'U').toUpperCase()
                 )}
+                {/* Online Status Indicator (Pulse) */}
+                <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-[#2BD45A] rounded-full border-2 border-[#18191c] animate-pulse z-10 shadow-[0_0_8px_#2BD45A] transform translate-x-1/4 -translate-y-1/4"></div>
               </div>
             </button>
 
@@ -108,7 +123,7 @@ export default function Header({ user }: HeaderProps) {
                 
                 <div className="p-1">
                   <Link href="/perfil" className="flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:bg-[#222327] hover:text-white rounded-lg transition-colors">
-                    <User size={16} /> Mi Perfil
+                    <UserIcon size={16} /> Mi Perfil
                   </Link>
                   <Link href="/ajustes" className="flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:bg-[#222327] hover:text-white rounded-lg transition-colors">
                     <Settings size={16} /> Configuración
@@ -131,7 +146,7 @@ export default function Header({ user }: HeaderProps) {
             href="/auth/login" 
             className="flex items-center gap-2 px-5 py-2.5 bg-[#2BD45A] hover:bg-[#25b84e] text-black font-bold rounded-xl text-sm transition-all shadow-[0_0_15px_rgba(43,212,90,0.3)] hover:shadow-[0_0_20px_rgba(43,212,90,0.5)]"
           >
-            <User size={18} />
+            <UserIcon size={18} />
             <span className="hidden sm:inline">Acceder</span>
           </Link>
         )}
