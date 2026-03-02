@@ -15,18 +15,11 @@ export const REFERRAL_PATTERNS = [
   't.co',
 ]
 
-export const POINT_SYSTEM = {
-  POST_APPROVED: 10,
-  POST_REJECTED: -5,
-  COMMENT_APPROVED: 2,
-  VOTE_RECEIVED: 1,
-  REPORT_VALID: 5,
-}
-
+// Deprecated: Use gamification levels instead
 export const REFERRAL_TIERS = {
   NO_REFERRALS: { min: 0, max: 100, limit: 0 },
-  LOW_TIER: { min: 101, max: 500, limit: 1 }, // 1 per week
-  HIGH_TIER: { min: 501, max: Infinity, limit: 3 }, // 3 per week
+  LOW_TIER: { min: 101, max: 500, limit: 1 }, 
+  HIGH_TIER: { min: 501, max: Infinity, limit: 3 },
 }
 
 export async function isReferralUrl(url: string): Promise<{ isReferral: boolean; reason?: string }> {
@@ -57,39 +50,48 @@ export async function isReferralUrl(url: string): Promise<{ isReferral: boolean;
   return { isReferral: false }
 }
 
-export function getUserReferralLimit(karmaPoints: number): number {
-  if (karmaPoints <= REFERRAL_TIERS.NO_REFERRALS.max) return REFERRAL_TIERS.NO_REFERRALS.limit
-  if (karmaPoints <= REFERRAL_TIERS.LOW_TIER.max) return REFERRAL_TIERS.LOW_TIER.limit
-  return REFERRAL_TIERS.HIGH_TIER.limit
-}
-
-export async function canUserPostReferral(userId: string): Promise<boolean> {
+export async function canUserPostReferral(userId: string): Promise<{ canPost: boolean; limit: number; used: number }> {
   const supabase = createClient()
   
-  // Get user karma
-  const { data: user } = await supabase
-    .from('users')
-    .select('karma_points')
-    .eq('id', userId)
+  // Get user gamification level
+  const { data: profile } = await supabase
+    .from('gamification_profiles')
+    .select('current_level')
+    .eq('user_id', userId)
     .single()
-
-  if (!user) return false
-
-  const limit = getUserReferralLimit((user as any).karma_points)
-  if (limit === 0) return false
+    
+  if (!profile) return { canPost: false, limit: 0, used: 0 }
+  
+  // Get referral limit based on level
+  const { data: levelData } = await supabase
+    .from('gamification_levels')
+    .select('referral_limit')
+    .eq('level', profile.current_level)
+    .single()
+    
+  const limit = levelData?.referral_limit || 0
+  
+  if (limit === 0) return { canPost: false, limit: 0, used: 0 }
 
   // Check posts in the last week
   const oneWeekAgo = new Date()
   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
 
-  const { count } = await supabase
+  // Count deals that are marked as referrals OR match patterns (fallback)
+  const { count, error } = await supabase
     .from('deals')
     .select('*', { count: 'exact', head: true })
     .eq('user_id', userId)
-    .gt('created_at', oneWeekAgo.toISOString())
-    .ilike('deal_url', '%ref=%') // Simple check, ideally we flag referrals in DB
+    .gte('created_at', oneWeekAgo.toISOString())
+    .eq('is_referral', true) // Assuming new column is_referral
 
-  return (count || 0) < limit
+  if (error) {
+      console.error('Error checking referral limits:', error)
+      return { canPost: false, limit, used: 0 } // Fail safe
+  }
+  
+  const used = count || 0
+  return { canPost: used < limit, limit, used }
 }
 
 export async function addKarmaPoints(userId: string, points: number, reason: string) {

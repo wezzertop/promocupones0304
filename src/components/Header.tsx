@@ -10,6 +10,8 @@ import { useScrollDirection } from '@/hooks/useScrollDirection'
 import { useUIStore } from '@/lib/store'
 import NotificationCenter from '@/components/NotificationCenter'
 
+import Image from 'next/image'
+
 interface HeaderProps {
   user: SupabaseUser | null
 }
@@ -20,6 +22,19 @@ export default function Header({ user }: HeaderProps) {
   const supabase = createClient()
   useScrollDirection() // Initialize scroll listener
   const { isHeaderVisible, toggleSidebar } = useUIStore()
+  
+  // Real-time avatar update check (optional, or rely on page refresh)
+  // For now we use the user metadata provided by the prop, which comes from server session.
+  // If user updates profile, they usually refresh or we need a client-side context for user profile.
+  // Let's assume user prop is relatively fresh or handled by layout.
+  
+  // Actually, Supabase user metadata might be stale if updated via 'users' table but not 'auth.users'.
+  // Our settings page updates 'users' table AND should ideally update auth metadata or we should fetch from 'users' table.
+  // The layout fetches from auth.getUser().
+  
+  // Let's fetch the latest profile data for the avatar if possible, or just use what we have.
+  // Ideally, we should use a React Context for the User Profile to keep it in sync.
+  // For this fix, we will just fix the Image component usage.
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -67,9 +82,15 @@ export default function Header({ user }: HeaderProps) {
                 </p>
                 <p className="text-xs text-[#2BD45A]">Miembro Pro</p>
               </div>
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#2BD45A] to-[#25b84e] flex items-center justify-center text-black font-bold shadow-lg shadow-[#2BD45A]/20">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#2BD45A] to-[#25b84e] flex items-center justify-center text-black font-bold shadow-lg shadow-[#2BD45A]/20 overflow-hidden relative border-2 border-[#2BD45A]/30">
                 {user.user_metadata?.avatar_url ? (
-                  <img src={user.user_metadata.avatar_url} alt="Avatar" className="w-full h-full object-cover rounded-lg" />
+                  <Image 
+                    src={user.user_metadata.avatar_url} 
+                    alt="Avatar" 
+                    fill
+                    sizes="36px"
+                    className="object-cover rounded-full"
+                  />
                 ) : (
                   (user.user_metadata?.username?.[0] || user.email?.[0] || 'U').toUpperCase()
                 )}

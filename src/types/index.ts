@@ -42,3 +42,53 @@ export interface Deal {
   store?: Store
   category?: Category
 }
+
+export interface GamificationLevel {
+  level: number
+  xp_required: number
+  referral_limit: number
+  title: string
+  icon_url: string | null
+}
+
+export interface GamificationProfile {
+  user_id: string
+  current_level: number
+  current_xp: number
+  next_level_xp: number
+  streak_days: number
+  last_activity_date: string | null
+  referral_code: string | null
+  referred_by: string | null
+  created_at: string
+  updated_at: string
+  level?: GamificationLevel // Joined
+}
+
+export interface Badge {
+  id: string
+  slug: string
+  name: string
+  description: string
+  icon_url: string | null
+  xp_reward: number
+  category: string
+  created_at: string
+}
+
+export interface UserBadge {
+  user_id: string
+  badge_id: string
+  earned_at: string
+  is_displayed: boolean
+  badge?: Badge // Joined
+}
+
+export interface XPHistory {
+  id: string
+  user_id: string
+  amount: number
+  source_type: string
+  source_id: string | null
+  created_at: string
+}

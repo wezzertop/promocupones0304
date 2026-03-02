@@ -7,6 +7,9 @@ import { Settings, User, MapPin, Calendar, Flame, MessageSquare, Tag } from 'luc
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { getUserGamificationProfile, getUserBadges, getAllBadges } from '@/lib/gamification'
+import LevelProgress from '@/components/gamification/LevelProgress'
+import BadgeList from '@/components/gamification/BadgeList'
 
 export const dynamic = 'force-dynamic'
 
@@ -26,6 +29,11 @@ export default async function ProfilePage() {
     .select('*')
     .eq('id', session.user.id)
     .single() as { data: any, error: any }
+
+  // Fetch gamification data
+  const gamificationProfile = await getUserGamificationProfile(session.user.id)
+  const userBadges = await getUserBadges(session.user.id)
+  const allBadges = await getAllBadges()
 
   // 3. Fetch user's deals
   const { data: userDeals, error: dealsError } = await supabase
@@ -123,6 +131,16 @@ export default async function ProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Gamification Section */}
+      {gamificationProfile && (
+        <div className="grid grid-cols-1 gap-6">
+          <LevelProgress profile={gamificationProfile} />
+          {allBadges && allBadges.length > 0 && userBadges && (
+            <BadgeList badges={allBadges} userBadges={userBadges} />
+          )}
+        </div>
+      )}
 
       {/* Content Tabs (Visual only for now) */}
       <div className="flex items-center gap-1 border-b border-[#2d2e33] pb-1 overflow-x-auto">

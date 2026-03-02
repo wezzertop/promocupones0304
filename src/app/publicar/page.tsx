@@ -135,9 +135,13 @@ export default function CreateDealPage() {
       const { isReferral, reason } = await isReferralUrl(url.toString())
       if (isReferral) {
         // Check if user is allowed to post referrals
-        const canPost = await canUserPostReferral(session.user.id)
+        const { canPost, limit, used } = await canUserPostReferral(session.user.id)
         if (!canPost) {
-           throw new Error(`No puedes publicar enlaces de referidos aún. ${reason}`)
+           if (limit === 0) {
+             throw new Error(`No tienes nivel suficiente para publicar enlaces de referidos (mínimo nivel 10). ${reason}`)
+           } else {
+             throw new Error(`Has alcanzado tu límite semanal de enlaces de referidos (${used}/${limit}). Intenta la próxima semana.`)
+           }
         }
       }
 
@@ -208,7 +212,8 @@ export default function CreateDealPage() {
         availability: availability || null,
         shipping_cost: shipping_cost ? Number(shipping_cost) : 0,
         shipping_country: shipping_country || null,
-        start_date: start_date ? new Date(start_date as string).toISOString() : null
+        start_date: start_date ? new Date(start_date as string).toISOString() : null,
+        is_referral: isReferral
       }
 
       const { error } = await supabase.from('deals').insert(deal)

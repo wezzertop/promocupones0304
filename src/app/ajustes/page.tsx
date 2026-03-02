@@ -1,21 +1,139 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Bell, User, Lock, Mail, Moon, Globe, LogOut, Save, Shield } from 'lucide-react'
+import { Bell, User, Lock, Mail, Moon, Globe, LogOut, Save, Shield, Camera, Upload } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
+import { processAvatar } from '@/lib/utils'
 
 export default function SettingsPage() {
   const router = useRouter()
   const supabase = createClient()
   
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [user, setUser] = useState<any>(null)
+  const [profile, setProfile] = useState<any>(null)
+  
+  // Form states
+  const [username, setUsername] = useState('')
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
   const [notifications, setNotifications] = useState({
     email: true,
     push: false,
     marketing: false
   })
 
-  const [isLoading, setIsLoading] = useState(false)
+  useEffect(() => {
+    async function getProfile() {
+      setLoading(true)
+      const { data: { user } } = await supabase.auth.getUser()
+      
+      if (!user) {
+        router.push('/auth/login')
+        return
+      }
+      
+      setUser(user)
+      
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+        
+      if (data) {
+        setProfile(data)
+        setUsername(data.username || '')
+        setAvatarUrl(data.avatar_url)
+      }
+      
+      setLoading(false)
+    }
+    
+    getProfile()
+  }, [supabase, router])
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) {
+      return
+    }
+    
+    const file = e.target.files[0]
+    setAvatarFile(file)
+    setAvatarUrl(URL.createObjectURL(file))
+  }
+
+  const handleSave = async () => {
+    if (!user) return
+    
+    setSaving(true)
+    
+    try {
+      let publicAvatarUrl = profile?.avatar_url
+      
+      // Upload new avatar if selected
+      if (avatarFile) {
+        const processedAvatar = await processAvatar(avatarFile)
+        const fileExt = 'webp' // processed avatar is always webp
+        const fileName = `${user.id}-${Math.random().toString(36).substring(7)}.${fileExt}`
+        const filePath = `avatars/${fileName}`
+        
+        const { error: uploadError } = await supabase.storage
+          .from('deals') 
+          .upload(filePath, processedAvatar, {
+             contentType: 'image/webp',
+             upsert: true
+          })
+          
+        if (uploadError) throw uploadError
+        
+        const { data: { publicUrl } } = supabase.storage
+          .from('deals')
+          .getPublicUrl(filePath)
+          
+        publicAvatarUrl = publicUrl
+      }
+      
+      // Update profile in DB
+      const { error } = await supabase
+        .from('users')
+        .update({
+          username,
+          avatar_url: publicAvatarUrl,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id)
+        
+      if (error) throw error
+
+      // Update Auth Metadata (Important for Header/Sidebar to reflect changes immediately)
+      const { error: authError } = await supabase.auth.updateUser({
+        data: {
+          username,
+          avatar_url: publicAvatarUrl
+        }
+      })
+
+      if (authError) {
+        console.error('Error updating auth metadata:', authError)
+        // Non-blocking, but good to know
+      }
+      
+      alert('Perfil actualizado correctamente')
+      router.refresh()
+      
+    } catch (error: any) {
+      console.error('Error updating profile:', error)
+      alert('Error al actualizar el perfil: ' + error.message)
+    } finally {
+      setSaving(false)
+    }
+  }
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -23,13 +141,12 @@ export default function SettingsPage() {
     router.refresh()
   }
 
-  const handleSave = () => {
-    setIsLoading(true)
-    // Simulate save
-    setTimeout(() => {
-      setIsLoading(false)
-      alert('Configuración guardada correctamente')
-    }, 1000)
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#2BD45A]"></div>
+      </div>
+    )
   }
 
   return (
@@ -41,10 +158,10 @@ export default function SettingsPage() {
         </div>
         <button 
           onClick={handleSave}
-          disabled={isLoading}
+          disabled={saving}
           className="px-6 py-2.5 bg-[#2BD45A] hover:bg-[#25b84e] text-black font-bold rounded-xl transition-all shadow-lg shadow-[#2BD45A]/20 flex items-center gap-2 disabled:opacity-50"
         >
-          {isLoading ? 'Guardando...' : (
+          {saving ? 'Guardando...' : (
             <>
               <Save size={18} />
               Guardar
@@ -61,15 +178,67 @@ export default function SettingsPage() {
             Cuenta
           </h2>
         </div>
-        <div className="p-6 space-y-6">
-          <div className="grid md:grid-cols-2 gap-6">
+        
+        <div className="p-6 space-y-8">
+            {/* Avatar Section */}
+            <div className="flex flex-col items-center sm:flex-row gap-6">
+                <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                    <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-[#222327] bg-[#222327] relative shadow-xl shadow-black/50">
+                        {avatarUrl ? (
+                            <Image 
+                                src={avatarUrl} 
+                                alt="Avatar" 
+                                fill 
+                                sizes="96px"
+                                unoptimized
+                                className="object-cover rounded-full group-hover:opacity-75 transition-opacity"
+                            />
+                        ) : (
+                            <div className="w-full h-full flex items-center justify-center text-zinc-500">
+                                <User size={40} />
+                            </div>
+                        )}
+                        
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 rounded-full">
+                            <Camera className="text-white" size={24} />
+                        </div>
+                    </div>
+                    <div className="absolute bottom-0 right-0 bg-[#2BD45A] text-black p-1.5 rounded-full border-4 border-[#18191c]">
+                        <Upload size={14} />
+                    </div>
+                    <input 
+                        type="file" 
+                        ref={fileInputRef}
+                        className="hidden" 
+                        accept="image/*"
+                        onChange={handleAvatarChange}
+                    />
+                </div>
+                
+                <div className="text-center sm:text-left">
+                    <h3 className="text-lg font-bold text-white mb-1">Foto de Perfil</h3>
+                    <p className="text-sm text-gray-400 mb-3">
+                        Sube una imagen para personalizar tu perfil. <br/>
+                        Se recomienda 400x400px.
+                    </p>
+                    <button 
+                        onClick={() => fileInputRef.current?.click()}
+                        className="text-sm font-bold text-[#2BD45A] hover:text-[#25b84e] transition-colors"
+                    >
+                        Cambiar imagen
+                    </button>
+                </div>
+            </div>
+
+          <div className="grid md:grid-cols-2 gap-6 pt-4 border-t border-[#2d2e33]">
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Nombre de usuario</label>
               <input 
                 type="text" 
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className="w-full bg-[#222327] border border-[#2d2e33] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#2BD45A] transition-colors"
                 placeholder="Tu nombre de usuario"
-                defaultValue="Usuario"
               />
             </div>
             <div>
@@ -78,7 +247,7 @@ export default function SettingsPage() {
                 type="email" 
                 disabled
                 className="w-full bg-[#222327]/50 border border-[#2d2e33] rounded-xl px-4 py-3 text-gray-500 cursor-not-allowed"
-                value="usuario@ejemplo.com"
+                value={user?.email || ''}
               />
             </div>
           </div>
@@ -96,6 +265,21 @@ export default function SettingsPage() {
                 </div>
               </div>
               <span className="text-xs font-bold text-[#2BD45A]">Actualizar</span>
+            </button>
+          </div>
+
+          <div className="pt-4 border-t border-[#2d2e33] flex justify-end">
+            <button 
+              onClick={handleSave}
+              disabled={saving}
+              className="px-6 py-2.5 bg-[#2BD45A] hover:bg-[#25b84e] text-black font-bold rounded-xl transition-all shadow-lg shadow-[#2BD45A]/20 flex items-center gap-2 disabled:opacity-50"
+            >
+              {saving ? 'Guardando...' : (
+                <>
+                  <Save size={18} />
+                  Guardar Cambios
+                </>
+              )}
             </button>
           </div>
         </div>

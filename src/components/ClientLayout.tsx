@@ -7,6 +7,7 @@ import FloatingActionButton from "@/components/FloatingActionButton";
 import { useUIStore } from '@/lib/store'
 import { User as SupabaseUser } from '@supabase/supabase-js'
 import { usePathname } from 'next/navigation'
+import GamificationToast from '@/components/gamification/GamificationToast'
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -34,6 +35,7 @@ export default function ClientLayout({ children, user }: ClientLayoutProps) {
         <Footer />
       </div>
       <FloatingActionButton />
+      <GamificationToast />
     </div>
   )
 }

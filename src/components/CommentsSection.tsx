@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { MessageSquare, ThumbsUp, ThumbsDown, Loader2, Flag, Trash2, Reply } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -389,16 +390,19 @@ export default function CommentsSection({ dealId }: CommentsSectionProps) {
 
   const CommentItem = ({ comment, isReply = false }: { comment: Comment, isReply?: boolean }) => (
     <div className={cn("flex gap-2.5", isReply ? "mt-3 ml-6 border-l-2 border-white/5 pl-3" : "mt-4")}>
-      <div className="shrink-0">
+      <div className="flex-shrink-0">
         {comment.user?.avatar_url ? (
-          <img 
-            src={comment.user.avatar_url} 
-            alt={comment.user.username} 
-            className="w-7 h-7 rounded-full bg-zinc-800"
-          />
+          <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10 relative">
+            <Image 
+              src={comment.user.avatar_url} 
+              alt={comment.user.username} 
+              fill
+              className="object-cover"
+            />
+          </div>
         ) : (
-          <div className="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-[10px] text-zinc-400 font-bold">
-            {comment.user?.username?.[0]?.toUpperCase() || 'U'}
+          <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-[10px] text-zinc-400 font-bold border border-white/5">
+            {(comment.user?.username || 'U').substring(0, 2).toUpperCase()}
           </div>
         )}
       </div>

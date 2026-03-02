@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export async function compressImage(file: File, quality = 0.8, maxWidth = 1200): Promise<Blob> {
+export async function compressImage(file: File, quality = 0.8, maxWidth = 1200, format: 'image/jpeg' | 'image/webp' = 'image/jpeg'): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -17,10 +17,13 @@ export async function compressImage(file: File, quality = 0.8, maxWidth = 1200):
         const canvas = document.createElement('canvas');
         let width = img.width;
         let height = img.height;
+        
+        // Calculate aspect ratio
+        const ratio = width / height;
 
         if (width > maxWidth) {
-          height = (height * maxWidth) / width;
           width = maxWidth;
+          height = width / ratio;
         }
 
         canvas.width = width;
@@ -31,6 +34,11 @@ export async function compressImage(file: File, quality = 0.8, maxWidth = 1200):
           reject(new Error('Could not get canvas context'));
           return;
         }
+        
+        // Better quality scaling
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        
         ctx.drawImage(img, 0, 0, width, height);
 
         canvas.toBlob(
@@ -41,7 +49,7 @@ export async function compressImage(file: File, quality = 0.8, maxWidth = 1200):
               reject(new Error('Image compression failed'));
             }
           },
-          'image/jpeg',
+          format,
           quality
         );
       };
@@ -49,6 +57,12 @@ export async function compressImage(file: File, quality = 0.8, maxWidth = 1200):
     };
     reader.onerror = (error) => reject(error);
   });
+}
+
+export async function processAvatar(file: File): Promise<File> {
+  // Avatar specific processing: Square, max 400px, WebP, strip metadata (canvas does this automatically)
+  const blob = await compressImage(file, 0.9, 400, 'image/webp');
+  return new File([blob], 'avatar.webp', { type: 'image/webp' });
 }
 
 export function formatPrice(price: number) {
