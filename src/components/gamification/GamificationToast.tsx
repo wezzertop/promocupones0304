@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Trophy, Star, ArrowUp } from 'lucide-react'
 
 export default function GamificationToast() {
-  const [toasts, setToasts] = useState<{ id: string, type: 'xp' | 'level', message: string, amount?: number }[]>([])
+  const [toasts, setToasts] = useState<{ id: string, type: 'xp' | 'level', message: string, amount?: number, isNegative?: boolean }[]>([])
   const supabase = createClient()
 
   useEffect(() => {

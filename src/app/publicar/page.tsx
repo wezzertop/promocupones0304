@@ -185,7 +185,7 @@ export default function CreateDealPage() {
             // Si falla, podríamos ignorarlo o mostrar error. 
             // Para robustez, seguimos sin store_id o lanzamos error.
           } else if (newStore) {
-            finalStoreId = newStore.id
+            finalStoreId = (newStore as any).id
           }
         }
       }
@@ -260,7 +260,7 @@ export default function CreateDealPage() {
       
       // 2. Determinar estado inicial
       // Por defecto PENDING. El backend también forzará esto via trigger, pero aquí lo mostramos para la UI
-      const userRole = userProfile?.role || 'user'
+      const userRole = (userProfile as any)?.role || 'user'
       const initialStatus = ['admin', 'moderator'].includes(userRole) ? 'active' : 'pending'
 
       console.log('User Role:', userRole, 'Initial Status:', initialStatus) // Debug
