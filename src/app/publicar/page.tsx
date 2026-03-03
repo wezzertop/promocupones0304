@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { Upload, DollarSign, Tag, Type, Link as LinkIcon, Image as ImageIcon, FileText, Loader2, X, Calendar, MapPin, Percent, ShoppingBag, Truck, Globe, HelpCircle, Check, ChevronsUpDown, Store as StoreIcon } from 'lucide-react'
+import { Upload, DollarSign, Tag, Type, Link as LinkIcon, Image as ImageIcon, FileText, Loader2, X, Calendar, MapPin, Percent, ShoppingBag, Truck, Globe, HelpCircle, Check, ChevronsUpDown, Store as StoreIcon, GripVertical } from 'lucide-react'
 import { compressImage, analyzeImage, slugify, cn } from '@/lib/utils'
 import Image from 'next/image'
 import Map from '@/components/DynamicMap'
@@ -17,6 +17,9 @@ import {
 import { isReferralUrl, canUserPostReferral, checkForbiddenWords } from '@/lib/moderation'
 import PublicationSuccessModal from '@/components/PublicationSuccessModal'
 import { createNotification } from '@/lib/notifications'
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, rectSortingStrategy } from '@dnd-kit/sortable';
+import { SortableItem } from '@/components/SortableItem'
 
 interface Category {
   id: string
@@ -42,8 +45,13 @@ export default function CreateDealPage() {
   const [storeSearch, setStoreSearch] = useState('')
   const [isStoreOpen, setIsStoreOpen] = useState(false)
   const [customStoreName, setCustomStoreName] = useState('')
-  const [imageFiles, setImageFiles] = useState<File[]>([])
-  const [previewUrls, setPreviewUrls] = useState<string[]>([])
+  // Unified state for dnd
+  interface ImageItem {
+    id: string
+    url: string
+    file?: File
+  }
+  const [items, setItems] = useState<ImageItem[]>([])
   const [location, setLocation] = useState<[number, number] | null>(null)
   const [titleLength, setTitleLength] = useState(0)
   const [descLength, setDescLength] = useState(0)
@@ -54,6 +62,14 @@ export default function CreateDealPage() {
   
   const router = useRouter()
   const supabase = createClient()
+
+  // DnD Sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   useEffect(() => {
     async function fetchData() {
@@ -78,8 +94,7 @@ export default function CreateDealPage() {
     if (files.length === 0) return
 
     // Validar y procesar cada archivo
-    const newFiles: File[] = []
-    const newPreviews: string[] = []
+    const newItems: ImageItem[] = []
 
     for (const file of files) {
       if (!file.type.startsWith('image/')) {
@@ -95,28 +110,45 @@ export default function CreateDealPage() {
         }
 
         const objectUrl = URL.createObjectURL(file)
-        newPreviews.push(objectUrl)
         
         // 2. Optimizar imagen (Compresión + WebP + Resize)
         const compressedBlob = await compressImage(file)
-        newFiles.push(new File([compressedBlob], file.name.replace(/\.[^/.]+$/, "") + ".webp", { type: 'image/webp' }))
+        const newFile = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, "") + ".webp", { type: 'image/webp' })
+        
+        newItems.push({
+          id: `new-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          url: objectUrl,
+          file: newFile
+        })
       } catch (error) {
         console.error('Error procesando imagen:', error)
       }
     }
 
-    setImageFiles(prev => [...prev, ...newFiles])
-    setPreviewUrls(prev => [...prev, ...newPreviews])
+    setItems(prev => [...prev, ...newItems])
   }
 
-  const removeImage = (index: number) => {
-    setImageFiles(prev => prev.filter((_, i) => i !== index))
-    setPreviewUrls(prev => {
-      const newPreviews = [...prev]
-      URL.revokeObjectURL(newPreviews[index]) // Limpiar memoria
-      return newPreviews.filter((_, i) => i !== index)
+  const removeItem = (id: string) => {
+    setItems(prev => {
+      const itemToRemove = prev.find(item => item.id === id)
+      if (itemToRemove) {
+        URL.revokeObjectURL(itemToRemove.url) // Limpiar memoria
+      }
+      return prev.filter(item => item.id !== id)
     })
   }
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      setItems((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -218,8 +250,11 @@ export default function CreateDealPage() {
       const uploadedImageUrls: string[] = []
 
       // Subir imágenes
-      if (imageFiles.length > 0) {
-        for (const file of imageFiles) {
+      if (items.length > 0) {
+        for (const item of items) {
+          if (!item.file) continue
+          
+          const file = item.file
           const fileExt = 'webp'
           const fileName = `${session.user.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
           
@@ -634,40 +669,38 @@ export default function CreateDealPage() {
                     id="image-upload"
                   />
                   
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                    {previewUrls.map((url, index) => (
-                      <div key={url} className="relative w-full aspect-square rounded-xl overflow-hidden border border-white/10 bg-black/40 group">
-                        <img 
-                          src={url} 
-                          alt={`Preview ${index + 1}`} 
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <button
-                            type="button"
-                            onClick={() => removeImage(index)}
-                            className="p-2 bg-red-500/20 hover:bg-red-500/40 text-red-400 rounded-full transition-colors"
-                            title="Eliminar imagen"
-                          >
-                            <X className="w-5 h-5" />
-                          </button>
-                        </div>
-                        {index === 0 && (
-                          <span className="absolute bottom-2 left-2 bg-[#2BD45A] text-black text-[10px] font-bold px-2 py-0.5 rounded">Principal</span>
-                        )}
-                      </div>
-                    ))}
-                    
-                    <label 
-                      htmlFor="image-upload"
-                      className="w-full aspect-square bg-black/20 border border-white/10 text-zinc-400 hover:text-white hover:border-[#2BD45A]/50 rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all group gap-2"
+                  <DndContext 
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <SortableContext 
+                      items={items.map(item => item.id)}
+                      strategy={rectSortingStrategy}
                     >
-                      <div className="p-3 rounded-full bg-zinc-800/50 group-hover:bg-[#2BD45A]/20 transition-colors">
-                        <ImageIcon className="h-6 w-6 text-zinc-500 group-hover:text-[#2BD45A]" />
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        {items.map((item, index) => (
+                          <SortableItem 
+                            key={item.id} 
+                            id={item.id} 
+                            url={item.url} 
+                            index={index}
+                            onRemove={removeItem} 
+                          />
+                        ))}
+                        
+                        <label 
+                          htmlFor="image-upload"
+                          className="w-full aspect-square bg-black/20 border border-white/10 text-zinc-400 hover:text-white hover:border-[#2BD45A]/50 rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all group gap-2"
+                        >
+                          <div className="p-3 rounded-full bg-zinc-800/50 group-hover:bg-[#2BD45A]/20 transition-colors">
+                            <ImageIcon className="h-6 w-6 text-zinc-500 group-hover:text-[#2BD45A]" />
+                          </div>
+                          <span className="text-xs text-zinc-500 group-hover:text-zinc-300 text-center px-2">Agregar imágenes</span>
+                        </label>
                       </div>
-                      <span className="text-xs text-zinc-500 group-hover:text-zinc-300 text-center px-2">Agregar imágenes</span>
-                    </label>
-                  </div>
+                    </SortableContext>
+                  </DndContext>
                 </div>
               </div>
 

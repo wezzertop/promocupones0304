@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { motion, AnimatePresence, PanInfo } from 'framer-motion'
-import { ExternalLink, ThumbsUp, Share2, Clock, Tag, ChevronLeft, ChevronRight, Calendar, MapPin, AlertCircle, ArrowUp, ArrowDown, Edit2, Flame, Maximize2, X, Store as StoreIcon, Globe } from 'lucide-react'
+import { ExternalLink, ThumbsUp, Share2, Clock, Tag, ChevronLeft, ChevronRight, Calendar, MapPin, AlertCircle, ArrowUp, ArrowDown, Edit2, Flame, Maximize2, X, Store as StoreIcon, Globe, Truck } from 'lucide-react'
 import CommentsSection from '@/components/CommentsSection'
 import Map from '@/components/DynamicMap'
 import { useEffect, useState, use } from 'react'
@@ -260,36 +260,50 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
                 <div className="flex-1 p-5 space-y-4 min-w-0">
                    <div>
                       <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold tracking-wider mb-2 uppercase">
-                         {/* Category */}
-                         <div className="flex items-center gap-1.5 text-[#2BD45A]">
-                            <Tag className="w-3 h-3" />
-                            {categoryName}
-                         </div>
-
-                         <span className="text-zinc-700">|</span>
-
-                         {/* Location Type */}
-                         {deal.availability === 'in_store' ? (
-                            <div className="flex items-center gap-1.5 text-zinc-400">
-                               <StoreIcon className="w-3 h-3" />
-                               <span>Tienda Física</span>
-                            </div>
-                         ) : (
-                            <div className="flex items-center gap-1.5 text-blue-400">
-                               <Globe className="w-3 h-3" />
-                               <span>Online</span>
-                            </div>
-                         )}
-
                          {/* Store Name */}
                          {deal.store && (
                            <>
-                             <span className="text-zinc-700">|</span>
                              <div className="flex items-center gap-1.5 text-zinc-300">
-                               <span className="text-white">{deal.store.name}</span>
+                                <StoreIcon className="w-3 h-3 text-zinc-500" />
+                                <span className="text-white">{deal.store.name}</span>
+                             </div>
+                             <span className="text-zinc-700">|</span>
+                           </>
+                         )}
+
+                         {/* Location Type */}
+                         <div className="flex items-center gap-1.5 text-blue-400">
+                            {deal.availability === 'in_store' ? (
+                               <>
+                                  <StoreIcon className="w-3 h-3 text-zinc-500" />
+                                  <span className="text-zinc-400">Local</span>
+                               </>
+                            ) : (
+                               <>
+                                  <Globe className="w-3 h-3 text-blue-400" />
+                                  <span>Online</span>
+                               </>
+                            )}
+                         </div>
+
+                         {/* Category */}
+                         {categoryName && (
+                           <>
+                             <span className="text-zinc-700">|</span>
+                             <div className="flex items-center gap-1.5 text-[#2BD45A]">
+                                <Tag className="w-3 h-3" />
+                                <span>{categoryName}</span>
                              </div>
                            </>
                          )}
+
+                         <span className="text-zinc-700">|</span>
+
+                         {/* Shipping info */}
+                         <div className="flex items-center gap-1.5 text-zinc-500">
+                           <Truck className="w-3 h-3" />
+                           <span className="whitespace-nowrap">{deal.shipping_cost === 0 ? 'Envío Gratis' : deal.shipping_cost ? `+${new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(deal.shipping_cost)}` : 'Envío no incl.'}</span>
+                         </div>
                       </div>
                       
                       <h1 className="text-xl md:text-2xl font-bold text-white leading-tight mb-3">

@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { Upload, DollarSign, Tag, Type, Link as LinkIcon, Image as ImageIcon, FileText, Loader2, X, Calendar, MapPin, Percent, ShoppingBag, Truck, Globe, HelpCircle, Save } from 'lucide-react'
+import { Upload, DollarSign, Tag, Type, Link as LinkIcon, Image as ImageIcon, FileText, Loader2, X, Calendar, MapPin, Percent, ShoppingBag, Truck, Globe, HelpCircle, Save, GripVertical } from 'lucide-react'
 import { compressImage, analyzeImage } from '@/lib/utils'
 import Image from 'next/image'
 import Map from '@/components/DynamicMap'
@@ -16,6 +16,9 @@ import {
 } from "@/components/ui/tooltip"
 import { updateDeal } from '../../actions'
 import { use } from 'react'
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, rectSortingStrategy } from '@dnd-kit/sortable';
+import { SortableItem } from '@/components/SortableItem'
 
 interface Category {
   id: string
@@ -47,9 +50,14 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
   const [expiresAt, setExpiresAt] = useState('')
   
   // Images
-  const [imageFiles, setImageFiles] = useState<File[]>([])
-  const [previewUrls, setPreviewUrls] = useState<string[]>([])
-  const [existingImages, setExistingImages] = useState<string[]>([])
+  // Unified state for dnd: { id: string, type: 'existing' | 'new', url: string, file?: File }
+  interface ImageItem {
+    id: string
+    type: 'existing' | 'new'
+    url: string
+    file?: File
+  }
+  const [items, setItems] = useState<ImageItem[]>([])
   
   const MAX_TITLE = 100
   const MAX_DESC = 2000
@@ -59,6 +67,14 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
   
   const router = useRouter()
   const supabase = createClient()
+
+  // DnD Sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   // 1. Fetch Categories & Deal Data
   useEffect(() => {
@@ -106,7 +122,12 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
       if (deal.expires_at) setExpiresAt(new Date(deal.expires_at).toISOString().slice(0, 16))
       
       if (deal.image_urls && Array.isArray(deal.image_urls)) {
-        setExistingImages(deal.image_urls)
+        const initialItems = deal.image_urls.map((url: string, index: number) => ({
+          id: `existing-${index}`,
+          type: 'existing' as const,
+          url
+        }))
+        setItems(initialItems)
       }
 
       setLoading(false)
@@ -118,8 +139,7 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
     const files = Array.from(e.target.files || [])
     if (files.length === 0) return
 
-    const newFiles: File[] = []
-    const newPreviews: string[] = []
+    const newItems: ImageItem[] = []
 
     for (const file of files) {
       if (!file.type.startsWith('image/')) continue
@@ -131,30 +151,44 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
         }
 
         const objectUrl = URL.createObjectURL(file)
-        newPreviews.push(objectUrl)
         const compressedBlob = await compressImage(file)
-        newFiles.push(new File([compressedBlob], file.name.replace(/\.[^/.]+$/, "") + ".webp", { type: 'image/webp' }))
+        const newFile = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, "") + ".webp", { type: 'image/webp' })
+        
+        newItems.push({
+          id: `new-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          type: 'new',
+          url: objectUrl,
+          file: newFile
+        })
       } catch (error) {
         console.error('Error:', error)
       }
     }
 
-    setImageFiles(prev => [...prev, ...newFiles])
-    setPreviewUrls(prev => [...prev, ...newPreviews])
+    setItems(prev => [...prev, ...newItems])
   }
 
-  const removeNewImage = (index: number) => {
-    setImageFiles(prev => prev.filter((_, i) => i !== index))
-    setPreviewUrls(prev => {
-      const newPreviews = [...prev]
-      URL.revokeObjectURL(newPreviews[index])
-      return newPreviews.filter((_, i) => i !== index)
+  const removeItem = (id: string) => {
+    setItems(prev => {
+      const itemToRemove = prev.find(item => item.id === id)
+      if (itemToRemove?.type === 'new') {
+        URL.revokeObjectURL(itemToRemove.url)
+      }
+      return prev.filter(item => item.id !== id)
     })
   }
 
-  const removeExistingImage = (index: number) => {
-    setExistingImages(prev => prev.filter((_, i) => i !== index))
-  }
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      setItems((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -164,22 +198,25 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) return
 
-      // Upload new images first
-      const uploadedUrls: string[] = []
-      for (const file of imageFiles) {
+      // Upload new images
+      const finalImages: string[] = []
+      
+      for (const item of items) {
+        if (item.type === 'existing') {
+          finalImages.push(item.url)
+        } else if (item.type === 'new' && item.file) {
           const fileName = `${session.user.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.webp`
           const { error: uploadError } = await supabase.storage
             .from('deals')
-            .upload(fileName, file, { contentType: 'image/webp' })
+            .upload(fileName, item.file, { contentType: 'image/webp' })
 
           if (!uploadError) {
              const { data: { publicUrl } } = supabase.storage.from('deals').getPublicUrl(fileName)
-             uploadedUrls.push(publicUrl)
+             finalImages.push(publicUrl)
           }
+        }
       }
 
-      // Combine existing and new images
-      const finalImages = [...existingImages, ...uploadedUrls]
       if (finalImages.length === 0) {
         alert('Debes tener al menos una imagen')
         setSaving(false)
@@ -332,50 +369,129 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
                </div>
             </div>
 
-             {/* Cupón */}
-             <div>
-                <label className="text-sm font-medium text-zinc-300 mb-1.5 block">Cupón (Opcional)</label>
-                <input
-                  value={couponCode}
-                  onChange={e => setCouponCode(e.target.value)}
-                  placeholder="Código de descuento"
-                  className="w-full bg-black/20 border border-white/10 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#2BD45A]/50 outline-none uppercase"
-                />
-             </div>
+            {/* Cupón y Disponibilidad */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+               <div>
+                  <label className="text-sm font-medium text-zinc-300 mb-1.5 block">Cupón (Opcional)</label>
+                  <div className="relative">
+                    <Tag className="absolute left-3 top-3 h-5 w-5 text-zinc-500" />
+                    <input
+                      value={couponCode}
+                      onChange={e => setCouponCode(e.target.value)}
+                      placeholder="Código de descuento"
+                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#2BD45A]/50 outline-none uppercase"
+                    />
+                  </div>
+               </div>
+               <div>
+                  <label className="text-sm font-medium text-zinc-300 mb-1.5 block">Disponibilidad</label>
+                  <div className="relative">
+                    <ShoppingBag className="absolute left-3 top-3 h-5 w-5 text-zinc-500" />
+                    <select
+                      value={availability}
+                      onChange={e => setAvailability(e.target.value)}
+                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#2BD45A]/50 outline-none appearance-none"
+                    >
+                      <option value="online" className="bg-zinc-900">Online</option>
+                      <option value="in_store" className="bg-zinc-900">Tienda Física</option>
+                    </select>
+                  </div>
+               </div>
+            </div>
+
+            {/* Envío y País */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium text-zinc-300 mb-1.5 block">Costo de Envío</label>
+                <div className="relative">
+                  <Truck className="absolute left-3 top-3 h-5 w-5 text-zinc-500" />
+                  <input
+                    type="number"
+                    value={shippingCost}
+                    onChange={e => setShippingCost(e.target.value)}
+                    placeholder="0 para gratis"
+                    step="0.01"
+                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#2BD45A]/50 outline-none"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-zinc-300 mb-1.5 block">País de Envío</label>
+                <div className="relative">
+                  <Globe className="absolute left-3 top-3 h-5 w-5 text-zinc-500" />
+                  <select
+                    value={shippingCountry}
+                    onChange={e => setShippingCountry(e.target.value)}
+                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#2BD45A]/50 outline-none appearance-none"
+                  >
+                    {COUNTRIES.map(c => (
+                      <option key={c} value={c} className="bg-zinc-900">{c}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Fechas */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium text-zinc-300 mb-1.5 block">Fecha de Inicio</label>
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-3 h-5 w-5 text-zinc-500" />
+                  <input
+                    type="datetime-local"
+                    value={startDate}
+                    onChange={e => setStartDate(e.target.value)}
+                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#2BD45A]/50 outline-none [color-scheme:dark]"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-zinc-300 mb-1.5 block">Fecha de Expiración</label>
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-3 h-5 w-5 text-zinc-500" />
+                  <input
+                    type="datetime-local"
+                    value={expiresAt}
+                    onChange={e => setExpiresAt(e.target.value)}
+                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#2BD45A]/50 outline-none [color-scheme:dark]"
+                  />
+                </div>
+              </div>
+            </div>
 
             {/* Imágenes */}
             <div>
-              <label className="text-sm font-medium text-zinc-300 mb-1.5 block">Imágenes</label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                {/* Existing Images */}
-                {existingImages.map((url, idx) => (
-                  <div key={`existing-${idx}`} className="relative aspect-square rounded-xl overflow-hidden border border-white/10 group">
-                    <img src={url} alt="Deal" className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                       <button type="button" onClick={() => removeExistingImage(idx)} className="p-2 bg-red-500/20 text-red-400 rounded-full">
-                         <X className="w-5 h-5" />
-                       </button>
-                    </div>
+              <label className="text-sm font-medium text-zinc-300 mb-1.5 block">Imágenes (Arrastra para ordenar)</label>
+              
+              <DndContext 
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext 
+                  items={items.map(item => item.id)}
+                  strategy={rectSortingStrategy}
+                >
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                    {items.map((item, index) => (
+                      <SortableItem 
+                        key={item.id} 
+                        id={item.id} 
+                        url={item.url} 
+                        index={index}
+                        onRemove={removeItem} 
+                      />
+                    ))}
+                    
+                    <label className="aspect-square bg-black/20 border border-white/10 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-[#2BD45A]/50 transition-colors">
+                      <ImageIcon className="h-6 w-6 text-zinc-500" />
+                      <span className="text-xs text-zinc-500 mt-2">Agregar</span>
+                      <input type="file" multiple accept="image/*" onChange={handleImageChange} className="hidden" />
+                    </label>
                   </div>
-                ))}
-                {/* New Previews */}
-                {previewUrls.map((url, idx) => (
-                  <div key={`new-${idx}`} className="relative aspect-square rounded-xl overflow-hidden border border-green-500/30 group">
-                    <img src={url} alt="New" className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                       <button type="button" onClick={() => removeNewImage(idx)} className="p-2 bg-red-500/20 text-red-400 rounded-full">
-                         <X className="w-5 h-5" />
-                       </button>
-                    </div>
-                  </div>
-                ))}
-                
-                <label className="aspect-square bg-black/20 border border-white/10 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-[#2BD45A]/50 transition-colors">
-                  <ImageIcon className="h-6 w-6 text-zinc-500" />
-                  <span className="text-xs text-zinc-500 mt-2">Agregar</span>
-                  <input type="file" multiple accept="image/*" onChange={handleImageChange} className="hidden" />
-                </label>
-              </div>
+                </SortableContext>
+              </DndContext>
             </div>
 
             {/* Descripción */}

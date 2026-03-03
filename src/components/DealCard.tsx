@@ -244,7 +244,7 @@ export default function DealCard({ deal }: DealCardProps) {
 
   return (
     <div className={cn(
-      "group relative flex flex-row bg-[#09090b] rounded-xl md:rounded-3xl overflow-hidden border border-white/5 hover:border-[#2BD45A]/50 transition-all duration-500 shadow-xl shadow-black/50 hover:shadow-[#2BD45A]/10 min-h-[160px] md:h-[280px]",
+      "group relative flex flex-row bg-[#09090b] rounded-xl md:rounded-3xl overflow-hidden border border-white/5 hover:border-[#2BD45A]/50 transition-all duration-500 shadow-xl shadow-black/50 hover:shadow-[#2BD45A]/10 min-h-[260px] md:h-[340px]",
       isExpired && "opacity-60 grayscale"
     )}>
       
@@ -292,29 +292,10 @@ export default function DealCard({ deal }: DealCardProps) {
       {/* Left Column (Mobile: Actions + Image + Votes) | (Desktop: Image only) */}
       <div className="flex flex-col w-[100px] md:w-[240px] shrink-0 border-r border-white/5 md:border-none">
         
-        {/* Mobile Top Actions (Comments & Save) */}
-        <div className="md:hidden flex items-center justify-between px-3 py-2 border-b border-white/5 bg-white/5">
-          <Link 
-            href={`/oferta/${deal.id}#comments`}
-            className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition-colors p-1 -m-1"
-          >
-            <MessageSquare size={16} />
-            <span className="text-xs font-bold">{deal.comments_count || 0}</span>
-          </Link>
-          <button 
-            onClick={handleSave}
-            className={cn(
-              "transition-colors p-1 -m-1",
-              isSaved ? "text-[#2BD45A]" : "text-zinc-400 hover:text-white"
-            )}
-            aria-label={isSaved ? "Quitar de guardados" : "Guardar oferta"}
-          >
-            <Bookmark size={16} className={isSaved ? "fill-current" : ""} />
-          </button>
-        </div>
+
 
         {/* Image Container */}
-        <div className="relative flex-1 flex items-center justify-center p-2 md:p-6 bg-white md:bg-white group/image">
+        <div className="relative flex-1 flex items-center justify-center p-2 md:p-6 bg-white md:bg-white group/image overflow-hidden">
           {/* Status Badge */}
           {deal.status !== 'active' && (
             <div className="absolute top-2 left-2 z-30 pointer-events-none">
@@ -353,7 +334,7 @@ export default function DealCard({ deal }: DealCardProps) {
                   dragConstraints={{ left: 0, right: 0 }}
                   dragElastic={0.2}
                   onDragEnd={handleDragEnd}
-                  className="w-full h-full object-contain max-h-[80px] md:max-h-none drop-shadow-xl cursor-grab active:cursor-grabbing touch-pan-y"
+                  className="w-full h-full object-contain max-h-[80px] md:max-h-[200px] drop-shadow-xl cursor-grab active:cursor-grabbing touch-pan-y"
                 />
               </AnimatePresence>
               
@@ -396,7 +377,7 @@ export default function DealCard({ deal }: DealCardProps) {
           )}
 
           {deal.expires_at && !isExpired && (
-            <Countdown targetDate={deal.expires_at} />
+            <Countdown targetDate={deal.expires_at} className="hidden md:flex" />
           )}
         </div>
 
@@ -458,38 +439,21 @@ export default function DealCard({ deal }: DealCardProps) {
           </h3>
         </Link>
 
-        {/* Price & Discount (Mobile Layout) */}
-        <div className="flex items-center gap-2 mb-2 relative z-10 md:hidden">
-           <span className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-[#2BD45A] to-emerald-400">
-             {deal.deal_price ? formatPrice(deal.deal_price) : 'Gratis'}
-           </span>
-           {deal.original_price && deal.original_price > (deal.deal_price || 0) && (
-             <span className="text-xs text-zinc-600 line-through decoration-zinc-700">
-               {formatPrice(deal.original_price)}
-             </span>
-           )}
-           {deal.discount_percentage && (
-             <span className="bg-[#2BD45A]/10 text-[#2BD45A] border border-[#2BD45A]/20 text-[10px] font-bold px-1.5 py-0.5 rounded ml-auto">
-               -{deal.discount_percentage}%
-             </span>
-           )}
-        </div>
-
-        {/* Desktop Price & Store (Hidden Mobile) */}
-        <div className="hidden md:flex flex-col gap-2 mb-2 relative z-10">
+        {/* Price & Store (Unified Layout) */}
+        <div className="flex flex-col gap-2 mb-2 relative z-10">
           <div className="flex flex-col">
-            <span className="text-xs text-zinc-500 font-medium mb-0.5 uppercase tracking-wider">Precio</span>
-            <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#2BD45A] to-emerald-400">
+            <span className="hidden text-xs text-zinc-500 font-medium mb-0.5 uppercase tracking-wider">Precio</span>
+            <div className="flex items-baseline gap-2 flex-wrap">
+              <span className="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#2BD45A] to-emerald-400">
                 {deal.deal_price ? formatPrice(deal.deal_price) : 'Gratis'}
               </span>
               {deal.original_price && deal.original_price > (deal.deal_price || 0) && (
-                <span className="text-sm text-zinc-600 line-through font-medium decoration-2 decoration-zinc-700">
+                <span className="text-xs md:text-sm text-zinc-600 line-through font-medium decoration-2 decoration-zinc-700">
                   {formatPrice(deal.original_price)}
                 </span>
               )}
               {deal.discount_percentage && (
-                <span className="bg-[#2BD45A] text-black text-xs font-black px-2 py-0.5 rounded ml-2">
+                <span className="bg-[#2BD45A] text-black text-[10px] md:text-xs font-black px-1.5 md:px-2 py-0.5 rounded ml-1 md:ml-2">
                   -{deal.discount_percentage}%
                 </span>
               )}
@@ -497,32 +461,47 @@ export default function DealCard({ deal }: DealCardProps) {
           </div>
             
           {/* Store & Location Info */}
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold tracking-wider mb-2 uppercase">
             {deal.store && (
-               <div className="flex items-center gap-1.5 text-xs text-zinc-300 bg-white/5 px-2 py-1 rounded-md border border-white/5 hover:bg-white/10 transition-colors">
-                  <StoreIcon size={12} className="text-[#2BD45A]" />
-                  <span className="font-medium">{deal.store.name}</span>
-               </div>
+               <>
+                 <div className="flex items-center gap-1.5 text-zinc-300">
+                    <StoreIcon size={12} className="text-zinc-500" />
+                    <span className="text-white">{deal.store.name}</span>
+                 </div>
+                 <span className="text-zinc-700">|</span>
+               </>
             )}
             
-            <div className="flex items-center gap-1.5 text-[10px] text-zinc-400 border border-white/5 px-2 py-1 rounded-md">
+            <div className="flex items-center gap-1.5 text-blue-400">
               {(deal as any).availability === 'in_store' ? (
                 <>
-                  <StoreIcon size={10} className="text-zinc-500" />
-                  <span>Tienda Física</span>
+                  <StoreIcon size={12} className="text-zinc-500" />
+                  <span className="text-zinc-400">Local</span>
                 </>
               ) : (
                 <>
-                  <Globe size={10} className="text-blue-400" />
+                  <Globe size={12} className="text-blue-400" />
                   <span>Online</span>
                 </>
               )}
             </div>
 
+            {deal.category && (
+              <>
+                <span className="text-zinc-700">|</span>
+                <div className="flex items-center gap-1.5 text-[#2BD45A]">
+                   <Tag size={12} />
+                   <span>{deal.category.name}</span>
+                </div>
+              </>
+            )}
+
+            <span className="text-zinc-700">|</span>
+
             {/* Shipping info */}
-            <div className="flex items-center gap-1 text-[10px] text-zinc-500">
-              <Truck size={10} />
-              <span>{(deal as any).shipping_cost === 0 ? 'Envío Gratis' : (deal as any).shipping_cost ? `+${formatPrice((deal as any).shipping_cost)}` : 'Envío no incl.'}</span>
+            <div className="flex items-center gap-1.5 text-zinc-500">
+              <Truck size={12} />
+              <span className="whitespace-nowrap">{(deal as any).shipping_cost === 0 ? 'Envío Gratis' : (deal as any).shipping_cost ? `+${formatPrice((deal as any).shipping_cost)}` : 'Envío no incl.'}</span>
             </div>
           </div>
         </div>
@@ -534,29 +513,20 @@ export default function DealCard({ deal }: DealCardProps) {
           </p>
         </div>
 
-        {/* Mobile Footer (Store + Button) */}
-        <div className="mt-auto flex flex-col gap-2 relative z-10 md:hidden">
-          
-          <a 
-            href={deal.deal_url} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="w-full bg-[#2BD45A] hover:bg-[#25b84e] text-black font-black py-3 rounded-xl text-sm uppercase tracking-wide flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-lg shadow-[#2BD45A]/20"
-            onClick={(e) => e.stopPropagation()}
-          >
-            VER OFERTA <ExternalLink size={16} strokeWidth={3} />
-          </a>
-        </div>
+      {/* Mobile Countdown */}
+        {deal.expires_at && !isExpired && (
+           <Countdown targetDate={deal.expires_at} className="md:hidden relative w-full mb-2 rounded-lg border border-white/10" size="sm" />
+        )}
 
-        {/* Desktop Footer Actions (Hidden Mobile) */}
-      <div className="hidden md:flex mt-auto items-center justify-between relative z-10 pt-2 border-t border-white/5">
-        <div className="flex items-center gap-2">
+        {/* Unified Footer Actions */}
+      <div className="flex mt-auto items-center justify-between relative z-10 pt-2 border-t border-white/5">
+        <div className="flex items-center gap-1 md:gap-2">
           <Link 
             href={`/oferta/${deal.id}#comments`}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 transition-all group/btn"
+            className="flex items-center gap-1.5 md:gap-2 px-2 md:px-4 py-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 transition-all group/btn"
           >
-            <MessageSquare size={18} className="group-hover/btn:scale-110 transition-transform" />
-            <span className="text-sm font-semibold">{deal.comments_count || 0}</span>
+            <MessageSquare size={16} className="md:w-[18px] md:h-[18px] group-hover/btn:scale-110 transition-transform" />
+            <span className="text-xs md:text-sm font-semibold">{deal.comments_count || 0}</span>
           </Link>
 
           <button 
@@ -564,7 +534,7 @@ export default function DealCard({ deal }: DealCardProps) {
             className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 transition-all"
             title="Compartir"
           >
-            <Share2 size={18} />
+            <Share2 size={16} className="md:w-[18px] md:h-[18px]" />
           </button>
 
           <button 
@@ -575,12 +545,12 @@ export default function DealCard({ deal }: DealCardProps) {
             )}
             title="Guardar"
           >
-            <Bookmark size={18} className={isSaved ? "fill-current" : ""} />
+            <Bookmark size={16} className={cn("md:w-[18px] md:h-[18px]", isSaved ? "fill-current" : "")} />
           </button>
 
           <button 
             onClick={() => setIsReportModalOpen(true)}
-            className="p-2 rounded-xl text-zinc-400 hover:text-red-400 hover:bg-white/5 transition-all"
+            className="hidden md:block p-2 rounded-xl text-zinc-400 hover:text-red-400 hover:bg-white/5 transition-all"
             title="Reportar"
           >
             <Flag size={18} />
@@ -591,11 +561,11 @@ export default function DealCard({ deal }: DealCardProps) {
           href={deal.deal_url} 
           target="_blank" 
           rel="noopener noreferrer"
-          className="flex items-center gap-2 bg-[#2BD45A] text-black font-black px-6 py-3 rounded-xl transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(43,212,90,0.3)] text-sm uppercase tracking-wide"
+          className="flex items-center gap-2 bg-[#2BD45A] text-black font-black px-3 py-1.5 md:px-6 md:py-3 rounded-xl transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(43,212,90,0.3)] text-[10px] md:text-sm uppercase tracking-wide ml-2"
           onClick={(e) => e.stopPropagation()}
         >
-          Ver Oferta
-          <ExternalLink size={16} strokeWidth={3} />
+          <span>Ver Oferta</span>
+          <ExternalLink size={14} className="md:w-4 md:h-4" strokeWidth={3} />
         </a>
       </div>
     </div>
