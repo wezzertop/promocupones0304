@@ -168,7 +168,7 @@ export default function CreateDealPage() {
           .maybeSingle()
 
         if (existingStore) {
-          finalStoreId = existingStore.id
+          finalStoreId = (existingStore as any).id
         } else {
           const { data: newStore, error: createStoreError } = await supabase
             .from('stores')
