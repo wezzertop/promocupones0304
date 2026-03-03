@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { Deal } from '@/types'
 import { 
   CheckCircle, 
   Clock, 
@@ -32,6 +33,7 @@ export default async function MyDealsPage() {
     .select('*')
     .eq('user_id', session.user.id)
     .order('created_at', { ascending: false })
+    .returns<Deal[]>()
 
   if (error) {
     console.error('Error fetching user deals:', error)
