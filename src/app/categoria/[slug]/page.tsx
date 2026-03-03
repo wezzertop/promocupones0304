@@ -30,6 +30,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   }
 
   // 2. Fetch deals for this category
+  const now = new Date().toISOString()
   const { data: dealsData, error } = await supabase
     .from('deals')
     .select(`
@@ -41,6 +42,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     `)
     .eq('status', 'active')
     .eq('category_id', (category as any).id)
+    .or(`expires_at.is.null,expires_at.gt.${now}`)
     .order('created_at', { ascending: false })
 
   if (error) {

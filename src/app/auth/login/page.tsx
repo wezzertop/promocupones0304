@@ -102,6 +102,13 @@ export default function LoginPage() {
                 </>
               )}
             </button>
+            
+            <p className="text-xs text-center text-zinc-500 mt-4">
+              Al iniciar sesión, aceptas nuestros{' '}
+              <Link href="/terms" className="text-zinc-400 hover:text-[#2BD45A] underline">Términos y Condiciones</Link>
+              {' '}y{' '}
+              <Link href="/privacy" className="text-zinc-400 hover:text-[#2BD45A] underline">Política de Privacidad</Link>.
+            </p>
           </form>
         </div>
 

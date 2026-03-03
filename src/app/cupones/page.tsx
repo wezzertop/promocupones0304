@@ -11,6 +11,7 @@ export default async function CuponesPage() {
   const supabase = await createClient()
 
   // Fetch deals with relations
+  const now = new Date().toISOString()
   const { data: dealsData, error } = await supabase
     .from('deals')
     .select(`
@@ -22,6 +23,7 @@ export default async function CuponesPage() {
     `)
     .eq('status', 'active')
     .eq('deal_type', 'coupon')
+    .or(`expires_at.is.null,expires_at.gt.${now}`)
     .order('created_at', { ascending: false })
 
   if (error) {

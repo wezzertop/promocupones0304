@@ -67,6 +67,30 @@ export default function Footer() {
             </p>
           </div>
         </div>
+
+        {/* Legal Disclaimer Section */}
+        <div className="border-t border-[#2d2e33] py-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-xs text-gray-500 leading-relaxed">
+            <div className="space-y-2">
+              <h4 className="font-bold text-gray-400">Exención de Responsabilidad de Precios</h4>
+              <p>
+                Todos los precios, ofertas y promociones mostrados en PromoCupones están sujetos a cambios sin previo aviso por parte de los vendedores y tiendas originales. No nos hacemos responsables de las discrepancias entre el precio listado en nuestra plataforma y el precio final en el sitio del vendedor.
+              </p>
+              <p>
+                Las ofertas pueden cambiar, expirar o agotarse en cualquier periodo de tiempo, ya sea corto o largo. PromoCupones actúa únicamente como una plataforma informativa y no garantiza la disponibilidad ni el precio de los productos.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <h4 className="font-bold text-gray-400">Términos de Uso</h4>
+              <p>
+                Al utilizar nuestros servicios, usted reconoce y acepta que PromoCupones no es responsable de ningún daño, pérdida o inconveniente derivado de cambios en los precios, disponibilidad de productos o errores en la información proporcionada.
+              </p>
+              <p>
+                Es responsabilidad exclusiva del usuario verificar todas las condiciones, precios y detalles directamente en la tienda del vendedor antes de realizar cualquier compra.
+              </p>
+            </div>
+          </div>
+        </div>
         
         <div className="border-t border-[#2d2e33] pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-600">
           <p>&copy; {new Date().getFullYear()} PromoCupones. Hecho con 💚 por la comunidad.</p>

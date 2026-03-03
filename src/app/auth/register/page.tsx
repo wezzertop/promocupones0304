@@ -111,6 +111,35 @@ export default function RegisterPage() {
                   />
                 </div>
               </div>
+
+              <div className="flex items-start gap-2 mt-4">
+                <div className="flex items-center h-5">
+                  <input
+                    id="terms"
+                    name="terms"
+                    type="checkbox"
+                    required
+                    className="w-4 h-4 rounded border-zinc-600 bg-black/20 text-[#2BD45A] focus:ring-[#2BD45A]/50 focus:ring-offset-0"
+                  />
+                </div>
+                <div className="ml-2 text-xs">
+                  <label htmlFor="terms" className="text-zinc-400">
+                    Acepto los{' '}
+                    <Link href="/terms" className="text-[#2BD45A] hover:underline" target="_blank">
+                      Términos y Condiciones
+                    </Link>
+                    , la{' '}
+                    <Link href="/privacy" className="text-[#2BD45A] hover:underline" target="_blank">
+                      Política de Privacidad
+                    </Link>{' '}
+                    y las{' '}
+                    <Link href="/rules" className="text-[#2BD45A] hover:underline" target="_blank">
+                      Reglas de la Comunidad
+                    </Link>
+                    .
+                  </label>
+                </div>
+              </div>
             </div>
 
             <button

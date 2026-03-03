@@ -21,9 +21,34 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     )
   }
 
-  // Search in deals title and description
-  // Note: For better search, Full Text Search (FTS) in Supabase is recommended.
-  // Using ilike for now as a simple fallback.
+  // 1. Get matching stores
+  const { data: stores } = await supabase
+    .from('stores')
+    .select('id')
+    .ilike('name', `%${query}%`)
+  
+  const storeIds = stores?.map(s => s.id) || []
+  
+  // 2. Get matching categories
+  const { data: categories } = await supabase
+    .from('categories')
+    .select('id')
+    .ilike('name', `%${query}%`)
+    
+  const categoryIds = categories?.map(c => c.id) || []
+  
+  // 3. Build OR query
+  let orQuery = `title.ilike.%${query}%,description.ilike.%${query}%`
+  
+  if (storeIds.length > 0) {
+    orQuery += `,store_id.in.(${storeIds.join(',')})`
+  }
+  
+  if (categoryIds.length > 0) {
+    orQuery += `,category_id.in.(${categoryIds.join(',')})`
+  }
+
+  const now = new Date().toISOString()
   const { data: dealsData, error } = await supabase
     .from('deals')
     .select(`
@@ -34,7 +59,8 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
       comments(count)
     `)
     .eq('status', 'active')
-    .or(`title.ilike.%${query}%,description.ilike.%${query}%`)
+    .or(orQuery)
+    .or(`expires_at.is.null,expires_at.gt.${now}`)
     .order('created_at', { ascending: false })
 
   if (error) {

@@ -10,6 +10,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
   const params = await searchParams
   const filter = params.filter || 'foryou'
 
+  const now = new Date().toISOString()
   let query = supabase
     .from('deals')
     .select(`
@@ -20,6 +21,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
       comments(count)
     `)
     .eq('status', 'active')
+    .or(`expires_at.is.null,expires_at.gt.${now}`)
 
   // Apply filters
   if (filter === 'popular') {

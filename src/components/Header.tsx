@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { Search, Bell, User as UserIcon, LogOut, Settings, Menu, BadgeCheck } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { User as SupabaseUser } from '@supabase/supabase-js'
@@ -23,6 +23,21 @@ export default function Header({ user }: HeaderProps) {
   const supabase = createClient()
   useScrollDirection() // Initialize scroll listener
   const { isHeaderVisible, toggleSidebar } = useUIStore()
+  const searchInputRef = useRef<HTMLInputElement>(null)
+  
+  // Keyboard shortcut for search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl+K or Cmd+K
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault()
+        searchInputRef.current?.focus()
+      }
+    }
+    
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
   
   useEffect(() => {
     async function fetchLevel() {
@@ -72,13 +87,16 @@ export default function Header({ user }: HeaderProps) {
             <Search className="h-4 w-4 text-gray-500 group-focus-within:text-[#2BD45A] transition-colors" />
           </div>
           <input
+            ref={searchInputRef}
             type="text"
             name="q"
-            placeholder="Buscar ofertas, tiendas, marcas..."
-            className="w-full bg-[#18191c] text-white pl-10 pr-4 py-2.5 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#2BD45A]/50 focus:ring-1 focus:ring-[#2BD45A]/50 transition-all placeholder:text-gray-600 text-sm"
+            placeholder="Buscar..."
+            className="w-full bg-[#18191c] text-white pl-10 pr-16 py-2.5 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#2BD45A]/50 focus:ring-1 focus:ring-[#2BD45A]/50 transition-all placeholder:text-gray-600 text-sm"
           />
           <div className="absolute right-3 top-2.5 hidden sm:flex items-center gap-1 pointer-events-none">
-            <span className="text-[10px] text-gray-600 border border-[#2d2e33] rounded px-1.5 py-0.5 bg-[#222327]">Enter</span>
+            <kbd className="hidden md:inline-flex h-5 items-center gap-1 rounded border border-[#2d2e33] bg-[#222327] px-1.5 font-mono text-[10px] font-medium text-gray-500 opacity-100">
+              <span className="text-xs">Ctrl</span> K
+            </kbd>
           </div>
         </form>
       </div>

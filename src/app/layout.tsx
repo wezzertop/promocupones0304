@@ -9,6 +9,12 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "PromoCupones - Comunidad de Ofertas y Descuentos",
   description: "Descubre y comparte las mejores ofertas, cupones y promociones en México.",
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+  },
 };
 
 export default async function RootLayout({

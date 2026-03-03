@@ -65,9 +65,9 @@ export default async function ProfilePage() {
   const pendingDealsCount = deals?.filter((d: any) => ['pending', 'rejected', 'revision'].includes(d.status)).length || 0
 
   return (
-    <div className="space-y-8 animate-fade-in max-w-5xl mx-auto">
+    <div className="space-y-8 animate-fade-in w-full max-w-[100vw] overflow-x-hidden">
       {/* Profile Header Card */}
-      <div className="bg-[#18191c] border border-[#2d2e33] rounded-3xl overflow-hidden relative">
+      <div className="bg-[#18191c] border border-[#2d2e33] rounded-3xl overflow-hidden relative mx-auto max-w-5xl">
         {/* Banner Background */}
         <div className="h-32 bg-gradient-to-r from-[#2BD45A]/20 to-emerald-900/20 w-full absolute top-0 left-0 z-0"></div>
         
@@ -172,18 +172,18 @@ export default async function ProfilePage() {
       )}
 
       {/* Content Tabs (Visual only for now) */}
-      <div className="flex items-center gap-1 border-b border-[#2d2e33] pb-1 overflow-x-auto">
+      <div className="flex items-center gap-1 border-b border-[#2d2e33] pb-1 overflow-x-auto scrollbar-hide">
         <Link 
           href="/mis-publicaciones"
-          className="px-6 py-3 text-sm font-bold text-white border-b-2 border-[#2BD45A] bg-[#2BD45A]/5 rounded-t-lg transition-colors whitespace-nowrap flex items-center gap-2"
+          className="px-6 py-3 text-sm font-bold text-white border-b-2 border-[#2BD45A] bg-[#2BD45A]/5 rounded-t-lg transition-colors whitespace-nowrap flex items-center gap-2 shrink-0"
         >
           Gestionar Publicaciones
           <ExternalLink size={14} />
         </Link>
-        <button className="px-6 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors whitespace-nowrap">
+        <button className="px-6 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors whitespace-nowrap shrink-0">
           Guardados
         </button>
-        <button className="px-6 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors whitespace-nowrap">
+        <button className="px-6 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors whitespace-nowrap shrink-0">
           Comentarios
         </button>
       </div>

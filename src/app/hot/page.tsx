@@ -11,6 +11,7 @@ export default async function HotPage() {
   const supabase = await createClient()
 
   // Fetch deals with relations, ordered by votes_count DESC
+  const now = new Date().toISOString()
   const { data: dealsData, error } = await supabase
     .from('deals')
     .select(`
@@ -21,6 +22,7 @@ export default async function HotPage() {
       comments(count)
     `)
     .eq('status', 'active')
+    .or(`expires_at.is.null,expires_at.gt.${now}`)
     .order('votes_count', { ascending: false })
     .limit(20)
 
