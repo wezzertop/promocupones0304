@@ -165,7 +165,7 @@ export default function CreateDealPage() {
           .from('stores')
           .select('id')
           .eq('slug', slug)
-          .single()
+          .maybeSingle()
 
         if (existingStore) {
           finalStoreId = existingStore.id
