@@ -1,8 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
 import DealCard from '@/components/DealCard'
 import { Deal } from '@/types'
-import { Flame, Tag } from 'lucide-react'
+import { Flame } from 'lucide-react'
 import HomeFilters from '@/components/HomeFilters'
+import GenericBanner from '@/components/GenericBanner'
 
 export const dynamic = 'force-dynamic'
 
@@ -35,24 +36,24 @@ export default async function HotPage() {
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-[#18191c] to-[#222327] rounded-3xl p-8 border border-[#2d2e33] relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500 opacity-5 blur-[100px] rounded-full pointer-events-none"></div>
-        <div className="relative z-10 max-w-2xl">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 text-orange-500 text-xs font-bold uppercase tracking-wider mb-4 border border-orange-500/20">
-            <Flame size={14} />
-            Lo más Hot
-          </span>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight leading-tight">
+      <GenericBanner 
+        id="hot_deals"
+        title={
+          <>
             Las ofertas más <br/>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500">
               votadas por la comunidad
             </span>
-          </h1>
-          <p className="text-lg text-gray-400 max-w-lg">
-            Estas son las ofertas que están ardiendo ahora mismo. ¡No te las pierdas antes de que se agoten!
-          </p>
-        </div>
-      </div>
+          </>
+        }
+        description="Estas son las ofertas que están ardiendo ahora mismo. ¡No te las pierdas antes de que se agoten!"
+        iconName="Flame"
+        iconLabel="Lo más Hot"
+        iconColorClass="text-orange-500"
+        iconBgClass="bg-orange-500/10"
+        iconBorderClass="border-orange-500/20"
+        glowColorClass="bg-orange-500"
+      />
 
       <HomeFilters dealsCount={deals?.length || 0} />
 

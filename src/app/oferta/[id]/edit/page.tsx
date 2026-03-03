@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { Upload, DollarSign, Tag, Type, Link as LinkIcon, Image as ImageIcon, FileText, Loader2, X, Calendar, MapPin, Percent, ShoppingBag, Truck, Globe, HelpCircle, Save } from 'lucide-react'
-import { compressImage } from '@/lib/utils'
+import { compressImage, analyzeImage } from '@/lib/utils'
 import Image from 'next/image'
 import Map from '@/components/DynamicMap'
 import {
@@ -124,10 +124,16 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
     for (const file of files) {
       if (!file.type.startsWith('image/')) continue
       try {
+        const analysis = await analyzeImage(file)
+        if (!analysis.valid) {
+          alert(`La imagen ${file.name} no cumple los requisitos: ${analysis.reason}`)
+          continue
+        }
+
         const objectUrl = URL.createObjectURL(file)
         newPreviews.push(objectUrl)
         const compressedBlob = await compressImage(file)
-        newFiles.push(new File([compressedBlob], file.name, { type: 'image/jpeg' }))
+        newFiles.push(new File([compressedBlob], file.name.replace(/\.[^/.]+$/, "") + ".webp", { type: 'image/webp' }))
       } catch (error) {
         console.error('Error:', error)
       }
@@ -161,10 +167,10 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
       // Upload new images first
       const uploadedUrls: string[] = []
       for (const file of imageFiles) {
-          const fileName = `${session.user.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`
+          const fileName = `${session.user.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.webp`
           const { error: uploadError } = await supabase.storage
             .from('deals')
-            .upload(fileName, file, { contentType: 'image/jpeg' })
+            .upload(fileName, file, { contentType: 'image/webp' })
 
           if (!uploadError) {
              const { data: { publicUrl } } = supabase.storage.from('deals').getPublicUrl(fileName)

@@ -35,7 +35,8 @@ export default function Header({ user }: HeaderProps) {
         .single()
         
       if (data) {
-        setUserLevel(data.current_level)
+        const levelData = data as any
+        setUserLevel(levelData.current_level)
       }
     }
     
@@ -59,17 +60,27 @@ export default function Header({ user }: HeaderProps) {
 
       {/* Search Bar */}
       <div className="flex-1 max-w-2xl relative group">
-        <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-          <Search className="h-4 w-4 text-gray-500 group-focus-within:text-[#2BD45A] transition-colors" />
-        </div>
-        <input
-          type="text"
-          placeholder="Buscar ofertas, tiendas, marcas..."
-          className="w-full bg-[#18191c] text-white pl-10 pr-4 py-2.5 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#2BD45A]/50 focus:ring-1 focus:ring-[#2BD45A]/50 transition-all placeholder:text-gray-600 text-sm"
-        />
-        <div className="absolute right-3 top-2.5 hidden sm:flex items-center gap-1 pointer-events-none">
-          <span className="text-[10px] text-gray-600 border border-[#2d2e33] rounded px-1.5 py-0.5 bg-[#222327]">Ctrl + K</span>
-        </div>
+        <form onSubmit={(e) => {
+          e.preventDefault()
+          const form = e.target as HTMLFormElement
+          const input = form.querySelector('input') as HTMLInputElement
+          if (input.value.trim()) {
+            router.push(`/search?q=${encodeURIComponent(input.value.trim())}`)
+          }
+        }} className="w-full">
+          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+            <Search className="h-4 w-4 text-gray-500 group-focus-within:text-[#2BD45A] transition-colors" />
+          </div>
+          <input
+            type="text"
+            name="q"
+            placeholder="Buscar ofertas, tiendas, marcas..."
+            className="w-full bg-[#18191c] text-white pl-10 pr-4 py-2.5 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#2BD45A]/50 focus:ring-1 focus:ring-[#2BD45A]/50 transition-all placeholder:text-gray-600 text-sm"
+          />
+          <div className="absolute right-3 top-2.5 hidden sm:flex items-center gap-1 pointer-events-none">
+            <span className="text-[10px] text-gray-600 border border-[#2d2e33] rounded px-1.5 py-0.5 bg-[#222327]">Enter</span>
+          </div>
+        </form>
       </div>
 
       {/* Right Actions */}

@@ -2,7 +2,8 @@
 
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
-import { ExternalLink, ThumbsUp, Share2, Clock, Tag, ChevronLeft, ChevronRight, Calendar, MapPin, AlertCircle, ArrowUp, ArrowDown, Edit2, Flame, Maximize2, X } from 'lucide-react'
+import { motion, AnimatePresence, PanInfo } from 'framer-motion'
+import { ExternalLink, ThumbsUp, Share2, Clock, Tag, ChevronLeft, ChevronRight, Calendar, MapPin, AlertCircle, ArrowUp, ArrowDown, Edit2, Flame, Maximize2, X, Store as StoreIcon, Globe } from 'lucide-react'
 import CommentsSection from '@/components/CommentsSection'
 import Map from '@/components/DynamicMap'
 import { useEffect, useState, use } from 'react'
@@ -10,7 +11,9 @@ import { useUIStore } from '@/lib/store'
 
 import { cn } from '@/lib/utils'
 
-export default function DealDetailPage({ params }: { params: Promise<{ id: string }> }) {
+import Countdown from '@/components/ui/Countdown'
+
+export default function DealPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const [deal, setDeal] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -36,6 +39,16 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
     setCurrentImageIndex((prev) => (prev - 1 + dealImages.length) % dealImages.length)
   }
 
+  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    if (Math.abs(info.offset.x) > 30) {
+      if (info.offset.x > 0) {
+        prevImage()
+      } else {
+        nextImage()
+      }
+    }
+  }
+
   useEffect(() => {
     // Reset image index when deal changes
     setCurrentImageIndex(0)
@@ -44,8 +57,7 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
   // Description state
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
   
-  // Countdown Timer State
-  const [timeLeft, setTimeLeft] = useState<{days: number, hours: number, minutes: number, seconds: number} | null>(null)
+  // Countdown Timer State removed - now using component
 
   useEffect(() => {
     // Force header visible on mount
@@ -64,42 +76,8 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
     }
   }, [setHeaderVisible])
 
-  // Countdown Logic
-  useEffect(() => {
-    if (!deal) return
-    
-    const expiresAt = deal.expires_at ? new Date(deal.expires_at) : null
-    const isExpired = expiresAt ? new Date() > expiresAt : false
-
-    if (!expiresAt || isExpired) {
-        setTimeLeft(null)
-        return
-    }
-
-    const calculateTimeLeft = () => {
-      const now = new Date().getTime()
-      const difference = expiresAt.getTime() - now
-
-      if (difference > 0) {
-        return {
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-          minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
-          seconds: Math.floor((difference % (1000 * 60)) / 1000)
-        }
-      } else {
-        return null
-      }
-    }
-
-    setTimeLeft(calculateTimeLeft())
-
-    const timer = setInterval(() => {
-        setTimeLeft(calculateTimeLeft())
-    }, 1000)
-
-    return () => clearInterval(timer)
-  }, [deal])
+  // Countdown Logic removed - now using component
+  // const isExpired = deal?.expires_at ? new Date() > new Date(deal.expires_at) : false
 
   useEffect(() => {
     async function checkAuth() {
@@ -121,6 +99,7 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
           *,
           user:users!deals_user_id_fkey(id, username, avatar_url),
           category:categories(name),
+          store:stores(name, slug, logo_url),
           comments(count)
         `)
         .eq('id', id)
@@ -280,9 +259,37 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
                 {/* Main Content Info */}
                 <div className="flex-1 p-5 space-y-4 min-w-0">
                    <div>
-                      <div className="flex items-center gap-2 text-[10px] text-[#2BD45A] font-bold tracking-wider mb-2 uppercase">
-                         <Tag className="w-3 h-3" />
-                         {categoryName}
+                      <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold tracking-wider mb-2 uppercase">
+                         {/* Category */}
+                         <div className="flex items-center gap-1.5 text-[#2BD45A]">
+                            <Tag className="w-3 h-3" />
+                            {categoryName}
+                         </div>
+
+                         <span className="text-zinc-700">|</span>
+
+                         {/* Location Type */}
+                         {deal.availability === 'in_store' ? (
+                            <div className="flex items-center gap-1.5 text-zinc-400">
+                               <StoreIcon className="w-3 h-3" />
+                               <span>Tienda Física</span>
+                            </div>
+                         ) : (
+                            <div className="flex items-center gap-1.5 text-blue-400">
+                               <Globe className="w-3 h-3" />
+                               <span>Online</span>
+                            </div>
+                         )}
+
+                         {/* Store Name */}
+                         {deal.store && (
+                           <>
+                             <span className="text-zinc-700">|</span>
+                             <div className="flex items-center gap-1.5 text-zinc-300">
+                               <span className="text-white">{deal.store.name}</span>
+                             </div>
+                           </>
+                         )}
                       </div>
                       
                       <h1 className="text-xl md:text-2xl font-bold text-white leading-tight mb-3">
@@ -414,34 +421,8 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
              <div className="glass-panel p-4 relative group overflow-hidden rounded-2xl order-1 flex flex-col gap-3 w-full">
                 
                 {/* Countdown Banner - Moved to top to avoid overlap */}
-                {timeLeft && !isExpired && (
-                   <div className="w-full bg-[#2BD45A]/10 border border-[#2BD45A]/20 text-[#2BD45A] py-2 px-3 rounded-xl flex items-center justify-center gap-4 backdrop-blur-sm">
-                       <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wide">
-                           <Clock className="w-3.5 h-3.5" />
-                           <span className="hidden sm:inline">Termina en:</span>
-                       </div>
-                       <div className="flex gap-2 font-black text-xs font-mono text-white">
-                           <div className="flex flex-col items-center leading-none">
-                               <span>{timeLeft.days}</span>
-                               <span className="text-[8px] font-normal opacity-60">DÍAS</span>
-                           </div>
-                           <span>:</span>
-                           <div className="flex flex-col items-center leading-none">
-                               <span>{timeLeft.hours.toString().padStart(2, '0')}</span>
-                               <span className="text-[8px] font-normal opacity-60">HRS</span>
-                           </div>
-                           <span>:</span>
-                           <div className="flex flex-col items-center leading-none">
-                               <span>{timeLeft.minutes.toString().padStart(2, '0')}</span>
-                               <span className="text-[8px] font-normal opacity-60">MIN</span>
-                           </div>
-                           <span>:</span>
-                           <div className="flex flex-col items-center leading-none">
-                               <span>{timeLeft.seconds.toString().padStart(2, '0')}</span>
-                               <span className="text-[8px] font-normal opacity-60">SEG</span>
-                           </div>
-                       </div>
-                   </div>
+                {deal.expires_at && !isExpired && (
+                   <Countdown targetDate={deal.expires_at} className="relative bg-black/40 rounded-xl mb-4 border border-[#2BD45A]/20" size="md" />
                 )}
 
                 <div className="flex flex-col md:flex-row gap-3 relative">
@@ -487,12 +468,24 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
                    
                    {/* Image Container */}
                    <div className="relative flex-1 rounded-xl overflow-hidden bg-zinc-900/50 flex items-center justify-center w-full aspect-square sm:aspect-video group/image order-1 md:order-2 border border-white/5">
-                      <img
-                          src={imageUrl}
-                          alt={deal.title}
-                          className="object-contain w-full h-full p-2 transition-transform duration-300 group-hover/image:scale-105"
-                          onClick={() => setIsLightboxOpen(true)}
-                      />
+                      <AnimatePresence mode="wait">
+                        <motion.img
+                            key={currentImageIndex}
+                            src={imageUrl}
+                            alt={deal.title}
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            transition={{ duration: 0.2 }}
+                            whileHover={{ scale: 1.05 }}
+                            drag={hasMultipleImages ? "x" : false}
+                            dragConstraints={{ left: 0, right: 0 }}
+                            dragElastic={0.2}
+                            onDragEnd={handleDragEnd}
+                            className="object-contain w-full h-full p-2 cursor-pointer touch-pan-y"
+                            onClick={() => setIsLightboxOpen(true)}
+                        />
+                      </AnimatePresence>
                       
                       {/* Zoom Button */}
                       <button 
@@ -566,11 +559,22 @@ export default function DealDetailPage({ params }: { params: Promise<{ id: strin
                   </button>
                   
                   <div className="relative w-full h-full max-w-7xl flex items-center justify-center">
-                    <img 
-                      src={imageUrl} 
-                      alt={deal.title} 
-                      className="max-w-full max-h-full object-contain"
-                    />
+                    <AnimatePresence mode="wait">
+                      <motion.img 
+                        key={currentImageIndex}
+                        src={imageUrl} 
+                        alt={deal.title} 
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.2 }}
+                        drag={hasMultipleImages ? "x" : false}
+                        dragConstraints={{ left: 0, right: 0 }}
+                        dragElastic={0.2}
+                        onDragEnd={handleDragEnd}
+                        className="max-w-full max-h-full object-contain touch-pan-y"
+                      />
+                    </AnimatePresence>
                     
                     {hasMultipleImages && (
                       <>

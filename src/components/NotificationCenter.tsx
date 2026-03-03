@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Bell, X, CheckCircle, AlertCircle } from 'lucide-react'
+import { Bell, X, CheckCircle, AlertCircle, MessageSquare, TrendingUp, Award } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import Link from 'next/link'
@@ -128,50 +128,62 @@ export default function NotificationCenter() {
                   {notifications.map((notification) => (
                     <div 
                       key={notification.id} 
-                      className={`p-4 hover:bg-white/5 transition-colors relative ${!notification.is_read ? 'bg-white/[0.02]' : ''}`}
+                      onClick={() => {
+                        if (notification.link && notification.link !== '#') {
+                            setIsOpen(false)
+                            // Mark as read when clicking the notification
+                            if (!notification.is_read) {
+                                markAsRead(notification.id)
+                            }
+                            // Navigate manually if needed, or rely on Link wrapping
+                        }
+                      }}
+                      className={`p-4 hover:bg-white/5 transition-colors relative cursor-pointer group ${!notification.is_read ? 'bg-white/[0.05]' : ''}`}
                     >
-                      <div className="flex gap-3">
+                      {/* Link wrapper for the whole card if link exists */}
+                      {notification.link && notification.link !== '#' && (
+                        <Link href={notification.link} className="absolute inset-0 z-0" onClick={() => setIsOpen(false)} />
+                      )}
+
+                      <div className="flex gap-3 relative z-10 pointer-events-none">
                         <div className={`mt-1 shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
                           notification.type === 'post_approved' ? 'bg-[#2BD45A]/10 text-[#2BD45A]' : 
                           notification.type === 'post_rejected' ? 'bg-red-500/10 text-red-500' :
-                          'bg-blue-500/10 text-blue-500'
+                          notification.type === 'comment_reply' || notification.type === 'new_comment' ? 'bg-blue-500/10 text-blue-500' :
+                          notification.type === 'level_up' || notification.type === 'badge_earned' ? 'bg-yellow-500/10 text-yellow-500' :
+                          'bg-zinc-500/10 text-zinc-500'
                         }`}>
                           {notification.type === 'post_approved' ? <CheckCircle size={16} /> : 
                            notification.type === 'post_rejected' ? <X size={16} /> :
+                           notification.type === 'comment_reply' || notification.type === 'new_comment' ? <MessageSquare size={16} /> :
+                           notification.type === 'level_up' ? <TrendingUp size={16} /> :
+                           notification.type === 'badge_earned' ? <Award size={16} /> :
                            <AlertCircle size={16} />}
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-white mb-0.5">
                             {notification.title}
                           </p>
-                          <p className="text-xs text-zinc-400 mb-2 break-words">
+                          <p className="text-xs text-zinc-400 mb-2 break-words line-clamp-2">
                             {notification.message}
                           </p>
                           <div className="flex items-center justify-between">
                             <span className="text-[10px] text-zinc-600">
                               {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true, locale: es })}
                             </span>
-                            {notification.link && notification.link !== '#' && (
-                              <Link 
-                                href={notification.link}
-                                onClick={() => setIsOpen(false)}
-                                className="text-xs text-[#2BD45A] hover:underline"
-                              >
-                                Ver detalles
-                              </Link>
-                            )}
                           </div>
                         </div>
                         {!notification.is_read && (
                           <button 
                             onClick={(e) => {
-                              e.stopPropagation()
+                              e.stopPropagation() // Prevent navigation
+                              e.preventDefault() // Prevent navigation
                               markAsRead(notification.id)
                             }}
-                            className="absolute top-4 right-4 text-zinc-600 hover:text-white"
+                            className="absolute top-0 right-0 p-2 text-blue-500 hover:text-blue-400 pointer-events-auto transition-transform hover:scale-110"
                             title="Marcar como leído"
                           >
-                            <span className="w-2 h-2 bg-blue-500 rounded-full block"></span>
+                            <span className="w-2.5 h-2.5 bg-blue-500 rounded-full block shadow-[0_0_8px_rgba(59,130,246,0.5)]"></span>
                           </button>
                         )}
                       </div>

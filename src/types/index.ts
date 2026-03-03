@@ -32,6 +32,7 @@ export interface Deal {
   deal_url: string
   image_urls: string[]
   deal_type: 'deal' | 'coupon' | 'discussion'
+  availability?: 'online' | 'in_store' | null
   status: 'active' | 'expired' | 'deleted' | 'pending' | 'rejected' | 'revision'
   moderation_notes?: string
   votes_count?: number

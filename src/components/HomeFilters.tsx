@@ -2,25 +2,56 @@
 
 import { Flame, Clock, Sparkles } from 'lucide-react'
 import { useUIStore } from '@/lib/store'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function HomeFilters({ dealsCount }: { dealsCount: number }) {
   const { isHeaderVisible } = useUIStore()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const currentFilter = searchParams.get('filter') || 'foryou'
+
+  const handleFilterChange = (filter: string) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('filter', filter)
+    router.push(`/?${params.toString()}`)
+  }
 
   return (
     <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 sticky top-16 z-20 bg-[#0f1012]/95 backdrop-blur-xl py-4 -mx-4 px-4 border-b border-[#2d2e33]/50 transition-transform duration-300 ${
       isHeaderVisible ? 'translate-y-0' : '-translate-y-full'
     }`}>
-      <div className="flex items-center gap-2 p-1 bg-[#18191c] rounded-xl border border-[#2d2e33]">
-        <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#222327] text-white text-sm font-medium shadow-sm transition-all">
-          <Sparkles size={16} className="text-[#2BD45A]" />
+      <div className="flex items-center gap-2 p-1 bg-[#18191c] rounded-xl border border-[#2d2e33] overflow-x-auto max-w-full scrollbar-hide">
+        <button 
+          onClick={() => handleFilterChange('foryou')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+            currentFilter === 'foryou' 
+              ? 'bg-[#222327] text-white shadow-sm' 
+              : 'text-gray-400 hover:text-white hover:bg-[#222327]'
+          }`}
+        >
+          <Sparkles size={16} className={currentFilter === 'foryou' ? "text-[#2BD45A]" : ""} />
           Para ti
         </button>
-        <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-[#222327] text-sm font-medium transition-all">
-          <Flame size={16} />
+        <button 
+          onClick={() => handleFilterChange('popular')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+            currentFilter === 'popular' 
+              ? 'bg-[#222327] text-white shadow-sm' 
+              : 'text-gray-400 hover:text-white hover:bg-[#222327]'
+          }`}
+        >
+          <Flame size={16} className={currentFilter === 'popular' ? "text-orange-500" : ""} />
           Más votadas
         </button>
-        <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-[#222327] text-sm font-medium transition-all">
-          <Clock size={16} />
+        <button 
+          onClick={() => handleFilterChange('recent')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+            currentFilter === 'recent' 
+              ? 'bg-[#222327] text-white shadow-sm' 
+              : 'text-gray-400 hover:text-white hover:bg-[#222327]'
+          }`}
+        >
+          <Clock size={16} className={currentFilter === 'recent' ? "text-blue-500" : ""} />
           Recientes
         </button>
       </div>

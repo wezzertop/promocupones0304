@@ -22,6 +22,14 @@ export const REFERRAL_TIERS = {
   HIGH_TIER: { min: 501, max: Infinity, limit: 3 },
 }
 
+export const POINT_SYSTEM = {
+  POST_APPROVED: 10,
+  COMMENT_APPROVED: 2,
+  VOTE_RECEIVED: 1,
+  REPORT_VALID: 5,
+  POST_REJECTED: -5
+}
+
 export async function isReferralUrl(url: string): Promise<{ isReferral: boolean; reason?: string }> {
   const lowerUrl = url.toLowerCase()
   
@@ -62,14 +70,16 @@ export async function canUserPostReferral(userId: string): Promise<{ canPost: bo
     
   if (!profile) return { canPost: false, limit: 0, used: 0 }
   
+  const currentLevel = (profile as any).current_level
+
   // Get referral limit based on level
   const { data: levelData } = await supabase
     .from('gamification_levels')
     .select('referral_limit')
-    .eq('level', profile.current_level)
+    .eq('level', currentLevel)
     .single()
     
-  const limit = levelData?.referral_limit || 0
+  const limit = (levelData as any)?.referral_limit || 0
   
   if (limit === 0) return { canPost: false, limit: 0, used: 0 }
 

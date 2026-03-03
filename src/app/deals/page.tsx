@@ -3,13 +3,14 @@ import DealCard from '@/components/DealCard'
 import { Deal } from '@/types'
 import { Tag } from 'lucide-react'
 import HomeFilters from '@/components/HomeFilters'
+import GenericBanner from '@/components/GenericBanner'
 
 export const dynamic = 'force-dynamic'
 
 export default async function DealsPage() {
   const supabase = await createClient()
 
-  // Fetch only deals of type 'deal'
+  // Fetch deals with relations
   const { data: dealsData, error } = await supabase
     .from('deals')
     .select(`
@@ -35,24 +36,24 @@ export default async function DealsPage() {
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-[#18191c] to-[#222327] rounded-3xl p-8 border border-[#2d2e33] relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500 opacity-5 blur-[100px] rounded-full pointer-events-none"></div>
-        <div className="relative z-10 max-w-2xl">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-500 text-xs font-bold uppercase tracking-wider mb-4 border border-blue-500/20">
-            <Tag size={14} />
-            Ofertas
-          </span>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight leading-tight">
+      <GenericBanner 
+        id="all_deals"
+        title={
+          <>
             Encuentra los mejores <br/>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-indigo-500">
               precios y descuentos
             </span>
-          </h1>
-          <p className="text-lg text-gray-400 max-w-lg">
-            Explora todas las ofertas publicadas por nuestra comunidad y ahorra en tus compras diarias.
-          </p>
-        </div>
-      </div>
+          </>
+        }
+        description="Explora todas las ofertas publicadas por nuestra comunidad y ahorra en tus compras diarias."
+        iconName="Tag"
+        iconLabel="Ofertas"
+        iconColorClass="text-blue-500"
+        iconBgClass="bg-blue-500/10"
+        iconBorderClass="border-blue-500/20"
+        glowColorClass="bg-blue-500"
+      />
 
       <HomeFilters dealsCount={deals?.length || 0} />
 

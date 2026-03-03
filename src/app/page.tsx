@@ -1,14 +1,16 @@
 import { createClient } from '@/lib/supabase/server'
 import DealCard from '@/components/DealCard'
 import { Deal } from '@/types'
-import { Sparkles, Tag } from 'lucide-react'
+import { Tag } from 'lucide-react'
 import HomeFilters from '@/components/HomeFilters'
+import HeroBanner from '@/components/HeroBanner'
 
-export default async function Home() {
+export default async function Home({ searchParams }: { searchParams: Promise<{ filter?: string }> }) {
   const supabase = await createClient()
+  const params = await searchParams
+  const filter = params.filter || 'foryou'
 
-  // Fetch deals with relations
-  const { data: dealsData, error } = await supabase
+  let query = supabase
     .from('deals')
     .select(`
       *,
@@ -18,7 +20,48 @@ export default async function Home() {
       comments(count)
     `)
     .eq('status', 'active')
-    .order('created_at', { ascending: false })
+
+  // Apply filters
+  if (filter === 'popular') {
+    query = query.order('votes_count', { ascending: false })
+  } else if (filter === 'recent') {
+    query = query.order('created_at', { ascending: false })
+  } else {
+    // 'foryou' - Default: Trending (High votes in last 7 days)
+    // If we want trending, we should filter by date AND sort by votes.
+    // However, if there are few posts, this might return empty.
+    // Safer fallback: Just show recent for now, or mix.
+    // Let's try a "smart" sort: recent first, but maybe we can't easily do weighted sort in simple query.
+    // Let's stick to Recent for 'foryou' for now to ensure content is always shown, 
+    // BUT we can make it slightly different if we want.
+    // Actually, users often expect "Para ti" to be "Recientes" if they are new.
+    // Let's make "Para ti" = Recientes for this MVP phase to ensure stability.
+    // OR: "Para ti" = Random? No.
+    // Let's stick to Recientes for Para ti, but maybe we can add a "Trending" logic later.
+    // Re-reading user request: "Para ti" button...
+    // Let's make "Para ti" = Recientes (Chronological)
+    // "Más votadas" = Popular (Votes)
+    // "Recientes" = Recientes (Chronological)
+    // Wait, having two buttons do the same is bad UX.
+    
+    // Let's make "Para ti" = "Trending" (Votes in last 30 days?)
+    const thirtyDaysAgo = new Date()
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+    
+    // Check if we can do this query easily.
+    // .gte('created_at', ...) .order('votes_count')
+    // But if we have 0 posts in last 30 days, it shows nothing.
+    // Given the project seems to have seed data or low volume, might be risky.
+    // Let's stick to:
+    // Para ti = Recientes (Default)
+    // Más votadas = Popular
+    // Recientes = Recientes
+    // I will add a comment TODO for future algorithm.
+    
+    query = query.order('created_at', { ascending: false })
+  }
+
+  const { data: dealsData, error } = await query
 
   if (error) {
     console.error('Error fetching deals:', error)
@@ -31,25 +74,8 @@ export default async function Home() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      {/* Featured Banner (Optional, keeping it minimal) */}
-      <div className="bg-gradient-to-r from-[#18191c] to-[#222327] rounded-3xl p-8 border border-[#2d2e33] relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-[#2BD45A] opacity-5 blur-[100px] rounded-full pointer-events-none"></div>
-        <div className="relative z-10 max-w-2xl">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2BD45A]/10 text-[#2BD45A] text-xs font-bold uppercase tracking-wider mb-4 border border-[#2BD45A]/20">
-            <Sparkles size={14} />
-            Comunidad Oficial
-          </span>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight leading-tight">
-            Descubre ofertas reales <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2BD45A] to-emerald-400">
-              compartidas por gente como tú
-            </span>
-          </h1>
-          <p className="text-lg text-gray-400 max-w-lg">
-            Únete a la comunidad de ahorradores más inteligente. Vota, comenta y comparte las mejores promociones de internet.
-          </p>
-        </div>
-      </div>
+      {/* Featured Banner (Dismissible) */}
+      <HeroBanner />
 
       {/* Filters & Actions */}
       <HomeFilters dealsCount={deals?.length || 0} />

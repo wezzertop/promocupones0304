@@ -1,5 +1,5 @@
 import { createClient } from './supabase/server'
-import { GamificationProfile, GamificationLevel, Badge, XPHistory } from '@/types'
+import { GamificationProfile, GamificationLevel, Badge, XPHistory, UserBadge } from '@/types'
 
 export async function getUserGamificationProfile(userId: string) {
   const supabase = await createClient()
@@ -18,7 +18,7 @@ export async function getUserGamificationProfile(userId: string) {
     return null
   }
   
-  return data as GamificationProfile
+  return data as unknown as GamificationProfile
 }
 
 export async function getUserBadges(userId: string) {
@@ -38,7 +38,7 @@ export async function getUserBadges(userId: string) {
     return []
   }
   
-  return data
+  return data as unknown as UserBadge[]
 }
 
 export async function getXPHistory(userId: string, limit = 20) {
@@ -56,7 +56,7 @@ export async function getXPHistory(userId: string, limit = 20) {
     return []
   }
   
-  return data as XPHistory[]
+  return data as unknown as XPHistory[]
 }
 
 export async function getLeaderboard(period: 'weekly' | 'monthly' | 'all_time' = 'weekly', limit = 10) {
@@ -115,5 +115,5 @@ export async function getAllBadges() {
     const supabase = await createClient()
     const { data, error } = await supabase.from('gamification_badges').select('*').order('xp_reward', { ascending: true })
     if (error) return []
-    return data as Badge[]
+    return data as unknown as Badge[]
 }

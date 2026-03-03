@@ -101,7 +101,7 @@ export default function LevelProgress({ profile }: LevelProgressProps) {
                 <div className="absolute bottom-full mb-2 w-48 bg-zinc-900 border border-white/10 rounded-lg p-3 text-xs text-zinc-300 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
                     <div className="font-bold text-white mb-1">Bonus Diario</div>
                     Conéctate cada día para ganar más XP. <br/>
-                    <span className="text-[#2BD45A]">Máx: 100 XP/día (10 días)</span>
+                    <span className="text-[#2BD45A]">Máx: 50 XP/día (10 días)</span>
                 </div>
              </div>
 

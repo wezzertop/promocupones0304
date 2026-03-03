@@ -1,8 +1,9 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { motion, AnimatePresence, PanInfo } from 'framer-motion'
 import { 
   MessageSquare, 
   Share2, 
@@ -17,7 +18,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Flag,
-  Flame
+  Flame,
+  Globe
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -29,6 +31,8 @@ import ReportModal from './ReportModal'
 interface DealCardProps {
   deal: Deal
 }
+
+import Countdown from './ui/Countdown'
 
 export default function DealCard({ deal }: DealCardProps) {
   const [votes, setVotes] = useState(deal.votes_count || 0)
@@ -42,6 +46,37 @@ export default function DealCard({ deal }: DealCardProps) {
   const supabase = createClient()
   const isExpired = deal.status === 'expired' || (deal.expires_at && new Date(deal.expires_at) < new Date())
   const hasMultipleImages = deal.image_urls && deal.image_urls.length > 1
+
+  useEffect(() => {
+    // Check if user has voted
+    async function checkUserVote() {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) return
+
+      const { data } = await supabase
+        .from('votes')
+        .select('vote_type')
+        .eq('user_id', session.user.id)
+        .eq('deal_id', deal.id)
+        .single()
+
+      if (data) {
+        setUserVote((data as any).vote_type as 'hot' | 'cold')
+      }
+      
+      // Check if saved
+      const { data: savedData } = await supabase
+        .from('saves')
+        .select('id')
+        .eq('user_id', session.user.id)
+        .eq('deal_id', deal.id)
+        .single()
+        
+      if (savedData) setIsSaved(true)
+    }
+
+    checkUserVote()
+  }, [deal.id, supabase])
 
   const nextImage = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -60,6 +95,26 @@ export default function DealCard({ deal }: DealCardProps) {
       setCurrentImageIndex(prev => prev - 1)
     } else if (deal.image_urls) {
       setCurrentImageIndex(deal.image_urls.length - 1)
+    }
+  }
+
+  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    if (Math.abs(info.offset.x) > 30) { // Threshold for swipe
+      if (info.offset.x > 0) {
+        // Swipe right -> prev
+        if (currentImageIndex > 0) {
+          setCurrentImageIndex(prev => prev - 1)
+        } else if (deal.image_urls) {
+          setCurrentImageIndex(deal.image_urls.length - 1)
+        }
+      } else {
+        // Swipe left -> next
+        if (deal.image_urls && currentImageIndex < deal.image_urls.length - 1) {
+          setCurrentImageIndex(prev => prev + 1)
+        } else {
+          setCurrentImageIndex(0)
+        }
+      }
     }
   }
 
@@ -97,13 +152,25 @@ export default function DealCard({ deal }: DealCardProps) {
       setVotes(newCount)
       setUserVote(newVote as any)
 
-      const { error } = await supabase
-        .from('votes')
-        .upsert({
-          user_id: session.user.id,
-          deal_id: deal.id,
-          vote_type: type
-        }, { onConflict: 'user_id, deal_id' })
+      let error;
+      
+      if (userVote === type) {
+        const { error: deleteError } = await supabase
+          .from('votes')
+          .delete()
+          .eq('user_id', session.user.id)
+          .eq('deal_id', deal.id)
+        error = deleteError
+      } else {
+        const { error: upsertError } = await supabase
+          .from('votes')
+          .upsert({
+            user_id: session.user.id,
+            deal_id: deal.id,
+            vote_type: type
+          }, { onConflict: 'user_id, deal_id' })
+        error = upsertError
+      }
 
       if (error) throw error
 
@@ -226,36 +293,69 @@ export default function DealCard({ deal }: DealCardProps) {
       <div className="flex flex-col w-[100px] md:w-[240px] shrink-0 border-r border-white/5 md:border-none">
         
         {/* Mobile Top Actions (Comments & Save) */}
-        <div className="md:hidden flex items-center justify-between px-2 py-1.5 border-b border-white/5 bg-white/5">
+        <div className="md:hidden flex items-center justify-between px-3 py-2 border-b border-white/5 bg-white/5">
           <Link 
             href={`/oferta/${deal.id}#comments`}
-            className="flex items-center gap-1 text-zinc-400 hover:text-white transition-colors"
+            className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition-colors p-1 -m-1"
           >
-            <MessageSquare size={12} />
-            <span className="text-[10px] font-bold">{deal.comments_count || 0}</span>
+            <MessageSquare size={16} />
+            <span className="text-xs font-bold">{deal.comments_count || 0}</span>
           </Link>
           <button 
             onClick={handleSave}
             className={cn(
-              "transition-colors",
+              "transition-colors p-1 -m-1",
               isSaved ? "text-[#2BD45A]" : "text-zinc-400 hover:text-white"
             )}
+            aria-label={isSaved ? "Quitar de guardados" : "Guardar oferta"}
           >
-            <Bookmark size={12} className={isSaved ? "fill-current" : ""} />
+            <Bookmark size={16} className={isSaved ? "fill-current" : ""} />
           </button>
         </div>
 
         {/* Image Container */}
         <div className="relative flex-1 flex items-center justify-center p-2 md:p-6 bg-white md:bg-white group/image">
+          {/* Status Badge */}
+          {deal.status !== 'active' && (
+            <div className="absolute top-2 left-2 z-30 pointer-events-none">
+              <span className={cn(
+                "px-2 py-1 rounded-md text-xs font-bold uppercase tracking-wider text-white shadow-sm",
+                deal.status === 'pending' ? "bg-yellow-500" :
+                deal.status === 'rejected' ? "bg-red-500" :
+                deal.status === 'expired' ? "bg-zinc-500" :
+                deal.status === 'revision' ? "bg-blue-500" :
+                "bg-zinc-500"
+              )}>
+                {deal.status === 'pending' ? 'Pendiente' :
+                 deal.status === 'rejected' ? 'Rechazada' :
+                 deal.status === 'expired' ? 'Expirada' :
+                 deal.status === 'revision' ? 'Revisión' :
+                 deal.status}
+              </span>
+            </div>
+          )}
+
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-100/50 via-white to-white opacity-50" />
           
           {deal.image_urls && deal.image_urls.length > 0 ? (
-            <>
-              <img 
-                src={deal.image_urls[currentImageIndex]} 
-                alt={deal.title}
-                className="w-full h-full object-contain relative z-10 transition-transform duration-700 group-hover:scale-105 drop-shadow-xl max-h-[80px] md:max-h-none"
-              />
+            <div className="relative w-full h-full flex items-center justify-center z-10 overflow-hidden">
+              <AnimatePresence mode="wait">
+                <motion.img 
+                  key={currentImageIndex}
+                  src={deal.image_urls[currentImageIndex]} 
+                  alt={deal.title}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.2 }}
+                  whileHover={{ scale: 1.05 }}
+                  drag={hasMultipleImages ? "x" : false}
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={handleDragEnd}
+                  className="w-full h-full object-contain max-h-[80px] md:max-h-none drop-shadow-xl cursor-grab active:cursor-grabbing touch-pan-y"
+                />
+              </AnimatePresence>
               
               {/* Carousel Controls */}
               {hasMultipleImages && (
@@ -274,7 +374,7 @@ export default function DealCard({ deal }: DealCardProps) {
                   </button>
                   
                   {/* Dots Indicator */}
-                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-20 flex gap-1">
+                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-20 flex gap-1 pointer-events-none">
                     {deal.image_urls.map((_, idx) => (
                       <div 
                         key={idx} 
@@ -287,23 +387,35 @@ export default function DealCard({ deal }: DealCardProps) {
                   </div>
                 </>
               )}
-            </>
+            </div>
           ) : (
             <div className="text-zinc-300 flex flex-col items-center gap-2">
               <Tag size={20} className="md:w-8 md:h-8" />
-              <span className="text-[10px] md:text-xs font-medium uppercase tracking-wider text-center">Sin imagen</span>
+              <span className="text-xs font-medium uppercase tracking-wider text-center">Sin imagen</span>
             </div>
+          )}
+
+          {deal.expires_at && !isExpired && (
+            <Countdown targetDate={deal.expires_at} />
           )}
         </div>
 
         {/* Mobile Bottom Actions (Votes) */}
-        <div className="md:hidden flex items-center justify-center gap-3 py-1.5 border-t border-white/5 bg-white/5">
-          <button onClick={(e) => { e.preventDefault(); handleVote('hot'); }} className={cn(userVote === 'hot' ? "text-[#2BD45A]" : "text-zinc-500")}>
-            <ArrowUp size={14} />
+        <div className="md:hidden flex items-center justify-center gap-6 py-2 border-t border-white/5 bg-white/5">
+          <button 
+            onClick={(e) => { e.preventDefault(); handleVote('hot'); }} 
+            className={cn("p-2 -m-2", userVote === 'hot' ? "text-[#2BD45A]" : "text-zinc-500")}
+            aria-label="Votar positivo"
+          >
+            <ArrowUp size={18} />
           </button>
-          <span className={cn("text-xs font-bold", votes > 0 ? "text-white" : "text-zinc-500")}>{votes}</span>
-          <button onClick={(e) => { e.preventDefault(); handleVote('cold'); }} className={cn(userVote === 'cold' ? "text-red-500" : "text-zinc-500")}>
-            <ArrowDown size={14} />
+          <span className={cn("text-sm font-bold", votes > 0 ? "text-white" : "text-zinc-500")}>{votes}</span>
+          <button 
+            onClick={(e) => { e.preventDefault(); handleVote('cold'); }} 
+            className={cn("p-2 -m-2", userVote === 'cold' ? "text-red-500" : "text-zinc-500")}
+            aria-label="Votar negativo"
+          >
+            <ArrowDown size={18} />
           </button>
         </div>
       </div>
@@ -341,7 +453,7 @@ export default function DealCard({ deal }: DealCardProps) {
 
         {/* Title */}
         <Link href={`/oferta/${deal.id}`} className="block mb-1 md:mb-3 group-hover:translate-x-1 transition-transform duration-300 relative z-10">
-          <h3 className="text-sm md:text-2xl font-bold text-white leading-tight line-clamp-2 h-[2.5em] md:h-[2.2em] group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-zinc-400">
+          <h3 className="text-sm md:text-xl font-bold text-white leading-tight line-clamp-2 h-[2.5em] md:h-[2.2em] group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-zinc-400">
             {deal.title}
           </h3>
         </Link>
@@ -364,11 +476,11 @@ export default function DealCard({ deal }: DealCardProps) {
         </div>
 
         {/* Desktop Price & Store (Hidden Mobile) */}
-        <div className="hidden md:flex items-end gap-3 mb-2 relative z-10">
+        <div className="hidden md:flex flex-col gap-2 mb-2 relative z-10">
           <div className="flex flex-col">
             <span className="text-xs text-zinc-500 font-medium mb-0.5 uppercase tracking-wider">Precio</span>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#2BD45A] to-emerald-400">
+              <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#2BD45A] to-emerald-400">
                 {deal.deal_price ? formatPrice(deal.deal_price) : 'Gratis'}
               </span>
               {deal.original_price && deal.original_price > (deal.deal_price || 0) && (
@@ -382,28 +494,37 @@ export default function DealCard({ deal }: DealCardProps) {
                 </span>
               )}
             </div>
+          </div>
             
-            {/* Shipping & Store Info */}
-            <div className="flex items-center gap-3 mt-1 text-xs text-zinc-400">
-              {deal.store && (
-                 <div className="flex items-center gap-1 hover:text-white transition-colors">
-                    <StoreIcon size={12} className="text-[#2BD45A]" />
-                    <span>{deal.store.name}</span>
-                 </div>
+          {/* Store & Location Info */}
+          <div className="flex items-center gap-3">
+            {deal.store && (
+               <div className="flex items-center gap-1.5 text-xs text-zinc-300 bg-white/5 px-2 py-1 rounded-md border border-white/5 hover:bg-white/10 transition-colors">
+                  <StoreIcon size={12} className="text-[#2BD45A]" />
+                  <span className="font-medium">{deal.store.name}</span>
+               </div>
+            )}
+            
+            <div className="flex items-center gap-1.5 text-[10px] text-zinc-400 border border-white/5 px-2 py-1 rounded-md">
+              {(deal as any).availability === 'in_store' ? (
+                <>
+                  <StoreIcon size={10} className="text-zinc-500" />
+                  <span>Tienda Física</span>
+                </>
+              ) : (
+                <>
+                  <Globe size={10} className="text-blue-400" />
+                  <span>Online</span>
+                </>
               )}
-              {/* Shipping info placeholder - Assuming 'shipping_cost' might be added to Deal type later, for now hardcoded or check if exists */}
-              <div className="flex items-center gap-1">
-                <Truck size={12} className="text-zinc-500" />
-                <span>{(deal as any).shipping_cost === 0 ? 'Envío Gratis' : (deal as any).shipping_cost ? `Envío: ${formatPrice((deal as any).shipping_cost)}` : 'Envío no incluido'}</span>
-              </div>
+            </div>
+
+            {/* Shipping info */}
+            <div className="flex items-center gap-1 text-[10px] text-zinc-500">
+              <Truck size={10} />
+              <span>{(deal as any).shipping_cost === 0 ? 'Envío Gratis' : (deal as any).shipping_cost ? `+${formatPrice((deal as any).shipping_cost)}` : 'Envío no incl.'}</span>
             </div>
           </div>
-          {deal.store && (
-            <div className="ml-auto flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-colors cursor-pointer">
-              <StoreIcon size={14} className="text-[#2BD45A]" />
-              <span className="text-sm font-bold text-zinc-300">{deal.store.name}</span>
-            </div>
-          )}
         </div>
 
         {/* Description (Desktop only) */}
@@ -415,21 +536,15 @@ export default function DealCard({ deal }: DealCardProps) {
 
         {/* Mobile Footer (Store + Button) */}
         <div className="mt-auto flex flex-col gap-2 relative z-10 md:hidden">
-          {deal.store && (
-             <div className="flex items-center gap-1.5 text-[10px] text-zinc-400">
-                <StoreIcon size={12} className="text-[#2BD45A]" /> 
-                <span>Vendido por <span className="text-zinc-300 font-medium">{deal.store.name}</span></span>
-             </div>
-          )}
           
           <a 
             href={deal.deal_url} 
             target="_blank" 
             rel="noopener noreferrer"
-            className="w-full bg-[#2BD45A] hover:bg-[#25b84e] text-black font-black py-2 rounded-lg text-xs uppercase tracking-wide flex items-center justify-center gap-1 transition-all active:scale-95"
+            className="w-full bg-[#2BD45A] hover:bg-[#25b84e] text-black font-black py-3 rounded-xl text-sm uppercase tracking-wide flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-lg shadow-[#2BD45A]/20"
             onClick={(e) => e.stopPropagation()}
           >
-            VER OFERTA <ExternalLink size={12} strokeWidth={3} />
+            VER OFERTA <ExternalLink size={16} strokeWidth={3} />
           </a>
         </div>
 

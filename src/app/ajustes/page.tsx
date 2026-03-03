@@ -47,9 +47,10 @@ export default function SettingsPage() {
         .single()
         
       if (data) {
-        setProfile(data)
-        setUsername(data.username || '')
-        setAvatarUrl(data.avatar_url)
+        const userData = data as any
+        setProfile(userData)
+        setUsername(userData.username || '')
+        setAvatarUrl(userData.avatar_url)
       }
       
       setLoading(false)

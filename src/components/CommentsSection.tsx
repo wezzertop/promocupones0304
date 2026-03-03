@@ -389,7 +389,14 @@ export default function CommentsSection({ dealId }: CommentsSectionProps) {
   }
 
   const CommentItem = ({ comment, isReply = false }: { comment: Comment, isReply?: boolean }) => (
-    <div className={cn("flex gap-2.5", isReply ? "mt-3 ml-6 border-l-2 border-white/5 pl-3" : "mt-4")}>
+    <div 
+      id={`comment-${comment.id}`}
+      className={cn(
+        "flex gap-2.5 transition-colors duration-500 rounded-xl p-2", 
+        isReply ? "mt-3 ml-6 border-l-2 border-white/5 pl-3" : "mt-4",
+        "target:bg-[#2BD45A]/10 target:border-[#2BD45A]/30 target:border"
+      )}
+    >
       <div className="flex-shrink-0">
         {comment.user?.avatar_url ? (
           <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10 relative">

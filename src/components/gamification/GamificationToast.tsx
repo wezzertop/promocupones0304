@@ -36,10 +36,12 @@ export default function GamificationToast() {
           
           supabase.auth.getUser().then(({ data: { user } }) => {
             if (user && user.id === newXp.user_id) {
+               const isPositive = newXp.amount > 0
                addToast({
                  type: 'xp',
-                 message: `+${newXp.amount} XP`,
-                 amount: newXp.amount
+                 message: `${isPositive ? '+' : ''}${newXp.amount} XP`,
+                 amount: newXp.amount,
+                 isNegative: !isPositive
                })
             }
           })
@@ -77,7 +79,7 @@ export default function GamificationToast() {
     }
   }, [supabase])
 
-  const addToast = (toast: Omit<{ type: 'xp' | 'level', message: string, amount?: number }, 'id'>) => {
+  const addToast = (toast: Omit<{ type: 'xp' | 'level', message: string, amount?: number, isNegative?: boolean }, 'id'>) => {
     const id = Math.random().toString(36).substring(7)
     const newToast = { ...toast, id }
     
@@ -103,7 +105,9 @@ export default function GamificationToast() {
               pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border backdrop-blur-md
               ${toast.type === 'level' 
                 ? 'bg-gradient-to-r from-yellow-600/90 to-amber-800/90 border-yellow-500/50 text-white' 
-                : 'bg-zinc-900/90 border-white/10 text-white'
+                : toast.isNegative 
+                  ? 'bg-red-900/90 border-red-500/30 text-white'
+                  : 'bg-zinc-900/90 border-white/10 text-white'
               }
             `}
           >
@@ -112,15 +116,17 @@ export default function GamificationToast() {
                 <Trophy size={20} />
               </div>
             ) : (
-              <div className="p-2 bg-[#2BD45A]/20 rounded-full text-[#2BD45A]">
-                <Star size={16} />
+              <div className={`p-2 rounded-full ${toast.isNegative ? 'bg-red-500/20 text-red-400' : 'bg-[#2BD45A]/20 text-[#2BD45A]'}`}>
+                {toast.isNegative ? <ArrowUp className="rotate-180" size={16} /> : <Star size={16} />}
               </div>
             )}
             
             <div>
               <div className="font-bold text-sm">{toast.message}</div>
               {toast.type === 'xp' && (
-                <div className="text-xs text-zinc-400">¡Sigue así!</div>
+                <div className={`text-xs ${toast.isNegative ? 'text-red-300' : 'text-zinc-400'}`}>
+                  {toast.isNegative ? 'Penalización aplicada' : '¡Sigue así!'}
+                </div>
               )}
               {toast.type === 'level' && (
                 <div className="text-xs text-yellow-200/80">Nuevas recompensas desbloqueadas</div>

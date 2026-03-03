@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import Image from 'next/image'
 import DealCard from '@/components/DealCard'
 import { Deal } from '@/types'
-import { Settings, User, MapPin, Calendar, Flame, MessageSquare, Tag } from 'lucide-react'
+import { Settings, User, MapPin, Calendar, Flame, MessageSquare, Tag, AlertCircle, ArrowRight, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -60,6 +60,9 @@ export default async function ProfilePage() {
   // Calculate stats
   const totalDeals = deals?.length || 0
   const totalVotes = deals?.reduce((acc, deal) => acc + (deal.votes_count || 0), 0) || 0
+  
+  // Identify pending/rejected deals
+  const pendingDealsCount = deals?.filter((d: any) => ['pending', 'rejected', 'revision'].includes(d.status)).length || 0
 
   return (
     <div className="space-y-8 animate-fade-in max-w-5xl mx-auto">
@@ -132,6 +135,32 @@ export default async function ProfilePage() {
         </div>
       </div>
 
+      {/* Pending Deals Notification Section */}
+      {pendingDealsCount > 0 && (
+        <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 bg-yellow-500/20 rounded-full flex items-center justify-center shrink-0">
+              <AlertCircle className="w-6 h-6 text-yellow-500" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-white mb-1">
+                Tienes {pendingDealsCount} {pendingDealsCount === 1 ? 'publicación' : 'publicaciones'} en proceso
+              </h3>
+              <p className="text-gray-400 text-sm">
+                Algunas de tus ofertas están pendientes de aprobación o requieren cambios.
+              </p>
+            </div>
+          </div>
+          <Link 
+            href="/mis-publicaciones"
+            className="w-full md:w-auto px-6 py-3 bg-[#222327] hover:bg-[#2d2e33] text-white font-medium rounded-xl border border-[#2d2e33] flex items-center justify-center gap-2 transition-colors whitespace-nowrap"
+          >
+            Ver estado detallado
+            <ArrowRight size={16} />
+          </Link>
+        </div>
+      )}
+
       {/* Gamification Section */}
       {gamificationProfile && (
         <div className="grid grid-cols-1 gap-6">
@@ -144,9 +173,13 @@ export default async function ProfilePage() {
 
       {/* Content Tabs (Visual only for now) */}
       <div className="flex items-center gap-1 border-b border-[#2d2e33] pb-1 overflow-x-auto">
-        <button className="px-6 py-3 text-sm font-bold text-white border-b-2 border-[#2BD45A] bg-[#2BD45A]/5 rounded-t-lg transition-colors whitespace-nowrap">
-          Mis Publicaciones
-        </button>
+        <Link 
+          href="/mis-publicaciones"
+          className="px-6 py-3 text-sm font-bold text-white border-b-2 border-[#2BD45A] bg-[#2BD45A]/5 rounded-t-lg transition-colors whitespace-nowrap flex items-center gap-2"
+        >
+          Gestionar Publicaciones
+          <ExternalLink size={14} />
+        </Link>
         <button className="px-6 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors whitespace-nowrap">
           Guardados
         </button>

@@ -1,16 +1,29 @@
 import { createClient } from '@/lib/supabase/server'
 import DealCard from '@/components/DealCard'
 import { Deal } from '@/types'
-import { Ticket } from 'lucide-react'
+import { Search } from 'lucide-react'
 import HomeFilters from '@/components/HomeFilters'
-import GenericBanner from '@/components/GenericBanner'
 
 export const dynamic = 'force-dynamic'
 
-export default async function CuponesPage() {
+export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const supabase = await createClient()
+  const params = await searchParams
+  const query = params.q || ''
 
-  // Fetch deals with relations
+  if (!query) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] text-center p-8">
+        <Search className="w-16 h-16 text-zinc-700 mb-4" />
+        <h1 className="text-2xl font-bold text-white mb-2">Busca ofertas increíbles</h1>
+        <p className="text-zinc-400">Ingresa un término de búsqueda para comenzar.</p>
+      </div>
+    )
+  }
+
+  // Search in deals title and description
+  // Note: For better search, Full Text Search (FTS) in Supabase is recommended.
+  // Using ilike for now as a simple fallback.
   const { data: dealsData, error } = await supabase
     .from('deals')
     .select(`
@@ -21,11 +34,11 @@ export default async function CuponesPage() {
       comments(count)
     `)
     .eq('status', 'active')
-    .eq('deal_type', 'coupon')
+    .or(`title.ilike.%${query}%,description.ilike.%${query}%`)
     .order('created_at', { ascending: false })
 
   if (error) {
-    console.error('Error fetching deals:', error)
+    console.error('Error searching deals:', error)
   }
 
   const deals = dealsData?.map(deal => ({
@@ -35,29 +48,18 @@ export default async function CuponesPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      {/* Header Banner */}
-      <GenericBanner 
-        id="all_coupons"
-        title={
-          <>
-            Códigos y Cupones <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">
-              verificados
-            </span>
-          </>
-        }
-        description="Ahorra extra en tus compras con los códigos de descuento más recientes."
-        iconName="Ticket"
-        iconLabel="Cupones"
-        iconColorClass="text-purple-500"
-        iconBgClass="bg-purple-500/10"
-        iconBorderClass="border-purple-500/20"
-        glowColorClass="bg-purple-500"
-      />
+      <div className="bg-[#18191c] border border-[#2d2e33] rounded-2xl p-6">
+        <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+          <Search className="text-[#2BD45A]" />
+          Resultados para "{query}"
+        </h1>
+        <p className="text-zinc-400 mt-1">
+          Se encontraron {deals?.length || 0} resultados
+        </p>
+      </div>
 
       <HomeFilters dealsCount={deals?.length || 0} />
 
-      {/* Main Grid */}
       <div className="flex flex-col gap-4">
         {deals && deals.length > 0 ? (
           deals.map((deal) => (
@@ -67,15 +69,15 @@ export default async function CuponesPage() {
         ) : (
           <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-[#18191c] rounded-3xl border border-[#2d2e33] border-dashed">
             <div className="w-16 h-16 bg-[#222327] rounded-full flex items-center justify-center mb-4 text-gray-500">
-              <Ticket size={32} />
+              <Search size={32} />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">No hay cupones activos</h3>
+            <h3 className="text-xl font-bold text-white mb-2">Sin resultados</h3>
             <p className="text-gray-400 max-w-md mb-6">
-              Vuelve pronto para ver nuevos códigos de descuento.
+              No encontramos ofertas que coincidan con tu búsqueda. Intenta con otros términos.
             </p>
           </div>
         )}
       </div>
     </div>
-  );
+  )
 }

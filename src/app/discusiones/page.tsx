@@ -3,13 +3,14 @@ import DealCard from '@/components/DealCard'
 import { Deal } from '@/types'
 import { MessageSquare } from 'lucide-react'
 import HomeFilters from '@/components/HomeFilters'
+import GenericBanner from '@/components/GenericBanner'
 
 export const dynamic = 'force-dynamic'
 
-export default async function DiscussionsPage() {
+export default async function DiscusionesPage() {
   const supabase = await createClient()
 
-  // Fetch only deals of type 'discussion'
+  // Fetch deals with relations
   const { data: dealsData, error } = await supabase
     .from('deals')
     .select(`
@@ -24,7 +25,7 @@ export default async function DiscussionsPage() {
     .order('created_at', { ascending: false })
 
   if (error) {
-    console.error('Error fetching discussions:', error)
+    console.error('Error fetching deals:', error)
   }
 
   const deals = dealsData?.map(deal => ({
@@ -35,24 +36,24 @@ export default async function DiscussionsPage() {
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-[#18191c] to-[#222327] rounded-3xl p-8 border border-[#2d2e33] relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500 opacity-5 blur-[100px] rounded-full pointer-events-none"></div>
-        <div className="relative z-10 max-w-2xl">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-500 text-xs font-bold uppercase tracking-wider mb-4 border border-cyan-500/20">
-            <MessageSquare size={14} />
-            Discusiones
-          </span>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight leading-tight">
+      <GenericBanner 
+        id="all_discussions"
+        title={
+          <>
             Conversaciones <br/>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-500">
               de la comunidad
             </span>
-          </h1>
-          <p className="text-lg text-gray-400 max-w-lg">
-            Pregunta, responde y comparte opiniones sobre productos y tiendas.
-          </p>
-        </div>
-      </div>
+          </>
+        }
+        description="Pregunta, responde y comparte opiniones sobre productos y tiendas."
+        iconName="MessageSquare"
+        iconLabel="Discusiones"
+        iconColorClass="text-cyan-500"
+        iconBgClass="bg-cyan-500/10"
+        iconBorderClass="border-cyan-500/20"
+        glowColorClass="bg-cyan-500"
+      />
 
       <HomeFilters dealsCount={deals?.length || 0} />
 

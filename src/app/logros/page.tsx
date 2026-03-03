@@ -38,7 +38,7 @@ export default function LogrosPage() {
                 </div>
                 <div>
                   <div className="font-semibold text-white">Publicar Ofertas</div>
-                  <div className="text-sm text-zinc-400">+50 XP por cada oferta aprobada</div>
+                  <div className="text-sm text-zinc-400">+20 XP por cada oferta aprobada</div>
                 </div>
               </li>
               <li className="flex items-start gap-3">
@@ -47,7 +47,7 @@ export default function LogrosPage() {
                 </div>
                 <div>
                   <div className="font-semibold text-white">Comentar</div>
-                  <div className="text-sm text-zinc-400">+10 XP por comentario útil</div>
+                  <div className="text-sm text-zinc-400">+5 XP por comentario útil</div>
                 </div>
               </li>
               <li className="flex items-start gap-3">
@@ -56,7 +56,7 @@ export default function LogrosPage() {
                 </div>
                 <div>
                   <div className="font-semibold text-white">Recibir Votos</div>
-                  <div className="text-sm text-zinc-400">+2 XP por cada voto positivo</div>
+                  <div className="text-sm text-zinc-400">+1 XP por cada voto positivo</div>
                 </div>
               </li>
               <li className="flex items-start gap-3">
@@ -86,7 +86,7 @@ export default function LogrosPage() {
                 </div>
                 <div>
                   <div className="font-semibold text-white text-sm">Eliminar Comentarios</div>
-                  <div className="text-xs text-red-300">-10 XP (se revierte la ganancia)</div>
+                  <div className="text-xs text-red-300">-5 XP (se revierte la ganancia)</div>
                 </div>
               </li>
               <li className="flex items-start gap-3">
@@ -95,7 +95,7 @@ export default function LogrosPage() {
                 </div>
                 <div>
                   <div className="font-semibold text-white text-sm">Perder Votos (Likes)</div>
-                  <div className="text-xs text-red-300">-2 XP si un usuario retira su voto</div>
+                  <div className="text-xs text-red-300">-1 XP si un usuario retira su voto</div>
                 </div>
               </li>
               <li className="flex items-start gap-3">
@@ -104,7 +104,7 @@ export default function LogrosPage() {
                 </div>
                 <div>
                   <div className="font-semibold text-white text-sm">Eliminar Publicaciones</div>
-                  <div className="text-xs text-red-300">-50 XP (se revierte la ganancia)</div>
+                  <div className="text-xs text-red-300">-20 XP (se revierte la ganancia)</div>
                 </div>
               </li>
             </ul>

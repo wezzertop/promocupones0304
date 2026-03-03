@@ -4,8 +4,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { Upload, DollarSign, Tag, Type, Link as LinkIcon, Image as ImageIcon, FileText, Loader2, X, Calendar, MapPin, Percent, ShoppingBag, Truck, Globe, HelpCircle } from 'lucide-react'
-import { compressImage } from '@/lib/utils'
+import { Upload, DollarSign, Tag, Type, Link as LinkIcon, Image as ImageIcon, FileText, Loader2, X, Calendar, MapPin, Percent, ShoppingBag, Truck, Globe, HelpCircle, Check, ChevronsUpDown, Store as StoreIcon } from 'lucide-react'
+import { compressImage, analyzeImage, slugify, cn } from '@/lib/utils'
 import Image from 'next/image'
 import Map from '@/components/DynamicMap'
 import {
@@ -15,11 +15,20 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { isReferralUrl, canUserPostReferral, checkForbiddenWords } from '@/lib/moderation'
+import PublicationSuccessModal from '@/components/PublicationSuccessModal'
+import { createNotification } from '@/lib/notifications'
 
 interface Category {
   id: string
   name: string
 }
+
+interface Store {
+  id: string
+  name: string
+  slug: string
+}
+
 
 const COUNTRIES = [
   "México", "Estados Unidos", "China", "España", "Internacional", "Otro"
@@ -28,11 +37,17 @@ const COUNTRIES = [
 export default function CreateDealPage() {
   const [loading, setLoading] = useState(false)
   const [categories, setCategories] = useState<Category[]>([])
+  const [stores, setStores] = useState<Store[]>([])
+  const [selectedStore, setSelectedStore] = useState<Store | null>(null)
+  const [storeSearch, setStoreSearch] = useState('')
+  const [isStoreOpen, setIsStoreOpen] = useState(false)
+  const [customStoreName, setCustomStoreName] = useState('')
   const [imageFiles, setImageFiles] = useState<File[]>([])
   const [previewUrls, setPreviewUrls] = useState<string[]>([])
   const [location, setLocation] = useState<[number, number] | null>(null)
   const [titleLength, setTitleLength] = useState(0)
   const [descLength, setDescLength] = useState(0)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
   const MAX_TITLE = 100
   const MAX_DESC = 2000
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -41,13 +56,21 @@ export default function CreateDealPage() {
   const supabase = createClient()
 
   useEffect(() => {
-    async function fetchCategories() {
-      const { data, error } = await supabase.from('categories').select('id, name').order('name')
-      if (data) {
-        setCategories(data as unknown as Category[])
+    async function fetchData() {
+      const [categoriesRes, storesRes] = await Promise.all([
+        supabase.from('categories').select('id, name').order('name'),
+        supabase.from('stores').select('id, name, slug').order('name')
+      ])
+      
+      if (categoriesRes.data) {
+        setCategories(categoriesRes.data as unknown as Category[])
+      }
+      
+      if (storesRes.data) {
+        setStores(storesRes.data as unknown as Store[])
       }
     }
-    fetchCategories()
+    fetchData()
   }, [supabase])
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,11 +87,19 @@ export default function CreateDealPage() {
       }
 
       try {
+        // 1. Analizar imagen (Calidad, Aspect Ratio, Resolución)
+        const analysis = await analyzeImage(file)
+        if (!analysis.valid) {
+          alert(`La imagen ${file.name} no cumple los requisitos: ${analysis.reason}`)
+          continue
+        }
+
         const objectUrl = URL.createObjectURL(file)
         newPreviews.push(objectUrl)
         
+        // 2. Optimizar imagen (Compresión + WebP + Resize)
         const compressedBlob = await compressImage(file)
-        newFiles.push(new File([compressedBlob], file.name, { type: 'image/jpeg' }))
+        newFiles.push(new File([compressedBlob], file.name.replace(/\.[^/.]+$/, "") + ".webp", { type: 'image/webp' }))
       } catch (error) {
         console.error('Error procesando imagen:', error)
       }
@@ -120,6 +151,45 @@ export default function CreateDealPage() {
         throw new Error('Por favor completa todos los campos obligatorios')
       }
 
+      // 1. Resolver Store ID
+      let finalStoreId = null
+
+      if (selectedStore) {
+        finalStoreId = selectedStore.id
+      } else if (customStoreName.trim()) {
+        const slug = slugify(customStoreName)
+        
+        // Intentar crear la tienda
+        // Primero verificamos si ya existe por slug para evitar errores
+        const { data: existingStore } = await supabase
+          .from('stores')
+          .select('id')
+          .eq('slug', slug)
+          .single()
+
+        if (existingStore) {
+          finalStoreId = existingStore.id
+        } else {
+          const { data: newStore, error: createStoreError } = await supabase
+            .from('stores')
+            .insert({
+              name: customStoreName.trim(),
+              slug: slug,
+              is_verified: false
+            })
+            .select('id')
+            .single()
+
+          if (createStoreError) {
+            console.error('Error creando tienda:', createStoreError)
+            // Si falla, podríamos ignorarlo o mostrar error. 
+            // Para robustez, seguimos sin store_id o lanzamos error.
+          } else if (newStore) {
+            finalStoreId = newStore.id
+          }
+        }
+      }
+
       // MODERATION CHECK: Forbidden Words
       const titleCheck = await checkForbiddenWords(title.toString())
       if (titleCheck.hasForbidden) {
@@ -150,13 +220,13 @@ export default function CreateDealPage() {
       // Subir imágenes
       if (imageFiles.length > 0) {
         for (const file of imageFiles) {
-          const fileExt = 'jpg'
+          const fileExt = 'webp'
           const fileName = `${session.user.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
           
           const { error: uploadError } = await supabase.storage
             .from('deals')
             .upload(fileName, file, {
-              contentType: 'image/jpeg',
+              contentType: 'image/webp',
               upsert: false
             })
 
@@ -182,21 +252,24 @@ export default function CreateDealPage() {
       }
 
       // Get User Role to determine status
-      // Modificación: Todos los usuarios publican directamente como 'active' para visibilidad inmediata
-      // const { data: userProfile } = await supabase
-      //   .from('users')
-      //   .select('role')
-      //   .eq('id', session.user.id)
-      //   .single()
+      const { data: userProfile } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', session.user.id)
+        .single()
       
-      // const userRole = userProfile?.role || 'user'
-      // const initialStatus = ['admin', 'moderator'].includes(userRole) ? 'active' : 'pending'
-      const initialStatus = 'active'
+      // 2. Determinar estado inicial
+      // Por defecto PENDING. El backend también forzará esto via trigger, pero aquí lo mostramos para la UI
+      const userRole = userProfile?.role || 'user'
+      const initialStatus = ['admin', 'moderator'].includes(userRole) ? 'active' : 'pending'
+
+      console.log('User Role:', userRole, 'Initial Status:', initialStatus) // Debug
 
       // Preparar payload
       const deal = {
         user_id: session.user.id,
         category_id: categoryId,
+        store_id: finalStoreId,
         title,
         description,
         deal_price: Number(price),
@@ -222,10 +295,27 @@ export default function CreateDealPage() {
         throw new Error(`Error al guardar la oferta: ${error.message}`)
       }
 
-      alert('¡Oferta publicada exitosamente!')
+      // Notificación de sistema (para que aparezca en la campanita)
+      if (initialStatus === 'pending') {
+        await createNotification(
+          session.user.id,
+          'system_alert',
+          'Oferta en revisión',
+          `Tu oferta "${title}" ha sido enviada y está siendo revisada por nuestro equipo.`,
+          '/mis-publicaciones'
+        )
+      } else {
+        await createNotification(
+          session.user.id,
+          'post_approved',
+          'Oferta publicada',
+          `Tu oferta "${title}" ha sido publicada exitosamente.`,
+          '/mis-publicaciones'
+        )
+      }
 
-      router.push('/')
-      router.refresh()
+      // Mostrar modal en lugar de alerta y redirección inmediata
+      setShowSuccessModal(true)
 
     } catch (error: any) {
       console.error('Error:', error)
@@ -235,8 +325,18 @@ export default function CreateDealPage() {
     }
   }
 
+  const handleCloseModal = () => {
+    setShowSuccessModal(false)
+    router.push('/')
+    router.refresh()
+  }
+
   return (
     <TooltipProvider>
+      <PublicationSuccessModal 
+        isOpen={showSuccessModal} 
+        onClose={handleCloseModal} 
+      />
       <div className="max-w-2xl mx-auto pb-20">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-white mb-2">Publicar Oferta</h1>
@@ -603,7 +703,108 @@ export default function CreateDealPage() {
                 </div>
               </div>
 
-              {/* Ubicación */}
+              {/* Tienda */}
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium text-zinc-300 mb-1.5 ml-1">
+                  Tienda
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Selecciona la tienda o escribe el nombre si no aparece.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+                    <StoreIcon className="h-5 w-5 text-zinc-500" />
+                  </div>
+                  
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={selectedStore ? selectedStore.name : storeSearch}
+                      onChange={(e) => {
+                        setStoreSearch(e.target.value)
+                        setSelectedStore(null)
+                        setCustomStoreName(e.target.value)
+                        setIsStoreOpen(true)
+                      }}
+                      onFocus={() => setIsStoreOpen(true)}
+                      onBlur={() => {
+                        // Delay closing to allow clicking on options
+                        setTimeout(() => setIsStoreOpen(false), 200)
+                      }}
+                      placeholder="Buscar o agregar tienda..."
+                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-10 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600"
+                    />
+                    
+                    {selectedStore && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedStore(null)
+                          setStoreSearch('')
+                          setCustomStoreName('')
+                        }}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+
+                    {!selectedStore && (
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                        <ChevronsUpDown className="h-4 w-4 text-zinc-500" />
+                      </div>
+                    )}
+
+                    {/* Dropdown */}
+                    {isStoreOpen && (
+                      <div className="absolute z-50 w-full mt-1 bg-zinc-900 border border-white/10 rounded-xl shadow-xl max-h-60 overflow-auto">
+                        {stores
+                          .filter(store => store.name.toLowerCase().includes(storeSearch.toLowerCase()))
+                          .map(store => (
+                            <button
+                              key={store.id}
+                              type="button"
+                              onClick={() => {
+                                setSelectedStore(store)
+                                setStoreSearch(store.name)
+                                setCustomStoreName('')
+                                setIsStoreOpen(false)
+                              }}
+                              className="w-full text-left px-4 py-2 hover:bg-white/5 text-zinc-300 hover:text-white flex items-center justify-between transition-colors"
+                            >
+                              <span>{store.name}</span>
+                              {selectedStore?.id === store.id && <Check className="h-4 w-4 text-[#2BD45A]" />}
+                            </button>
+                          ))}
+                        
+                        {storeSearch && !stores.some(s => s.name.toLowerCase() === storeSearch.toLowerCase()) && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              // We will handle creation on submit
+                              setCustomStoreName(storeSearch)
+                              setSelectedStore(null)
+                              setIsStoreOpen(false)
+                            }}
+                            className="w-full text-left px-4 py-2 hover:bg-white/5 text-[#2BD45A] font-medium transition-colors"
+                          >
+                            Usar "{storeSearch}" como nueva tienda
+                          </button>
+                        )}
+                        
+                        {stores.length === 0 && !storeSearch && (
+                          <div className="px-4 py-2 text-zinc-500 text-sm">Cargando tiendas...</div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
               <div>
                 <label className="flex items-center gap-2 text-sm font-medium text-zinc-300 mb-1.5 ml-1">
                   Ubicación de la oferta (Opcional)
