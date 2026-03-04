@@ -3,9 +3,9 @@ import { Facebook, Twitter, Instagram, Youtube, Mail, Heart } from 'lucide-react
 
 export default function Footer() {
   return (
-    <footer className="mt-auto border-t border-[#2d2e33] bg-[#0f1012]">
-      <div className="max-w-[1920px] mx-auto px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+    <footer className="mt-auto border-t border-[#2d2e33] bg-[#0f1012] w-full overflow-hidden">
+      <div className="max-w-[1920px] mx-auto px-4 sm:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 mb-12">
           {/* Brand */}
           <div className="col-span-1 md:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-6 group">

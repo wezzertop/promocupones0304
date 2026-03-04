@@ -49,10 +49,8 @@ export default function Sidebar() {
         />
       )}
 
-      <aside className={`fixed left-0 top-0 h-screen w-64 bg-[#0f1012] border-r border-[#2d2e33] flex flex-col z-50 transition-transform duration-300 ${
+      <aside className={`fixed left-0 top-0 h-screen w-64 bg-[#0f1012] border-r border-[#2d2e33] flex flex-col z-50 transition-transform duration-300 lg:translate-x-0 ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } ${
-          isHeaderVisible ? 'lg:translate-x-0' : 'lg:-translate-x-full'
         }`}>
 
         {/* Logo Area */}

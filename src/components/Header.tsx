@@ -64,10 +64,10 @@ export default function Header({ user }: HeaderProps) {
   }
 
   return (
-    <header className={`sticky top-0 z-30 h-16 bg-[#0f1012]/80 backdrop-blur-md border-b border-[#2d2e33] flex items-center px-4 lg:px-8 transition-transform duration-300 ${isHeaderVisible ? 'translate-y-0' : '-translate-y-full'}`}>
+    <header className={`sticky top-0 z-30 h-16 bg-[#0f1012]/80 backdrop-blur-md border-b border-[#2d2e33] flex items-center px-4 lg:px-8 transition-transform duration-300 w-full overflow-x-hidden ${isHeaderVisible ? 'translate-y-0' : '-translate-y-full'}`}>
       {/* Mobile Menu Trigger */}
       <button 
-        className="lg:hidden p-2 text-gray-400 hover:text-white mr-4"
+        className="lg:hidden p-2 text-gray-400 hover:text-white mr-2 shrink-0"
         onClick={toggleSidebar}
       >
         <Menu size={24} />
@@ -91,7 +91,7 @@ export default function Header({ user }: HeaderProps) {
             type="text"
             name="q"
             placeholder="Buscar..."
-            className="w-full bg-[#18191c] text-white pl-10 pr-16 py-2.5 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#2BD45A]/50 focus:ring-1 focus:ring-[#2BD45A]/50 transition-all placeholder:text-gray-600 text-sm"
+            className="w-full bg-[#18191c] text-white pl-9 pr-2 py-2.5 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#2BD45A]/50 focus:ring-1 focus:ring-[#2BD45A]/50 transition-all placeholder:text-gray-600 text-sm"
           />
           <div className="absolute right-3 top-2.5 hidden sm:flex items-center gap-1 pointer-events-none">
             <kbd className="hidden md:inline-flex h-5 items-center gap-1 rounded border border-[#2d2e33] bg-[#222327] px-1.5 font-mono text-[10px] font-medium text-gray-500 opacity-100">
@@ -142,19 +142,27 @@ export default function Header({ user }: HeaderProps) {
             </button>
 
             {isUserMenuOpen && (
-              <div className="absolute right-0 mt-2 w-56 bg-[#18191c] border border-[#2d2e33] rounded-xl shadow-2xl py-1 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+              <div className="absolute right-0 top-full mt-2 w-56 bg-[#18191c] border border-[#2d2e33] rounded-xl shadow-2xl py-1 z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                 <div className="px-4 py-3 border-b border-[#2d2e33] sm:hidden">
-                  <p className="text-sm font-medium text-white">
+                  <p className="text-sm font-medium text-white truncate">
                     {user.user_metadata?.username || user.email?.split('@')[0]}
                   </p>
-                  <p className="text-xs text-gray-500">{user.email}</p>
+                  <p className="text-xs text-gray-500 truncate">{user.email}</p>
                 </div>
                 
                 <div className="p-1">
-                  <Link href="/perfil" className="flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:bg-[#222327] hover:text-white rounded-lg transition-colors">
+                  <Link 
+                    href="/perfil" 
+                    className="flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:bg-[#222327] hover:text-white rounded-lg transition-colors"
+                    onClick={() => setIsUserMenuOpen(false)}
+                  >
                     <UserIcon size={16} /> Mi Perfil
                   </Link>
-                  <Link href="/ajustes" className="flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:bg-[#222327] hover:text-white rounded-lg transition-colors">
+                  <Link 
+                    href="/ajustes" 
+                    className="flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:bg-[#222327] hover:text-white rounded-lg transition-colors"
+                    onClick={() => setIsUserMenuOpen(false)}
+                  >
                     <Settings size={16} /> Configuración
                   </Link>
                 </div>
