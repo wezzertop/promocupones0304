@@ -6,6 +6,7 @@ import { Bell, User, Lock, Mail, Moon, Globe, LogOut, Save, Shield, Camera, Uplo
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { processAvatar } from '@/lib/utils'
+import { updateProfile } from './actions'
 
 export default function SettingsPage() {
   const router = useRouter()
@@ -100,17 +101,22 @@ export default function SettingsPage() {
         publicAvatarUrl = publicUrl
       }
       
-      // Update profile in DB
-      const { error } = await supabase
-        .from('users')
-        .update({
-          username,
-          avatar_url: publicAvatarUrl,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', user.id)
+      // Update profile in DB via Server Action
+      const formData = new FormData()
+      formData.append('username', username)
+      if (publicAvatarUrl) {
+        formData.append('avatar_url', publicAvatarUrl)
+      }
+
+      const result = await updateProfile(null, formData)
         
-      if (error) throw error
+      if (result?.error) {
+        // Handle field errors or string error
+        const msg = typeof result.error === 'string' 
+          ? result.error 
+          : (result.error.username?.[0] || 'Error al actualizar')
+        throw new Error(msg)
+      }
 
       // Update Auth Metadata (Important for Header/Sidebar to reflect changes immediately)
       const { error: authError } = await supabase.auth.updateUser({

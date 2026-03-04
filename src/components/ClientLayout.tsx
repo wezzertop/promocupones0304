@@ -25,7 +25,7 @@ export default function ClientLayout({ children, user }: ClientLayoutProps) {
   return (
     <div className="flex">
       <Sidebar />
-      <div className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${
+      <div className={`flex-1 flex flex-col min-h-screen transition-[padding] duration-300 ease-in-out ${
         isHeaderVisible ? 'lg:pl-64' : 'lg:pl-0'
       }`}>
         <Header user={user} />

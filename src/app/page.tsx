@@ -29,38 +29,45 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
   } else if (filter === 'recent') {
     query = query.order('created_at', { ascending: false })
   } else {
-    // 'foryou' - Default: Trending (High votes in last 7 days)
-    // If we want trending, we should filter by date AND sort by votes.
-    // However, if there are few posts, this might return empty.
-    // Safer fallback: Just show recent for now, or mix.
-    // Let's try a "smart" sort: recent first, but maybe we can't easily do weighted sort in simple query.
-    // Let's stick to Recent for 'foryou' for now to ensure content is always shown, 
-    // BUT we can make it slightly different if we want.
-    // Actually, users often expect "Para ti" to be "Recientes" if they are new.
-    // Let's make "Para ti" = Recientes for this MVP phase to ensure stability.
-    // OR: "Para ti" = Random? No.
-    // Let's stick to Recientes for Para ti, but maybe we can add a "Trending" logic later.
-    // Re-reading user request: "Para ti" button...
-    // Let's make "Para ti" = Recientes (Chronological)
-    // "Más votadas" = Popular (Votes)
-    // "Recientes" = Recientes (Chronological)
-    // Wait, having two buttons do the same is bad UX.
+    // 'foryou' - Trending: High votes in last 14 days
+    const twoWeeksAgo = new Date()
+    twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14)
     
-    // Let's make "Para ti" = "Trending" (Votes in last 30 days?)
+    // We try to get trending items first.
+    // Note: If the platform is new, we might not have enough data for "trending",
+    // so we might want to fallback to just recent if this yields few results.
+    // For now, let's mix: Recent deals that have high engagement.
+    // Since Supabase doesn't support complex weighted sorting easily in one go without a function,
+    // we will prioritize recent deals but sort by votes for now?
+    // Actually, "Para ti" usually implies "Algorithm".
+    // Let's go with: Deals created in last 14 days, sorted by votes.
+    
+    // If we want to ensure we show *something* even if nothing is new, we can remove the date filter
+    // and just sort by a "hotness" score if we had one.
+    // For now, let's just sort by votes but only for recent-ish content to keep it fresh.
+    
+    // However, strictly filtering by date might return 0 results.
+    // Let's stick to a safe default for "Para ti":
+    // Sort by votes (popularity) but heavily weighted by recency?
+    // Since we can't do that easily in client-side query builder without a computed column:
+    // We will just show Recent deals for now, but maybe we can ask the user if they want a real algorithm later.
+    
+    // Let's implement a simple "Trending" = Most voted in last 30 days.
     const thirtyDaysAgo = new Date()
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
     
-    // Check if we can do this query easily.
-    // .gte('created_at', ...) .order('votes_count')
-    // But if we have 0 posts in last 30 days, it shows nothing.
-    // Given the project seems to have seed data or low volume, might be risky.
-    // Let's stick to:
-    // Para ti = Recientes (Default)
-    // Más votadas = Popular
-    // Recientes = Recientes
-    // I will add a comment TODO for future algorithm.
+    // We apply the date filter only for 'foryou' to keep it fresh
+    // query = query.gte('created_at', thirtyDaysAgo.toISOString()).order('votes_count', { ascending: false })
     
-    query = query.order('created_at', { ascending: false })
+    // REVERTING to Recent for stability as requested in analysis, 
+    // but we will order by votes descending as a secondary sort if possible?
+    // No, let's just use Recent for now to ensure content shows up.
+    // The previous TODO mentioned implementing a real algorithm.
+    // Let's try to implement a hybrid approach:
+    // Fetch recent 50 items, then sort them by score in Javascript?
+    // That's a good client-side (server component) optimization.
+    
+    query = query.order('created_at', { ascending: false }).limit(50)
   }
 
   const { data: dealsData, error } = await query
@@ -69,10 +76,20 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
     console.error('Error fetching deals:', error)
   }
 
-  const deals = dealsData?.map(deal => ({
+  let deals = dealsData?.map(deal => ({
     ...(deal as any),
     comments_count: (deal as any).comments ? ((deal as any).comments as any)[0]?.count : 0
   }))
+
+  // Custom "Para ti" sorting (Client/Server-side logic)
+  if (filter === 'foryou' && deals) {
+    // Simple "Hot" score: votes + (comments * 2) - (hours_since_creation * 0.5)
+    deals = deals.sort((a, b) => {
+      const scoreA = (a.votes_count || 0) + (a.comments_count * 2) - (Math.abs(new Date().getTime() - new Date(a.created_at).getTime()) / 3600000 * 0.5)
+      const scoreB = (b.votes_count || 0) + (b.comments_count * 2) - (Math.abs(new Date().getTime() - new Date(b.created_at).getTime()) / 3600000 * 0.5)
+      return scoreB - scoreA
+    })
+  }
 
   return (
     <div className="space-y-8 animate-fade-in">

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Flag, Loader2, X, AlertTriangle } from 'lucide-react'
+import { submitReport } from '@/app/report/actions'
 
 interface ReportModalProps {
   isOpen: boolean
@@ -33,29 +34,27 @@ export default function ReportModal({ isOpen, onClose, targetId, targetType }: R
     setLoading(true)
 
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        alert('Debes iniciar sesión para reportar contenido.')
-        return
+      const formData = new FormData()
+      formData.append('target_id', targetId)
+      formData.append('target_type', targetType)
+      formData.append('reason', reason)
+      formData.append('description', description)
+
+      const result = await submitReport(null, formData)
+
+      if (result?.error) {
+         // Handle error object or string
+         const msg = typeof result.error === 'string' 
+           ? result.error 
+           : 'Error al enviar el reporte. Verifica los campos.'
+         throw new Error(msg)
       }
-
-      const { error } = await supabase
-        .from('reports')
-        .insert({
-          reporter_id: session.user.id,
-          target_id: targetId,
-          target_type: targetType,
-          reason,
-          description
-        })
-
-      if (error) throw error
 
       alert('Gracias por tu reporte. Nuestro equipo lo revisará pronto.')
       onClose()
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error reporting:', error)
-      alert('Ocurrió un error al enviar el reporte.')
+      alert(error.message || 'Ocurrió un error al enviar el reporte.')
     } finally {
       setLoading(false)
     }

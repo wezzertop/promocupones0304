@@ -64,7 +64,7 @@ export default function Header({ user }: HeaderProps) {
   }
 
   return (
-    <header className={`sticky top-0 z-30 h-16 bg-[#0f1012]/80 backdrop-blur-md border-b border-[#2d2e33] flex items-center px-4 lg:px-8 transition-transform duration-300 w-full overflow-x-hidden ${isHeaderVisible ? 'translate-y-0' : '-translate-y-full'}`}>
+    <header className={`sticky top-0 z-30 h-16 bg-[#0f1012]/80 backdrop-blur-md border-b border-[#2d2e33] flex items-center px-4 lg:px-8 transition-transform duration-300 w-full ${isHeaderVisible ? 'translate-y-0' : '-translate-y-full'}`}>
       {/* Mobile Menu Trigger */}
       <button 
         className="lg:hidden p-2 text-gray-400 hover:text-white mr-2 shrink-0"

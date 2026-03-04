@@ -44,13 +44,15 @@ export default function Sidebar() {
       {/* Mobile Backdrop */}
       {isSidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm"
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm transition-opacity duration-300"
           onClick={closeSidebar}
         />
       )}
 
-      <aside className={`fixed left-0 top-0 h-screen w-64 bg-[#0f1012] border-r border-[#2d2e33] flex flex-col z-50 transition-transform duration-300 lg:translate-x-0 ${
+      <aside className={`fixed left-0 top-0 h-screen w-64 bg-[#0f1012] border-r border-[#2d2e33] flex flex-col z-50 transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } ${
+          isHeaderVisible ? 'lg:translate-x-0' : 'lg:-translate-x-full'
         }`}>
 
         {/* Logo Area */}
