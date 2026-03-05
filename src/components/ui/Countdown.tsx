@@ -5,12 +5,13 @@ import { Clock } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface CountdownProps {
-  targetDate: string
+  targetDate: string | Date
   className?: string
   size?: 'sm' | 'md' | 'lg'
+  minimal?: boolean // Add minimal mode for small cards
 }
 
-export default function Countdown({ targetDate, className, size = 'sm' }: CountdownProps) {
+export default function Countdown({ targetDate, className, size = 'sm', minimal = false }: CountdownProps) {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
   const [isExpired, setIsExpired] = useState(false)
 
@@ -40,6 +41,17 @@ export default function Countdown({ targetDate, className, size = 'sm' }: Countd
 
   if (isExpired) {
     return null
+  }
+
+  if (minimal) {
+      return (
+          <span className={cn("font-mono font-bold tracking-tight text-[#2BD45A]", className)}>
+              {timeLeft.days > 0 ? `${timeLeft.days}d ` : ''}
+              {timeLeft.hours.toString().padStart(2, '0')}:
+              {timeLeft.minutes.toString().padStart(2, '0')}:
+              {timeLeft.seconds.toString().padStart(2, '0')}
+          </span>
+      )
   }
 
   const sizeClasses = {

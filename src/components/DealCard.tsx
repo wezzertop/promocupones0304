@@ -46,6 +46,7 @@ export default function DealCard({ deal }: DealCardProps) {
   const supabase = createClient()
   const isExpired = deal.status === 'expired' || (deal.expires_at && new Date(deal.expires_at) < new Date())
   const hasMultipleImages = deal.image_urls && deal.image_urls.length > 1
+  const isFreeShipping = deal.shipping_cost === 0 || deal.description?.toLowerCase().includes('envío gratis') || deal.description?.toLowerCase().includes('entrega gratis');
 
   useEffect(() => {
     // Check if user has voted
@@ -377,7 +378,11 @@ export default function DealCard({ deal }: DealCardProps) {
           )}
 
           {deal.expires_at && !isExpired && (
-            <Countdown targetDate={deal.expires_at} className="hidden md:flex" />
+            <div className="absolute top-2 right-2 z-30 pointer-events-none md:hidden">
+                 <div className="bg-black/60 backdrop-blur-sm text-white text-[10px] px-2 py-0.5 rounded font-mono border border-white/10">
+                    ⏳ <Countdown targetDate={deal.expires_at} className="inline-flex" size="sm" minimal />
+                 </div>
+            </div>
           )}
         </div>
 
@@ -501,7 +506,7 @@ export default function DealCard({ deal }: DealCardProps) {
             {/* Shipping info */}
             <div className="flex items-center gap-1.5 text-zinc-500">
               <Truck size={12} />
-              <span className="whitespace-nowrap">{(deal as any).shipping_cost === 0 ? 'Envío Gratis' : (deal as any).shipping_cost ? `+${formatPrice((deal as any).shipping_cost)}` : 'Envío no incl.'}</span>
+              <span className="whitespace-nowrap">{(deal as any).shipping_cost === 0 || isFreeShipping ? 'Envío Gratis' : (deal as any).shipping_cost ? `+${formatPrice((deal as any).shipping_cost)}` : 'Envío no incl.'}</span>
             </div>
           </div>
         </div>
@@ -512,6 +517,13 @@ export default function DealCard({ deal }: DealCardProps) {
             {deal.description}
           </p>
         </div>
+
+        {/* Desktop Countdown */}
+        {deal.expires_at && !isExpired && (
+            <div className="hidden md:block mb-2">
+                 <Countdown targetDate={deal.expires_at} className="relative w-full rounded-lg border border-white/10" size="sm" />
+            </div>
+        )}
 
       {/* Mobile Countdown */}
         {deal.expires_at && !isExpired && (

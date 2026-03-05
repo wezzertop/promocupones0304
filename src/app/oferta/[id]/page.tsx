@@ -240,9 +240,19 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
   // Expiration logic
   const expiresAt = deal.expires_at ? new Date(deal.expires_at) : null
   const isExpired = expiresAt ? new Date() > expiresAt : false
-  const latitude = deal.latitude
-  const longitude = deal.longitude
+  const latitude = deal.latitude ? Number(deal.latitude) : null
+  const longitude = deal.longitude ? Number(deal.longitude) : null
   
+  // Extract special tags from description if not available in structured fields
+  // This is a fallback since we might store this info in description for scraped deals
+  const descriptionLower = deal.description?.toLowerCase() || ''
+  const hasPrime = descriptionLower.includes('prime')
+  const hasMeliPlus = descriptionLower.includes('meli+')
+  const hasFull = descriptionLower.includes('full')
+  const hasCoupon = descriptionLower.includes('cupón') || descriptionLower.includes('cupon')
+  const hasMSI = descriptionLower.includes('meses sin intereses') || descriptionLower.includes('msi')
+  const isFreeShipping = deal.shipping_cost === 0 || descriptionLower.includes('envío gratis') || descriptionLower.includes('entrega gratis')
+
   return (
     <div className="max-w-6xl mx-auto space-y-4 pb-12 px-4 sm:px-6">
        {/* Back button */}
@@ -302,7 +312,11 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
                          {/* Shipping info */}
                          <div className="flex items-center gap-1.5 text-zinc-500">
                            <Truck className="w-3 h-3" />
-                           <span className="whitespace-nowrap">{deal.shipping_cost === 0 ? 'Envío Gratis' : deal.shipping_cost ? `+${new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(deal.shipping_cost)}` : 'Envío no incl.'}</span>
+                           <span className="whitespace-nowrap">
+                             {isFreeShipping ? 'Envío Gratis' : 
+                              deal.shipping_cost ? `+${new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(deal.shipping_cost)}` : 
+                              'Envío no incl.'}
+                           </span>
                          </div>
                       </div>
                       
@@ -329,6 +343,42 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
                             </div>
                          )}
                       </div>
+
+                      {/* Shipping & Payment Badges Block */}
+                      {(hasPrime || hasMeliPlus || hasFull || isFreeShipping || hasCoupon || hasMSI) && (
+                          <div className="flex flex-wrap gap-2 mb-4">
+                              {hasPrime && (
+                                  <span className="bg-[#00A8E1] text-white text-xs px-2 py-0.5 rounded font-bold flex items-center gap-1">
+                                      <span className="italic font-black">prime</span>
+                                  </span>
+                              )}
+                              {hasMeliPlus && (
+                                  <span className="bg-[#9c27b0] text-white text-xs px-2 py-0.5 rounded font-bold flex items-center gap-1">
+                                      <span>Meli+</span>
+                                  </span>
+                              )}
+                              {hasFull && (
+                                  <span className="bg-[#00a650] text-white text-xs px-2 py-0.5 rounded font-bold flex items-center gap-1">
+                                      <span className="italic font-black">FULL</span>
+                                  </span>
+                              )}
+                              {hasCoupon && (
+                                  <span className="bg-orange-500/20 text-orange-500 text-xs px-2 py-0.5 rounded font-bold border border-orange-500/20 border-dashed">
+                                      Cupón
+                                  </span>
+                              )}
+                              {isFreeShipping && (
+                                  <span className="bg-green-600/20 text-green-500 text-xs px-2 py-0.5 rounded font-bold border border-green-600/20">
+                                      Envío Gratis
+                                  </span>
+                              )}
+                              {hasMSI && (
+                                  <span className="bg-blue-600/20 text-blue-400 text-xs px-2 py-0.5 rounded font-bold border border-blue-600/20">
+                                      MSI
+                                  </span>
+                              )}
+                          </div>
+                      )}
 
                       {isExpired ? (
                          <div className="w-full flex items-center justify-center gap-2 bg-zinc-800 text-zinc-400 font-bold py-3 rounded-xl cursor-not-allowed border border-white/5 text-sm">
@@ -435,8 +485,8 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
              <div className="glass-panel p-4 relative group overflow-hidden rounded-2xl order-1 flex flex-col gap-3 w-full">
                 
                 {/* Countdown Banner - Moved to top to avoid overlap */}
-                {deal.expires_at && !isExpired && (
-                   <Countdown targetDate={deal.expires_at} className="relative bg-black/40 rounded-xl mb-4 border border-[#2BD45A]/20" size="md" />
+                {expiresAt && !isExpired && (
+                   <Countdown targetDate={expiresAt} className="relative bg-black/40 rounded-xl mb-4 border border-[#2BD45A]/20" size="md" />
                 )}
 
                 <div className="flex flex-col md:flex-row gap-3 relative">

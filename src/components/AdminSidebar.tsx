@@ -21,7 +21,7 @@ const MENU_ITEMS = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/admin', roles: ['admin', 'moderator'] },
   { icon: ShieldAlert, label: 'Moderación', href: '/admin/moderation', roles: ['admin', 'moderator'] },
   { icon: Flag, label: 'Reportes', href: '/admin/reports', roles: ['admin', 'moderator'] },
-  { icon: ShoppingCart, label: 'Scraper de Ofertas', href: '/admin/scraper', roles: ['admin'] },
+  { icon: ShoppingCart, label: 'Scraper de Ofertas', href: '/admin/scraper', roles: ['admin', 'moderator'] },
   { icon: Users, label: 'Usuarios', href: '/admin/users', roles: ['admin'] },
   { icon: Bell, label: 'Notificaciones', href: '/admin/notifications', roles: ['admin'] },
   { icon: FileText, label: 'Logs de Auditoría', href: '/admin/logs', roles: ['admin'] },
