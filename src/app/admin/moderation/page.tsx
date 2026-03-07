@@ -69,13 +69,12 @@ export default function ModerationPage() {
   const handleApprove = async (id: string) => {
     if (!confirm('¿Estás seguro de aprobar esta publicación?')) return
 
-    const { error } = await supabase
-      .from('deals')
+    const { error } = await (supabase.from('deals') as any)
       .update({ 
         status: 'active',
         moderated_at: new Date().toISOString(),
         // moderated_by: session.user.id (Supabase can handle this with triggers or we pass it)
-      } as any)
+      })
       .eq('id', id)
 
     if (!error) {
@@ -103,13 +102,12 @@ export default function ModerationPage() {
   const handleReject = async () => {
     if (!selectedDeal || !rejectReason) return
 
-    const { error } = await supabase
-      .from('deals')
+    const { error } = await (supabase.from('deals') as any)
       .update({ 
         status: 'rejected',
         moderation_notes: rejectReason,
         moderated_at: new Date().toISOString()
-      } as any)
+      })
       .eq('id', selectedDeal.id)
 
     if (!error) {
