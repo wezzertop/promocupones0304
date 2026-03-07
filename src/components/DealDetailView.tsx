@@ -1,0 +1,551 @@
+'use client'
+
+import Link from 'next/link'
+import { motion, AnimatePresence, PanInfo } from 'framer-motion'
+import { ExternalLink, Share2, Clock, Tag, ChevronLeft, ChevronRight, Calendar, MapPin, AlertCircle, ArrowUp, ArrowDown, Edit2, Flame, Maximize2, X, Store as StoreIcon, Globe, Truck, Upload, Loader2 } from 'lucide-react'
+import CommentsSection from '@/components/CommentsSection'
+import Map from '@/components/DynamicMap'
+import { useState, useEffect } from 'react'
+import { cn } from '@/lib/utils'
+import Countdown from '@/components/ui/Countdown'
+
+interface DealDetailViewProps {
+  deal: any
+  isPreview?: boolean
+  currentUserId?: string | null
+  userVote?: 'hot' | 'cold' | null
+  votes?: number
+  onVote?: (type: 'hot' | 'cold') => void
+  onPublish?: () => void
+  isPublishing?: boolean
+}
+
+export default function DealDetailView({ 
+  deal, 
+  isPreview = false, 
+  currentUserId,
+  userVote = null,
+  votes = 0,
+  onVote,
+  onPublish,
+  isPublishing = false
+}: DealDetailViewProps) {
+  // Image State
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false)
+  const dealImages = deal?.image_urls || (deal?.image_url ? [deal.image_url] : [])
+  const hasMultipleImages = dealImages.length > 1
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % dealImages.length)
+  }
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + dealImages.length) % dealImages.length)
+  }
+
+  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    if (Math.abs(info.offset.x) > 30) {
+      if (info.offset.x > 0) {
+        prevImage()
+      } else {
+        nextImage()
+      }
+    }
+  }
+
+  // Description state
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
+
+  // Calculate discount
+  const originalPrice = Number(deal.original_price) || 0
+  const dealPrice = Number(deal.deal_price) || Number(deal.price) || 0
+  
+  const discount = originalPrice > 0
+    ? Math.round(((originalPrice - dealPrice) / originalPrice) * 100)
+    : 0
+
+  const imageUrl = dealImages.length > 0 ? dealImages[currentImageIndex] : '/placeholder.jpg'
+  const categoryName = deal.category?.name || deal.suggested_category || 'Oferta'
+  const userName = deal.user?.username || 'Usuario'
+  const userAvatar = deal.user?.avatar_url
+  const dealUrl = deal.deal_url || deal.url || '#'
+
+  // Expiration logic
+  const expiresAt = deal.expires_at ? new Date(deal.expires_at) : null
+  const isExpired = expiresAt ? new Date() > expiresAt : false
+  const latitude = deal.latitude ? Number(deal.latitude) : null
+  const longitude = deal.longitude ? Number(deal.longitude) : null
+  
+  // Extract special tags
+  // For Preview (ScrapedDeal), we might have structured shipping_info
+  // For DB Deal, we parse description or use fields
+  const descriptionLower = deal.description?.toLowerCase() || ''
+  
+  const hasPrime = deal.shipping_info?.has_prime || descriptionLower.includes('prime')
+  const hasMeliPlus = deal.shipping_info?.has_meli_plus || descriptionLower.includes('meli+')
+  const hasFull = deal.shipping_info?.is_full || descriptionLower.includes('full')
+  const hasCoupon = deal.coupon_code || descriptionLower.includes('cupón') || descriptionLower.includes('cupon')
+  const hasMSI = deal.payment_info?.has_msi || descriptionLower.includes('meses sin intereses') || descriptionLower.includes('msi')
+  
+  // Shipping Cost Logic
+  let isFreeShipping = false
+  let shippingCostDisplay = 'Envío no incl.'
+  
+  if (deal.shipping_info) {
+      // Scraper Deal Logic
+      isFreeShipping = deal.shipping_info.free_shipping_label || deal.shipping_info.shipping_cost === 0
+      if (isFreeShipping) shippingCostDisplay = 'Envío Gratis'
+      else if (deal.shipping_info.shipping_cost) shippingCostDisplay = `+${new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(deal.shipping_info.shipping_cost)}`
+      else if (deal.shipping_info.shipping_text) shippingCostDisplay = deal.shipping_info.shipping_text
+  } else {
+      // DB Deal Logic
+      isFreeShipping = deal.shipping_cost === 0 || descriptionLower.includes('envío gratis') || descriptionLower.includes('entrega gratis')
+      if (isFreeShipping) shippingCostDisplay = 'Envío Gratis'
+      else if (deal.shipping_cost) shippingCostDisplay = `+${new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(deal.shipping_cost)}`
+  }
+
+  // Store Name
+  const storeName = deal.store?.name || (deal.source === 'amazon' ? 'Amazon' : deal.source === 'mercadolibre' ? 'Mercado Libre' : deal.source) || 'Tienda'
+
+  return (
+    <div className="max-w-6xl mx-auto space-y-4 pb-12 px-4 sm:px-6">
+       {/* Back button */}
+       {!isPreview && (
+           <Link href="/" className="inline-flex items-center text-zinc-400 hover:text-white transition-colors group text-sm">
+              <ChevronLeft className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" />
+              Volver a ofertas
+           </Link>
+       )}
+
+       <div className="flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-6">
+          {/* Right Column: Info (4 cols) */}
+          <div className="lg:col-span-4 space-y-4 order-2 lg:order-2 w-full min-w-0">
+             <div className="glass-panel rounded-2xl lg:sticky lg:top-24 border border-white/5 flex flex-col md:flex-row overflow-hidden">
+                
+                {/* Main Content Info */}
+                <div className="flex-1 p-5 space-y-4 min-w-0">
+                   <div>
+                      <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold tracking-wider mb-2 uppercase">
+                         {/* Store Name */}
+                         <div className="flex items-center gap-1.5 text-zinc-300">
+                            <StoreIcon className="w-3 h-3 text-zinc-500" />
+                            <span className="text-white">{storeName}</span>
+                         </div>
+                         <span className="text-zinc-700">|</span>
+
+                         {/* Location Type */}
+                         <div className="flex items-center gap-1.5 text-blue-400">
+                            {deal.availability === 'in_store' ? (
+                               <>
+                                  <StoreIcon className="w-3 h-3 text-zinc-500" />
+                                  <span className="text-zinc-400">Local</span>
+                               </>
+                            ) : (
+                               <>
+                                  <Globe className="w-3 h-3 text-blue-400" />
+                                  <span>Online</span>
+                               </>
+                            )}
+                         </div>
+
+                         {/* Category */}
+                         {categoryName && (
+                           <>
+                             <span className="text-zinc-700">|</span>
+                             <div className="flex items-center gap-1.5 text-[#2BD45A]">
+                                <Tag className="w-3 h-3" />
+                                <span>{categoryName}</span>
+                             </div>
+                           </>
+                         )}
+
+                         <span className="text-zinc-700">|</span>
+
+                         {/* Shipping info */}
+                         <div className="flex items-center gap-1.5 text-zinc-500">
+                           <Truck className="w-3 h-3" />
+                           <span className="whitespace-nowrap max-w-[120px] truncate" title={shippingCostDisplay}>
+                             {shippingCostDisplay}
+                           </span>
+                         </div>
+                      </div>
+                      
+                      <h1 className="text-xl md:text-2xl font-bold text-white leading-tight mb-3">
+                         {deal.title}
+                      </h1>
+                      
+                      <div className="flex flex-wrap items-center justify-between gap-3 mb-5 bg-black/20 p-3 rounded-xl border border-white/5">
+                         <div className="flex flex-col min-w-0">
+                            <span className="text-2xl md:text-3xl font-bold text-white tracking-tight truncate">
+                               ${dealPrice.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                            </span>
+                            {originalPrice > 0 && (
+                               <span className="text-xs md:text-sm text-zinc-500 line-through">
+                                  ${originalPrice.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                               </span>
+                            )}
+                         </div>
+                         
+                         {discount > 0 && (
+                            <div className="bg-[#2BD45A] text-black px-2.5 py-1 rounded-lg font-black text-xs md:text-sm shadow-lg shadow-[#2BD45A]/20 transform -rotate-2">
+                               -{discount}%
+                            </div>
+                         )}
+                      </div>
+
+                      {/* Badges */}
+                      {(hasPrime || hasMeliPlus || hasFull || isFreeShipping || hasCoupon || hasMSI) && (
+                          <div className="flex flex-wrap gap-2 mb-4">
+                              {hasPrime && (
+                                  <span className="bg-[#00A8E1] text-white text-xs px-2 py-0.5 rounded font-bold flex items-center gap-1">
+                                      <span className="italic font-black">prime</span>
+                                  </span>
+                              )}
+                              {hasMeliPlus && (
+                                  <span className="bg-[#9c27b0] text-white text-xs px-2 py-0.5 rounded font-bold flex items-center gap-1">
+                                      <span>Meli+</span>
+                                  </span>
+                              )}
+                              {hasFull && (
+                                  <span className="bg-[#00a650] text-white text-xs px-2 py-0.5 rounded font-bold flex items-center gap-1">
+                                      <span className="italic font-black">FULL</span>
+                                  </span>
+                              )}
+                              {hasCoupon && (
+                                  <span className="bg-orange-500/20 text-orange-500 text-xs px-2 py-0.5 rounded font-bold border border-orange-500/20 border-dashed">
+                                      Cupón
+                                  </span>
+                              )}
+                              {isFreeShipping && (
+                                  <span className="bg-green-600/20 text-green-500 text-xs px-2 py-0.5 rounded font-bold border border-green-600/20">
+                                      Envío Gratis
+                                  </span>
+                              )}
+                              {hasMSI && (
+                                  <span className="bg-blue-600/20 text-blue-400 text-xs px-2 py-0.5 rounded font-bold border border-blue-600/20">
+                                      MSI
+                                  </span>
+                              )}
+                          </div>
+                      )}
+
+                      {isExpired ? (
+                         <div className="w-full flex items-center justify-center gap-2 bg-zinc-800 text-zinc-400 font-bold py-3 rounded-xl cursor-not-allowed border border-white/5 text-sm">
+                            <AlertCircle className="w-4 h-4" /> Oferta Expirada
+                         </div>
+                      ) : (
+                         <a
+                             href={dealUrl}
+                             target="_blank"
+                             rel="noopener noreferrer"
+                             className="w-full flex items-center justify-center gap-2 bg-[#2BD45A] hover:bg-[#25b84e] text-black font-bold py-3 rounded-xl transition-all shadow-lg shadow-[#2BD45A]/20 hover:shadow-[#2BD45A]/40 hover:-translate-y-0.5 text-sm md:text-base"
+                         >
+                             Ir a la oferta <ExternalLink className="w-4 h-4" />
+                         </a>
+                      )}
+                      
+                      {/* Publish Button for Preview Mode */}
+                      {isPreview && onPublish && (
+                        <button
+                          onClick={onPublish}
+                          disabled={isPublishing}
+                          className="w-full flex items-center justify-center gap-2 bg-white hover:bg-zinc-200 text-black font-bold py-3 rounded-xl transition-all shadow-lg mt-3 disabled:opacity-50"
+                        >
+                          {isPublishing ? (
+                            <>
+                                <Loader2 className="w-4 h-4 animate-spin" /> Publicando...
+                            </>
+                          ) : (
+                            <>
+                                <Upload className="w-4 h-4" /> Publicar Ahora
+                            </>
+                          )}
+                        </button>
+                      )}
+
+                   </div>
+
+                   <div className="pt-4 border-t border-white/5 space-y-3">
+                      {/* Location Map */}
+                      {latitude && longitude && (
+                         <div className="space-y-2">
+                            <div className="flex items-center gap-2 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
+                               <MapPin className="w-3 h-3" /> Ubicación
+                            </div>
+                            <Map position={[latitude, longitude]} readonly />
+                         </div>
+                      )}
+
+                      {/* Expiration Date */}
+                      {expiresAt && (
+                         <div className={`flex items-center gap-2 text-xs p-2.5 rounded-lg border ${
+                            isExpired 
+                              ? 'bg-red-500/10 border-red-500/20 text-red-400' 
+                              : 'bg-[#2BD45A]/10 border-[#2BD45A]/20 text-[#2BD45A]'
+                         }`}>
+                            <Calendar className="w-3 h-3" />
+                            <span className="font-medium">
+                               {isExpired ? 'Expiró el: ' : 'Válido hasta: '} 
+                               {expiresAt.toLocaleDateString()}
+                            </span>
+                         </div>
+                      )}
+
+                      <div className="flex items-center justify-between text-sm gap-2">
+                         <div className="flex items-center gap-2.5 min-w-0 overflow-hidden">
+                            <div className="shrink-0 w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center overflow-hidden ring-2 ring-black">
+                               {userAvatar ? (
+                                  <img src={userAvatar} alt={userName} className="w-full h-full object-cover" />
+                               ) : (
+                                  <span className="font-bold text-zinc-400 text-xs">{userName?.[0] || 'U'}</span>
+                               )}
+                            </div>
+                            <div className="flex flex-col min-w-0 overflow-hidden">
+                               <span className="text-[10px] text-zinc-500 uppercase tracking-wider truncate">Publicado por</span>
+                               <span className="text-white font-medium text-xs md:text-sm truncate">{userName}</span>
+                            </div>
+                         </div>
+                         
+                         {/* Edit Button if owner */}
+                         {!isPreview && deal.user_id && currentUserId === deal.user_id && (
+                           <Link 
+                              href={`/oferta/${deal.id}/edit`}
+                              className="p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                              title="Editar oferta"
+                           >
+                              <Edit2 className="w-3.5 h-3.5" />
+                           </Link>
+                         )}
+                      </div>
+                      <div className="flex items-center gap-2 text-[10px] text-zinc-500 bg-white/5 p-2 rounded-lg">
+                        <Clock className="w-3 h-3" />
+                        <span>Publicado {deal.created_at ? new Date(deal.created_at).toLocaleDateString() : 'Hoy'}</span>
+                      </div>
+                   </div>
+
+                   <div className="pt-3 border-t border-white/5">
+                      <h4 className="text-xs font-medium text-zinc-300 mb-1.5 uppercase tracking-wider">Descripción</h4>
+                      <div className="relative">
+                        <p className={cn("text-zinc-400 text-sm leading-relaxed whitespace-pre-line", !isDescriptionExpanded && "line-clamp-6")}>
+                           {deal.description}
+                        </p>
+                        {deal.description && deal.description.length > 200 && (
+                            <button 
+                                onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                                className="text-[#2BD45A] text-xs font-bold mt-1.5 hover:underline focus:outline-none"
+                            >
+                                {isDescriptionExpanded ? "Mostrar menos" : "Mostrar más"}
+                            </button>
+                        )}
+                      </div>
+                   </div>
+
+                   <div className="pt-3">
+                      <button className="w-full flex items-center justify-center gap-2 text-zinc-400 hover:text-white py-2 transition-colors text-xs font-medium hover:bg-white/5 rounded-lg">
+                         <Share2 className="w-3.5 h-3.5" /> Compartir oferta
+                      </button>
+                   </div>
+                </div>
+             </div>
+          </div>
+
+          {/* Left Column: Image & Comments (8 cols) */}
+          <div className="contents lg:block lg:col-span-8 lg:space-y-4 lg:order-1">
+             <div className="glass-panel p-4 relative group overflow-hidden rounded-2xl order-1 flex flex-col gap-3 w-full">
+                
+                {/* Countdown Banner */}
+                {expiresAt && !isExpired && (
+                   <Countdown targetDate={expiresAt} className="relative bg-black/40 rounded-xl mb-4 border border-[#2BD45A]/20" size="md" />
+                )}
+
+                <div className="flex flex-col md:flex-row gap-3 relative">
+                   {/* Voting Sidebar */}
+                   <div className="flex flex-row md:flex-col items-center justify-center gap-4 md:gap-2 w-full md:w-14 bg-black/20 border border-white/5 rounded-xl py-3 px-4 md:px-0 backdrop-blur-sm shrink-0 order-2 md:order-1">
+                      <button 
+                        onClick={() => onVote?.('hot')}
+                        disabled={isPreview || !onVote}
+                        className={cn(
+                          "p-2 rounded-xl transition-all hover:scale-110 active:scale-95 hover:bg-white/10",
+                          userVote === 'hot' ? "text-[#2BD45A]" : "text-zinc-500",
+                          (isPreview || !onVote) && "opacity-50 cursor-not-allowed"
+                        )}
+                      >
+                        <ArrowUp className="w-5 h-5" strokeWidth={3} />
+                      </button>
+                      
+                      <div className="flex flex-col items-center gap-0.5 min-w-[3ch] text-center">
+                          <Flame 
+                              className={cn(
+                                  "transition-colors w-4 h-4 mb-0.5",
+                                  userVote === 'hot' ? "text-[#2BD45A] fill-[#2BD45A]" :
+                                  userVote === 'cold' ? "text-blue-500 fill-blue-500" : "text-zinc-600"
+                              )} 
+                          />
+                          <span className={cn(
+                              "font-black text-xs md:text-sm",
+                              userVote === 'hot' ? "text-[#2BD45A]" :
+                              userVote === 'cold' ? "text-blue-500" : "text-white"
+                          )}>
+                              {votes}°
+                          </span>
+                      </div>
+                      
+                      <button 
+                        onClick={() => onVote?.('cold')}
+                        disabled={isPreview || !onVote}
+                        className={cn(
+                          "p-2 rounded-xl transition-all hover:scale-110 active:scale-95 hover:bg-white/10",
+                          userVote === 'cold' ? "text-blue-500" : "text-zinc-500",
+                          (isPreview || !onVote) && "opacity-50 cursor-not-allowed"
+                        )}
+                      >
+                        <ArrowDown className="w-5 h-5" strokeWidth={3} />
+                      </button>
+                   </div>
+                   
+                   {/* Image Container */}
+                   <div className="relative flex-1 rounded-xl overflow-hidden bg-zinc-900/50 flex items-center justify-center w-full aspect-square sm:aspect-video group/image order-1 md:order-2 border border-white/5">
+                      <AnimatePresence mode="wait">
+                        <motion.img
+                            key={currentImageIndex}
+                            src={imageUrl}
+                            alt={deal.title}
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            transition={{ duration: 0.2 }}
+                            whileHover={{ scale: 1.05 }}
+                            drag={hasMultipleImages ? "x" : false}
+                            dragConstraints={{ left: 0, right: 0 }}
+                            dragElastic={0.2}
+                            onDragEnd={handleDragEnd}
+                            className="object-contain w-full h-full p-2 cursor-pointer touch-pan-y"
+                            onClick={() => setIsLightboxOpen(true)}
+                        />
+                      </AnimatePresence>
+                      
+                      {/* Zoom Button */}
+                      <button 
+                        onClick={() => setIsLightboxOpen(true)}
+                        className="absolute bottom-3 right-3 p-2 bg-black/60 text-white rounded-full opacity-0 group-hover/image:opacity-100 transition-opacity hover:bg-black/80 z-20"
+                      >
+                        <Maximize2 className="w-4 h-4" />
+                      </button>
+
+                      {/* Carousel Controls */}
+                      {hasMultipleImages && (
+                        <>
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                            className="absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-black/40 text-white rounded-full hover:bg-black/60 transition-colors z-20 opacity-0 group-hover/image:opacity-100"
+                          >
+                            <ChevronLeft className="w-5 h-5" />
+                          </button>
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-black/40 text-white rounded-full hover:bg-black/60 transition-colors z-20 opacity-0 group-hover/image:opacity-100"
+                          >
+                            <ChevronRight className="w-5 h-5" />
+                          </button>
+                          
+                          {/* Dots Indicator */}
+                          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-20 bg-black/40 px-2.5 py-1 rounded-full backdrop-blur-sm">
+                            {dealImages.map((_: any, idx: number) => (
+                              <button
+                                key={idx}
+                                onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(idx); }}
+                                className={cn(
+                                  "w-1.5 h-1.5 rounded-full transition-all",
+                                  idx === currentImageIndex ? "bg-[#2BD45A] w-3" : "bg-white/50 hover:bg-white/80"
+                                )}
+                              />
+                            ))}
+                          </div>
+                        </>
+                      )}
+                   </div>
+                </div>
+
+                {/* Thumbnails */}
+                {hasMultipleImages && (
+                  <div className="flex gap-2.5 overflow-x-auto py-1 px-1 scrollbar-hide">
+                    {dealImages.map((url: string, idx: number) => (
+                      <button
+                        key={idx}
+                        onClick={() => setCurrentImageIndex(idx)}
+                        className={cn(
+                          "relative w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden border-2 flex-shrink-0 transition-all",
+                          idx === currentImageIndex ? "border-[#2BD45A] ring-2 ring-[#2BD45A]/20" : "border-transparent opacity-60 hover:opacity-100 bg-zinc-900"
+                        )}
+                      >
+                        <img src={url} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                      </button>
+                    ))}
+                  </div>
+                )}
+             </div>
+
+             {/* Lightbox Modal */}
+             {isLightboxOpen && (
+                <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 animate-in fade-in duration-200">
+                  <button 
+                    onClick={() => setIsLightboxOpen(false)}
+                    className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-white transition-colors"
+                  >
+                    <X className="w-8 h-8" />
+                  </button>
+                  
+                  <div className="relative w-full h-full max-w-7xl flex items-center justify-center">
+                    <AnimatePresence mode="wait">
+                      <motion.img 
+                        key={currentImageIndex}
+                        src={imageUrl} 
+                        alt={deal.title} 
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.2 }}
+                        drag={hasMultipleImages ? "x" : false}
+                        dragConstraints={{ left: 0, right: 0 }}
+                        dragElastic={0.2}
+                        onDragEnd={handleDragEnd}
+                        className="max-w-full max-h-full object-contain touch-pan-y"
+                      />
+                    </AnimatePresence>
+                    
+                    {hasMultipleImages && (
+                      <>
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                          className="absolute left-4 top-1/2 -translate-y-1/2 p-4 text-white/50 hover:text-white transition-colors"
+                        >
+                          <ChevronLeft className="w-12 h-12" />
+                        </button>
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 p-4 text-white/50 hover:text-white transition-colors"
+                        >
+                          <ChevronRight className="w-12 h-12" />
+                        </button>
+                      </>
+                    )}
+                  </div>
+                  
+                  <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 font-medium">
+                    {currentImageIndex + 1} / {dealImages.length}
+                  </div>
+                </div>
+             )}
+
+             {/* Comments (Hidden in Preview if desired, or mocked) */}
+             {!isPreview && deal.id && (
+                <div className="glass-panel p-5 rounded-2xl space-y-4 border border-white/5 order-3 w-full overflow-hidden">
+                    <CommentsSection dealId={deal.id} />
+                </div>
+             )}
+          </div>
+       </div>
+    </div>
+  )
+}

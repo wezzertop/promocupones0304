@@ -57,10 +57,10 @@ function extractMLID(url: string): string | null {
 }
 
 // Helper to extract Amazon Image ID for deduplication
-function extractAmazonImageId(url: string): string {
+function extractAmazonImageId(url: string): string | null {
   // Matches IDs like: 71sKzRj+LJL, 61+7J8x9wLL
   const match = url.match(/\/images\/I\/([^.]+)\./);
-  return match ? match[1] : url;
+  return match ? match[1] : null;
 }
 
 // Helper to normalize Amazon image URL to high-res
@@ -108,24 +108,43 @@ export async function scrapeAmazonUrl(url: string): Promise<ScrapedDeal | null> 
     let originalPriceText = $('.a-price.a-text-price[data-a-strike="true"] .a-offscreen').first().text().replace('$', '').replace(/,/g, '');
     const original_price = originalPriceText ? parseFloat(originalPriceText) : null;
 
-    // Image Extraction
+    // Extract multiple images
     const image_urls: string[] = [];
     const seenImageIds = new Set<string>();
 
     const addImage = (url: string) => {
         if (!url) return;
-        const normalizedUrl = normalizeAmazonImageUrl(url);
-        const id = extractAmazonImageId(normalizedUrl);
         
-        if (!seenImageIds.has(id)) {
-            image_urls.push(normalizedUrl);
-            seenImageIds.add(id);
+        let id = extractAmazonImageId(url);
+        let finalUrl = url;
+        let uniqueId = url;
+
+        if (id) {
+            // Reconstruct high-res URL
+            finalUrl = `https://m.media-amazon.com/images/I/${id}.jpg`;
+            uniqueId = id;
+        } else {
+             // Fallback normalization
+             finalUrl = normalizeAmazonImageUrl(url);
+             // Try to extract ID again after normalization
+             id = extractAmazonImageId(finalUrl);
+             if (id) {
+                 finalUrl = `https://m.media-amazon.com/images/I/${id}.jpg`;
+                 uniqueId = id;
+             } else {
+                 uniqueId = finalUrl;
+             }
+        }
+        
+        // Remove size modifiers just in case, for non-standard URLs
+        uniqueId = uniqueId.replace(/\._AC_.*?\./, '.').replace(/\._SY_.*?\./, '.').replace(/\._SX_.*?\./, '.');
+
+        if (!seenImageIds.has(uniqueId)) {
+            image_urls.push(finalUrl);
+            seenImageIds.add(uniqueId);
         }
     };
 
-    const mainImage = $('#landingImage').attr('src') || $('#imgBlkFront').attr('src');
-    if (mainImage) addImage(mainImage);
-    
     // Try to find more images in the script tags or gallery
     try {
         // Strategy 1: Look for 'colorImages' or 'ImageBlockATF' in script tags
@@ -144,7 +163,26 @@ export async function scrapeAmazonUrl(url: string): Promise<ScrapedDeal | null> 
                                     else if (img.large) addImage(img.large);
                                 });
                             }
-                        } catch (e) {
+                            // Strategy 3: Look for imageBlock_feature_div (often contains JSON in data-a-dynamic-image)
+        const imageBlockDynamic = $('#imageBlock_feature_div').find('img').attr('data-a-dynamic-image');
+        if (imageBlockDynamic) {
+             try {
+                const dynamicImages = JSON.parse(imageBlockDynamic);
+                Object.keys(dynamicImages).forEach(url => {
+                    addImage(url);
+                });
+            } catch (e) {
+                // ignore
+            }
+        }
+
+        // Strategy 4: Look for data-csa-c-image-id or similar in alt images
+        $('.a-button-text img').each((_, el) => {
+             const src = $(el).attr('src');
+             if (src) addImage(src);
+        });
+
+    } catch (e) {
                             // ignore parse error
                         }
                     }
@@ -206,6 +244,10 @@ export async function scrapeAmazonUrl(url: string): Promise<ScrapedDeal | null> 
         console.warn('Error extracting extra Amazon images', e);
     }
     
+    // Add main image if not already present (deduplication handled by addImage)
+    const mainImage = $('#landingImage').attr('src') || $('#imgBlkFront').attr('src');
+    if (mainImage) addImage(mainImage);
+
     const image_url = image_urls[0] || '';
 
     // Description
