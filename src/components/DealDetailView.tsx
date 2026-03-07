@@ -405,7 +405,7 @@ export default function DealDetailView({
                    </div>
                    
                    {/* Image Container */}
-                   <div className="relative flex-1 rounded-xl overflow-hidden bg-white flex items-center justify-center w-full aspect-video group/image order-1 md:order-2 border border-white/5">
+                   <div className="relative flex-1 rounded-xl overflow-hidden bg-white flex items-center justify-center w-full aspect-video group/image order-1 md:order-2 border border-white/5 touch-pan-y">
                       <AnimatePresence mode="wait">
                         <motion.div
                             key={currentImageIndex}
@@ -413,13 +413,21 @@ export default function DealDetailView({
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -20 }}
                             transition={{ duration: 0.2 }}
-                            className="relative w-full h-full flex items-center justify-center p-2"
+                            drag="x"
+                            dragConstraints={{ left: 0, right: 0 }}
+                            dragElastic={1}
+                            onDragEnd={handleDragEnd}
+                            className="relative w-full h-full flex items-center justify-center p-2 cursor-grab active:cursor-grabbing"
                         >
                              <img 
                                 src={imageUrl}
                                 alt={deal.title}
-                                className="max-w-full max-h-full w-auto h-auto object-contain cursor-zoom-in"
-                                onClick={() => setIsLightboxOpen(true)}
+                                draggable="false"
+                                className="max-w-full max-h-full w-auto h-auto object-contain cursor-zoom-in pointer-events-none"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setIsLightboxOpen(true);
+                                }}
                              />
                         </motion.div>
                       </AnimatePresence>
@@ -468,19 +476,21 @@ export default function DealDetailView({
 
                 {/* Thumbnails */}
                 {hasMultipleImages && (
-                  <div className="flex gap-2.5 overflow-x-auto py-1 px-1 scrollbar-hide">
-                    {dealImages.map((url: string, idx: number) => (
-                      <button
-                        key={idx}
-                        onClick={() => setCurrentImageIndex(idx)}
-                        className={cn(
-                          "relative w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden border-2 flex-shrink-0 transition-all",
-                          idx === currentImageIndex ? "border-[#2BD45A] ring-2 ring-[#2BD45A]/20" : "border-transparent opacity-60 hover:opacity-100 bg-zinc-900"
-                        )}
-                      >
-                        <img src={url} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
-                      </button>
-                    ))}
+                  <div className="w-full max-w-full overflow-hidden">
+                    <div className="flex gap-2.5 overflow-x-auto py-1 px-1 scrollbar-hide snap-x snap-mandatory touch-pan-x">
+                      {dealImages.map((url: string, idx: number) => (
+                        <button
+                          key={idx}
+                          onClick={() => setCurrentImageIndex(idx)}
+                          className={cn(
+                            "relative w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden border-2 flex-shrink-0 transition-all snap-start",
+                            idx === currentImageIndex ? "border-[#2BD45A] ring-2 ring-[#2BD45A]/20" : "border-transparent opacity-60 hover:opacity-100 bg-zinc-900"
+                          )}
+                        >
+                          <img src={url} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover pointer-events-none" />
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
              </div>
@@ -496,7 +506,7 @@ export default function DealDetailView({
                   </button>
                   
                   <div className="relative w-full h-full flex items-center justify-center" onClick={() => setIsLightboxOpen(false)}>
-                    <div className="relative w-full h-full max-w-5xl max-h-[90vh] flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+                    <div className="relative w-full h-full max-w-7xl max-h-[90vh] flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
                         <AnimatePresence mode="wait">
                         <motion.img 
                             key={currentImageIndex}
@@ -506,7 +516,12 @@ export default function DealDetailView({
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.9 }}
                             transition={{ duration: 0.2 }}
-                            className="max-w-full max-h-full w-auto h-auto object-contain select-none"
+                            drag="x"
+                            dragConstraints={{ left: 0, right: 0 }}
+                            dragElastic={1}
+                            onDragEnd={handleDragEnd}
+                            className="max-w-full max-h-full w-auto h-auto object-contain select-none touch-pan-y"
+                            draggable="false"
                         />
                         </AnimatePresence>
                     </div>

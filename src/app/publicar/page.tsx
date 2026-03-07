@@ -92,6 +92,12 @@ export default function CreateDealPage() {
     const files = Array.from(e.target.files || [])
     if (files.length === 0) return
 
+    // Validar límite de 6 imágenes
+    if (items.length + files.length > 6) {
+      alert('Solo puedes subir un máximo de 6 imágenes por oferta.')
+      return
+    }
+
     // Validar y procesar cada archivo
     const newItems: ImageItem[] = []
 
@@ -631,7 +637,7 @@ export default function CreateDealPage() {
                       <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>Puedes subir múltiples imágenes. La primera será la principal.</p>
+                      <p>Puedes subir hasta 6 imágenes. La primera será la principal.</p>
                     </TooltipContent>
                   </Tooltip>
                 </label>

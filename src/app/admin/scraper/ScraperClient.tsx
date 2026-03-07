@@ -115,7 +115,8 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
       let optimizedImageUrls: string[] = [];
       
       // Determine which images to process: prefer the gallery list if available, otherwise fallback to single image
-      const sourceImages = deal.image_urls && deal.image_urls.length > 0 ? deal.image_urls : [deal.image_url];
+      // Limit to max 6 images to prevent mobile layout issues
+      const sourceImages = (deal.image_urls && deal.image_urls.length > 0 ? deal.image_urls : [deal.image_url]).slice(0, 6);
       
       // Process images sequentially or in parallel? Parallel is faster but might hit rate limits. Let's try parallel.
       const uploadPromises = sourceImages.map(async (imgUrl) => {
