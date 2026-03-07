@@ -64,17 +64,19 @@ export default function Header({ user }: HeaderProps) {
   }
 
   return (
-    <header className={`sticky top-0 z-30 h-16 bg-[#0f1012]/80 backdrop-blur-md border-b border-[#2d2e33] flex items-center px-4 lg:px-8 transition-transform duration-300 w-full ${isHeaderVisible ? 'translate-y-0' : '-translate-y-full'}`}>
+    <header className={`sticky top-0 z-30 h-16 bg-[#0f1012]/80 backdrop-blur-md border-b border-[#2d2e33] flex items-center px-2 md:px-4 transition-transform duration-300 w-full ${isHeaderVisible ? 'translate-y-0' : '-translate-y-full'}`}>
       {/* Mobile Menu Trigger */}
-      <button 
-        className="lg:hidden p-2 text-gray-400 hover:text-white mr-2 shrink-0"
-        onClick={toggleSidebar}
-      >
-        <Menu size={24} />
-      </button>
+      <div className="lg:hidden shrink-0 mr-1 md:mr-2 w-10 h-10 flex items-center justify-center">
+        <button 
+          className="p-2 text-gray-400 hover:text-white"
+          onClick={toggleSidebar}
+        >
+          <Menu size={24} />
+        </button>
+      </div>
 
       {/* Search Bar */}
-      <div className="flex-1 max-w-2xl relative group">
+      <div className="flex-1 w-full max-w-2xl relative group mx-1 md:mx-4 lg:mx-8">
         <form onSubmit={(e) => {
           e.preventDefault()
           const form = e.target as HTMLFormElement
@@ -91,7 +93,7 @@ export default function Header({ user }: HeaderProps) {
             type="text"
             name="q"
             placeholder="Buscar..."
-            className="w-full bg-[#18191c] text-white pl-9 pr-2 py-2.5 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#2BD45A]/50 focus:ring-1 focus:ring-[#2BD45A]/50 transition-all placeholder:text-gray-600 text-sm"
+            className="w-full bg-[#18191c] text-white pl-9 pr-2 py-2.5 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#2BD45A]/50 focus:ring-1 focus:ring-[#2BD45A]/50 transition-[border-color,box-shadow] duration-200 placeholder:text-gray-600 text-sm"
           />
           <div className="absolute right-3 top-2.5 hidden sm:flex items-center gap-1 pointer-events-none">
             <kbd className="hidden md:inline-flex h-5 items-center gap-1 rounded border border-[#2d2e33] bg-[#222327] px-1.5 font-mono text-[10px] font-medium text-gray-500 opacity-100">
@@ -102,7 +104,7 @@ export default function Header({ user }: HeaderProps) {
       </div>
 
       {/* Right Actions */}
-      <div className="flex items-center gap-2 sm:gap-4 ml-auto">
+      <div className="flex items-center gap-1 sm:gap-4 ml-auto w-[100px] sm:w-auto justify-end">
         {user && <NotificationCenter />}
         
         {user ? (

@@ -11,12 +11,20 @@ export function useScrollDirection() {
     const updateScrollDirection = () => {
       const scrollY = window.scrollY
       const direction = scrollY > lastScrollY ? 'down' : 'up'
-      if (direction !== scrollDirection && (scrollY - lastScrollY > 10 || scrollY - lastScrollY < -10)) {
-        setScrollDirection(direction)
-        const visible = scrollY < 50 || direction === 'up'
-        setHeaderVisible(visible)
+      
+      // Calculate difference from last UPDATE point, not last event
+      const diff = Math.abs(scrollY - lastScrollY)
+
+      if (diff > 10) {
+        if (direction !== scrollDirection) {
+          setScrollDirection(direction)
+          const visible = scrollY < 50 || direction === 'up'
+          setHeaderVisible(visible)
+        }
+        // Only update lastScrollY when we've moved enough to trigger a check
+        // This allows accumulating delta for slow scrolls
+        lastScrollY = scrollY > 0 ? scrollY : 0
       }
-      lastScrollY = scrollY > 0 ? scrollY : 0
     }
 
     window.addEventListener('scroll', updateScrollDirection)

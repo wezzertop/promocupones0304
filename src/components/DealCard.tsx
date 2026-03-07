@@ -233,7 +233,7 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
 
   return (
     <div className={cn(
-      "group relative flex flex-col md:flex-row bg-[#09090b] rounded-xl md:rounded-3xl overflow-hidden border border-white/5 hover:border-[#2BD45A]/50 transition-all duration-300 hover:scale-[1.01] shadow-xl shadow-black/50 hover:shadow-2xl hover:shadow-[#2BD45A]/10 h-auto md:h-[340px]",
+      "group relative flex flex-col md:flex-row bg-[#09090b] rounded-xl md:rounded-3xl overflow-hidden border border-white/5 hover:border-[#2BD45A]/50 transition-all duration-300 md:hover:scale-[1.01] shadow-xl shadow-black/50 hover:shadow-2xl hover:shadow-[#2BD45A]/10 h-auto md:h-[340px]",
       isExpired && "opacity-60 grayscale"
     )}>
       

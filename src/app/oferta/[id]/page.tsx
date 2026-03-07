@@ -62,18 +62,6 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
   useEffect(() => {
     // Force header visible on mount
     setHeaderVisible(true)
-    
-    // Disable scroll hide logic by setting a flag or simply re-enabling it on unmount if needed
-    // But since the store is global, we might want to ensure it stays visible
-    const handleScroll = () => {
-      setHeaderVisible(true)
-    }
-    
-    window.addEventListener('scroll', handleScroll)
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-      setHeaderVisible(true) // Reset on unmount
-    }
   }, [setHeaderVisible])
 
   // Countdown Logic removed - now using component
@@ -250,9 +238,9 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
   const isFreeShipping = deal.shipping_cost === 0 || descriptionLower.includes('envío gratis') || descriptionLower.includes('entrega gratis')
 
   return (
-    <div className="max-w-6xl mx-auto space-y-3 md:space-y-4 pb-12 px-3 sm:px-6">
+    <div className="max-w-6xl mx-auto space-y-3 md:space-y-4 pb-12 sm:px-6">
        {/* Back button */}
-       <Link href="/" className="inline-flex items-center text-zinc-400 hover:text-white transition-colors group text-sm">
+       <Link href="/" className="inline-flex items-center text-zinc-400 hover:text-white transition-colors group text-sm ml-2 sm:ml-0">
           <ChevronLeft className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" />
           Volver a ofertas
        </Link>
