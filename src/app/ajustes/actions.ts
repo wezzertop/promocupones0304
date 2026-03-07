@@ -37,13 +37,12 @@ export async function updateProfile(prevState: any, formData: FormData) {
     .eq('username', data.username)
     .single()
 
-  if (existingUser && existingUser.id !== user.id) {
+  if (existingUser && (existingUser as any).id !== user.id) {
     return { error: { username: ['El nombre de usuario ya está en uso'] } }
   }
 
   // 5. Update Profile
-  const { error: updateError } = await supabase
-    .from('users')
+  const { error: updateError } = await (supabase.from('users') as any)
     .update({
       username: data.username,
       avatar_url: data.avatar_url,

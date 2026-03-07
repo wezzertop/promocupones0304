@@ -84,8 +84,7 @@ export async function updateDeal(dealId: string, prevState: any, formData: FormD
   // Determine status (reset to pending if normal user)
   const status = isStaff ? 'active' : 'pending'
 
-  const { error: updateError } = await supabase
-    .from('deals')
+  const { error: updateError } = await (supabase.from('deals') as any)
     .update({
       title: data.title,
       description: data.description,

@@ -11,8 +11,7 @@ export default async function DiscusionesPage() {
   const supabase = await createClient()
 
   // Fetch deals with relations
-  const { data: dealsData, error } = await supabase
-    .from('deals')
+  const { data: dealsData, error } = await (supabase.from('deals') as any)
     .select(`
       *,
       store:stores(*),
@@ -28,7 +27,7 @@ export default async function DiscusionesPage() {
     console.error('Error fetching deals:', error)
   }
 
-  const deals = dealsData?.map(deal => ({
+  const deals = dealsData?.map((deal: any) => ({
     ...(deal as any),
     comments_count: (deal as any).comments ? ((deal as any).comments as any)[0]?.count : 0
   }))
@@ -60,7 +59,7 @@ export default async function DiscusionesPage() {
       {/* Main Grid */}
       <div className="flex flex-col gap-4">
         {deals && deals.length > 0 ? (
-          deals.map((deal) => (
+          deals.map((deal: any) => (
             // @ts-ignore
             <DealCard key={deal.id} deal={deal as unknown as Deal} />
           ))

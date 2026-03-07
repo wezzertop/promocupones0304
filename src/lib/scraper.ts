@@ -153,7 +153,7 @@ export async function scrapeAmazonUrl(url: string): Promise<ScrapedDeal | null> 
             if (content) {
                 // Pattern 1: 'colorImages': { ... }
                 if (content.includes('colorImages')) {
-                    const match = content.match(/'colorImages':\s*({.*?}),\s*'/s) || content.match(/"colorImages":\s*({.*?}),/s);
+                    const match = content.match(/'colorImages':\s*({[\s\S]*?}),\s*'/) || content.match(/"colorImages":\s*({[\s\S]*?}),/);
                     if (match) {
                         try {
                             const data = JSON.parse(match[1]);
@@ -190,7 +190,7 @@ export async function scrapeAmazonUrl(url: string): Promise<ScrapedDeal | null> 
                 
                 // Pattern 2: ImageBlockATF
                 if (content.includes('ImageBlockATF')) {
-                    const match = content.match(/P\.when\('A'\)\.register\("ImageBlockATF",\s*function\(A\)\{\s*var\s+data\s*=\s*({.*?});/s);
+                    const match = content.match(/P\.when\('A'\)\.register\("ImageBlockATF",\s*function\(A\)\{\s*var\s+data\s*=\s*({[\s\S]*?});/);
                     if (match) {
                         try {
                              const data = JSON.parse(match[1]);

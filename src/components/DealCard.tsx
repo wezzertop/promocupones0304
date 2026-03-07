@@ -54,8 +54,7 @@ export default function DealCard({ deal }: DealCardProps) {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) return
 
-      const { data } = await supabase
-        .from('votes')
+      const { data } = await (supabase.from('votes') as any)
         .select('vote_type')
         .eq('user_id', session.user.id)
         .eq('deal_id', deal.id)
@@ -66,8 +65,7 @@ export default function DealCard({ deal }: DealCardProps) {
       }
       
       // Check if saved
-      const { data: savedData } = await supabase
-        .from('saves')
+      const { data: savedData } = await (supabase.from('saves') as any)
         .select('id')
         .eq('user_id', session.user.id)
         .eq('deal_id', deal.id)
@@ -156,15 +154,13 @@ export default function DealCard({ deal }: DealCardProps) {
       let error;
       
       if (userVote === type) {
-        const { error: deleteError } = await supabase
-          .from('votes')
+        const { error: deleteError } = await (supabase.from('votes') as any)
           .delete()
           .eq('user_id', session.user.id)
           .eq('deal_id', deal.id)
         error = deleteError
       } else {
-        const { error: upsertError } = await supabase
-          .from('votes')
+        const { error: upsertError } = await (supabase.from('votes') as any)
           .upsert({
             user_id: session.user.id,
             deal_id: deal.id,
@@ -194,9 +190,9 @@ export default function DealCard({ deal }: DealCardProps) {
       setIsSaved(!isSaved)
       
       if (!isSaved) {
-        await supabase.from('saves').insert({ user_id: session.user.id, deal_id: deal.id })
+        await (supabase.from('saves') as any).insert({ user_id: session.user.id, deal_id: deal.id })
       } else {
-        await supabase.from('saves').delete().match({ user_id: session.user.id, deal_id: deal.id })
+        await (supabase.from('saves') as any).delete().match({ user_id: session.user.id, deal_id: deal.id })
       }
     } catch (error) {
       console.error('Error al guardar:', error)

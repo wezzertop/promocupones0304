@@ -42,8 +42,7 @@ export async function isReferralUrl(url: string): Promise<{ isReferral: boolean;
 
   // 2. Check DB patterns
   const supabase = createClient()
-  const { data: dbPatterns } = await supabase
-    .from('referral_patterns')
+  const { data: dbPatterns } = await (supabase.from('referral_patterns') as any)
     .select('pattern')
     .eq('is_active', true)
 
@@ -62,8 +61,7 @@ export async function canUserPostReferral(userId: string): Promise<{ canPost: bo
   const supabase = createClient()
   
   // Get user gamification level
-  const { data: profile } = await supabase
-    .from('gamification_profiles')
+  const { data: profile } = await (supabase.from('gamification_profiles') as any)
     .select('current_level')
     .eq('user_id', userId)
     .single()
@@ -73,8 +71,7 @@ export async function canUserPostReferral(userId: string): Promise<{ canPost: bo
   const currentLevel = (profile as any).current_level
 
   // Get referral limit based on level
-  const { data: levelData } = await supabase
-    .from('gamification_levels')
+  const { data: levelData } = await (supabase.from('gamification_levels') as any)
     .select('referral_limit')
     .eq('level', currentLevel)
     .single()
@@ -88,8 +85,7 @@ export async function canUserPostReferral(userId: string): Promise<{ canPost: bo
   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
 
   // Count deals that are marked as referrals OR match patterns (fallback)
-  const { count, error } = await supabase
-    .from('deals')
+  const { count, error } = await (supabase.from('deals') as any)
     .select('*', { count: 'exact', head: true })
     .eq('user_id', userId)
     .gte('created_at', oneWeekAgo.toISOString())
@@ -108,22 +104,20 @@ export async function addKarmaPoints(userId: string, points: number, reason: str
   const supabase = createClient()
   
   // 1. Update user points
-  const { error } = await supabase.rpc('increment_karma', { 
+  const { error } = await (supabase.rpc as any)('increment_karma', { 
     row_id: userId, 
     amount: points 
   })
 
   // Fallback if RPC doesn't exist (client-side update, less safe but works for now)
   if (error) {
-    const { data: user } = await supabase
-      .from('users')
+    const { data: user } = await (supabase.from('users') as any)
       .select('karma_points')
       .eq('id', userId)
       .single()
       
     if (user) {
-      await supabase
-        .from('users')
+      await (supabase.from('users') as any)
         .update({ karma_points: ((user as any).karma_points || 0) + points })
         .eq('id', userId)
     }
@@ -136,8 +130,7 @@ export async function checkForbiddenWords(text: string): Promise<{ hasForbidden:
   if (!text) return { hasForbidden: false }
   
   const supabase = createClient()
-  const { data: forbidden } = await supabase
-    .from('forbidden_words')
+  const { data: forbidden } = await (supabase.from('forbidden_words') as any)
     .select('word')
   
   if (!forbidden) return { hasForbidden: false }

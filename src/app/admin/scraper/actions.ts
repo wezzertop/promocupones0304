@@ -3,13 +3,14 @@
 import { createClient } from '@/lib/supabase/server'
 import { searchMercadoLibre, searchAmazon, scrapeAmazonUrl, scrapeMercadoLibreUrl, ScrapedDeal } from '@/lib/scraper'
 import { revalidatePath } from 'next/cache'
+import { Database } from '@/types/supabase'
 
 async function logScraperAction(operation: 'search' | 'url_scrape' | 'publish', source: string | null, status: 'success' | 'error', details: any) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   
   if (user) {
-    await supabase.from('scraper_logs').insert({
+    await (supabase.from('scraper_logs') as any).insert({
       operation,
       source,
       status,
@@ -26,7 +27,8 @@ async function checkPermissions() {
 
   const { data: userData } = await supabase.from('users').select('role').eq('id', user.id).single()
   
-  const authorized = userData && (userData.role === 'admin' || userData.role === 'moderator')
+  const role = (userData as any)?.role
+  const authorized = role && (role === 'admin' || role === 'moderator')
   return { authorized, user }
 }
 
@@ -103,7 +105,7 @@ export async function publishDeal(deal: ScrapedDeal, categoryId: string) {
     shipping_info: deal.shipping_info
   }
 
-  const { error: scrapeError } = await supabase.from('scraped_deals').upsert({
+  const { error: scrapeError } = await (supabase.from('scraped_deals') as any).upsert({
     external_id: deal.id,
     source: deal.source,
     title: deal.title,
@@ -154,10 +156,10 @@ export async function publishDeal(deal: ScrapedDeal, categoryId: string) {
     .maybeSingle();
   
   if (storeData) {
-      storeId = storeData.id;
+      storeId = (storeData as any).id;
   }
 
-  const { error } = await supabase.from('deals').insert({
+  const { error } = await (supabase.from('deals') as any).insert({
     user_id: user.id,
     title: deal.title,
     description: descriptionWithShipping,
@@ -203,5 +205,5 @@ export async function getScraperLogs() {
     .order('created_at', { ascending: false })
     .limit(50)
 
-  return data || []
+  return (data as any) || []
 }

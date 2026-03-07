@@ -683,6 +683,91 @@ export interface Database {
           }
         ]
       }
+      scraped_deals: {
+        Row: {
+          id: string
+          external_id: string
+          source: 'amazon' | 'mercadolibre'
+          title: string
+          price: number
+          original_price: number | null
+          currency: string | null
+          image_url: string | null
+          url: string
+          description: string | null
+          scraped_at: string
+          status: 'pending' | 'published' | 'rejected' | null
+          raw_data: Json | null
+        }
+        Insert: {
+          id?: string
+          external_id: string
+          source: 'amazon' | 'mercadolibre'
+          title: string
+          price: number
+          original_price?: number | null
+          currency?: string | null
+          image_url?: string | null
+          url: string
+          description?: string | null
+          scraped_at?: string
+          status?: 'pending' | 'published' | 'rejected' | null
+          raw_data?: Json | null
+        }
+        Update: {
+          id?: string
+          external_id?: string
+          source?: 'amazon' | 'mercadolibre'
+          title?: string
+          price?: number
+          original_price?: number | null
+          currency?: string | null
+          image_url?: string | null
+          url?: string
+          description?: string | null
+          scraped_at?: string
+          status?: 'pending' | 'published' | 'rejected' | null
+          raw_data?: Json | null
+        }
+        Relationships: []
+      }
+      scraper_logs: {
+        Row: {
+          id: string
+          operation: 'search' | 'url_scrape' | 'publish'
+          source: string | null
+          status: 'success' | 'error' | 'warning'
+          details: Json | null
+          created_at: string
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          operation: 'search' | 'url_scrape' | 'publish'
+          source?: string | null
+          status: 'success' | 'error' | 'warning'
+          details?: Json | null
+          created_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          operation?: 'search' | 'url_scrape' | 'publish'
+          source?: string | null
+          status?: 'success' | 'error' | 'warning'
+          details?: Json | null
+          created_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scraper_logs_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [key: string]: {

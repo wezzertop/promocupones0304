@@ -27,8 +27,7 @@ export async function submitContactForm(prevState: any, formData: FormData) {
   const data = validated.data
 
   // 3. Insert into DB
-  const { error } = await supabase
-    .from('contact_messages')
+  const { error } = await (supabase.from('contact_messages') as any)
     .insert({
       user_id: user?.id || null,
       name: data.name,

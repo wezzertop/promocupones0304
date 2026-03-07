@@ -93,8 +93,7 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
   useEffect(() => {
     async function fetchDeal() {
       const supabase = createClient()
-      const { data: dealData, error } = await supabase
-        .from('deals')
+      const { data: dealData, error } = await (supabase.from('deals') as any)
         .select(`
           *,
           user:users!deals_user_id_fkey(id, username, avatar_url),
@@ -127,8 +126,7 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
       const { data: { session } } = await supabase.auth.getSession()
       
       if (session) {
-        const { data: voteData } = await supabase
-          .from('votes')
+        const { data: voteData } = await (supabase.from('votes') as any)
           .select('vote_type')
           .eq('deal_id', id)
           .eq('user_id', session.user.id)
@@ -185,16 +183,14 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
       setUserVote(newVote)
 
       if (shouldDelete) {
-         const { error } = await supabase
-          .from('votes')
+         const { error } = await (supabase.from('votes') as any)
           .delete()
           .eq('user_id', session.user.id)
           .eq('deal_id', id)
          
          if (error) throw error
       } else {
-         const { error } = await supabase
-          .from('votes')
+         const { error } = await (supabase.from('votes') as any)
           .upsert({
             user_id: session.user.id,
             deal_id: id,

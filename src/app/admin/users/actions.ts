@@ -10,8 +10,7 @@ export async function banUser(userId: string, reason: string) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Unauthorized')
 
-  const { data: currentUser } = await supabase
-    .from('users')
+  const { data: currentUser } = await (supabase.from('users') as any)
     .select('role')
     .eq('id', user.id)
     .single()
@@ -49,8 +48,7 @@ export async function unbanUser(userId: string) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Unauthorized')
 
-  const { data: currentUser } = await supabase
-    .from('users')
+  const { data: currentUser } = await (supabase.from('users') as any)
     .select('role')
     .eq('id', user.id)
     .single()

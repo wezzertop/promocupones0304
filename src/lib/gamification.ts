@@ -87,7 +87,7 @@ export async function getLeaderboard(period: 'weekly' | 'monthly' | 'all_time' =
     // But for MVP/v1, let's stick to total XP or create a specific function for period leaderboards.
     // Let's try to use the history table to sum up.
     
-    const { data, error } = await supabase.rpc('get_leaderboard', { 
+    const { data, error } = await (supabase.rpc as any)('get_leaderboard', { 
         period_start: oneWeekAgo.toISOString(), 
         limit_count: limit 
     })

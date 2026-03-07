@@ -8,8 +8,7 @@ async function checkAdmin() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Unauthorized')
 
-  const { data } = await supabase
-    .from('users')
+  const { data } = await (supabase.from('users') as any)
     .select('role')
     .eq('id', user.id)
     .single()
@@ -43,8 +42,7 @@ export async function addReferralPattern(pattern: string, description: string) {
 export async function deleteReferralPattern(id: string) {
   const supabase = await checkAdmin()
 
-  const { error } = await supabase
-    .from('referral_patterns')
+  const { error } = await (supabase.from('referral_patterns') as any)
     .delete()
     .eq('id', id)
 
@@ -74,8 +72,7 @@ export async function addForbiddenWord(word: string) {
 export async function deleteForbiddenWord(id: string) {
   const supabase = await checkAdmin()
 
-  const { error } = await supabase
-    .from('forbidden_words')
+  const { error } = await (supabase.from('forbidden_words') as any)
     .delete()
     .eq('id', id)
 

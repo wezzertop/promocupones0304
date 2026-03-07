@@ -18,7 +18,7 @@ export async function GET(request: Request) {
     periodStart = now.toISOString()
   }
   
-  const { data, error } = await supabase.rpc('get_leaderboard', {
+  const { data, error } = await (supabase.rpc as any)('get_leaderboard', {
     period_start: periodStart,
     limit_count: limit
   })

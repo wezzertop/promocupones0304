@@ -64,8 +64,7 @@ export default function CommentsSection({ dealId }: CommentsSectionProps) {
       const { data: { session } } = await supabase.auth.getSession()
       const currentUserId = session?.user?.id
 
-      const { data, error } = await supabase
-        .from('comments')
+      const { data, error } = await (supabase.from('comments') as any)
         .select(`
           *,
           user:users(username, avatar_url)
@@ -78,8 +77,7 @@ export default function CommentsSection({ dealId }: CommentsSectionProps) {
       // Fetch user votes if logged in
       let userVotesMap = new Map<string, { type: 'like' | 'dislike', change_count: number }>()
       if (currentUserId) {
-        const { data: votesData } = await supabase
-          .from('comment_votes')
+        const { data: votesData } = await (supabase.from('comment_votes') as any)
           .select('comment_id, vote_type, change_count')
           .eq('user_id', currentUserId)
         
@@ -242,8 +240,7 @@ export default function CommentsSection({ dealId }: CommentsSectionProps) {
     try {
       if (newVote === null) {
         // Remove vote
-        const { error } = await supabase
-          .from('comment_votes')
+        const { error } = await (supabase.from('comment_votes') as any)
           .delete()
           .eq('user_id', session.user.id)
           .eq('comment_id', commentId)
@@ -254,8 +251,7 @@ export default function CommentsSection({ dealId }: CommentsSectionProps) {
         // Actually, since we have the change_count logic, we know if we are updating or inserting usually.
         // But let's rely on upsert which handles both.
         
-        const { error } = await supabase
-          .from('comment_votes')
+        const { error } = await (supabase.from('comment_votes') as any)
           .upsert({
             user_id: session.user.id,
             comment_id: commentId,
@@ -270,16 +266,14 @@ export default function CommentsSection({ dealId }: CommentsSectionProps) {
       if (countDelta !== 0) {
         // Fetch current count first to be safe, or just atomic update if we had RPC.
         // For now, we'll just read-then-write which is susceptible to race conditions but acceptable for this MVP fix.
-        const { data: current } = await supabase
-          .from('comments')
+        const { data: current } = await (supabase.from('comments') as any)
           .select('likes_count')
           .eq('id', commentId)
           .single()
         
         if (current) {
           const currentCount = (current as any).likes_count
-          await supabase
-            .from('comments')
+          await (supabase.from('comments') as any)
             .update({ likes_count: Math.max(0, (currentCount || 0) + countDelta) })
             .eq('id', commentId)
         }
@@ -304,7 +298,7 @@ export default function CommentsSection({ dealId }: CommentsSectionProps) {
     }
 
     try {
-      const { error } = await supabase.from('reports').insert({
+      const { error } = await (supabase.from('reports') as any).insert({
         user_id: session.user.id,
         target_id: commentId,
         target_type: 'comment',
@@ -343,8 +337,7 @@ export default function CommentsSection({ dealId }: CommentsSectionProps) {
         payload.parent_id = parentId
       }
 
-      const { data: insertedRaw, error } = await supabase
-        .from('comments')
+      const { data: insertedRaw, error } = await (supabase.from('comments') as any)
         .insert(payload)
         .select('*')
         .single()

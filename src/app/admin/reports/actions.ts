@@ -47,10 +47,10 @@ export async function deleteContent(reportId: string, targetId: string, targetTy
   let error = null
   
   if (targetType === 'deal') {
-    const { error: e } = await supabase.from('deals').delete().eq('id', targetId)
+    const { error: e } = await (supabase.from('deals') as any).delete().eq('id', targetId)
     error = e
   } else {
-    const { error: e } = await supabase.from('comments').delete().eq('id', targetId)
+    const { error: e } = await (supabase.from('comments') as any).delete().eq('id', targetId)
     error = e
   }
 
@@ -74,10 +74,10 @@ export async function banAuthor(reportId: string, targetId: string, targetType: 
   let userId = null
   
   if (targetType === 'deal') {
-    const { data } = await supabase.from('deals').select('user_id').eq('id', targetId).single()
+    const { data } = await (supabase.from('deals') as any).select('user_id').eq('id', targetId).single()
     userId = (data as any)?.user_id
   } else {
-     const { data } = await supabase.from('comments').select('user_id').eq('id', targetId).single()
+     const { data } = await (supabase.from('comments') as any).select('user_id').eq('id', targetId).single()
      userId = (data as any)?.user_id
   }
 
@@ -86,7 +86,7 @@ export async function banAuthor(reportId: string, targetId: string, targetType: 
   }
 
   // 2. Check if author is admin/mod
-  const { data: user } = await supabase.from('users').select('role').eq('id', userId).single()
+  const { data: user } = await (supabase.from('users') as any).select('role').eq('id', userId).single()
   if ((user as any)?.role === 'admin' || (user as any)?.role === 'moderator') {
     throw new Error('No puedes banear a un miembro del staff.')
   }

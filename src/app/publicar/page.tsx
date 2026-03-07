@@ -74,8 +74,8 @@ export default function CreateDealPage() {
   useEffect(() => {
     async function fetchData() {
       const [categoriesRes, storesRes] = await Promise.all([
-        supabase.from('categories').select('id, name').order('name'),
-        supabase.from('stores').select('id, name, slug').order('name')
+        (supabase.from('categories') as any).select('id, name').order('name'),
+        (supabase.from('stores') as any).select('id, name, slug').order('name')
       ])
       
       if (categoriesRes.data) {
@@ -193,8 +193,7 @@ export default function CreateDealPage() {
         
         // Intentar crear la tienda
         // Primero verificamos si ya existe por slug para evitar errores
-        const { data: existingStore } = await supabase
-          .from('stores')
+        const { data: existingStore } = await (supabase.from('stores') as any)
           .select('id')
           .eq('slug', slug)
           .maybeSingle()
@@ -202,8 +201,7 @@ export default function CreateDealPage() {
         if (existingStore) {
           finalStoreId = (existingStore as any).id
         } else {
-          const { data: newStore, error: createStoreError } = await supabase
-            .from('stores')
+          const { data: newStore, error: createStoreError } = await (supabase.from('stores') as any)
             .insert({
               name: customStoreName.trim(),
               slug: slug,
@@ -287,8 +285,7 @@ export default function CreateDealPage() {
       }
 
       // Get User Role to determine status
-      const { data: userProfile } = await supabase
-        .from('users')
+      const { data: userProfile } = await (supabase.from('users') as any)
         .select('role')
         .eq('id', session.user.id)
         .single()
@@ -323,8 +320,8 @@ export default function CreateDealPage() {
         start_date: start_date ? new Date(start_date as string).toISOString() : null,
         is_referral: isReferral
       }
-
-      const { error } = await supabase.from('deals').insert(deal)
+      
+      const { error } = await (supabase.from('deals') as any).insert(deal)
 
       if (error) {
         throw new Error(`Error al guardar la oferta: ${error.message}`)

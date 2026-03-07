@@ -41,7 +41,7 @@ export default function LevelProgress({ profile }: LevelProgressProps) {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         // Streak
-        const { data: streakData } = await supabase.rpc('claim_daily_bonus', { p_user_id: user.id })
+        const { data: streakData } = await (supabase.rpc as any)('claim_daily_bonus', { p_user_id: user.id })
         if (streakData) {
           setStreak(streakData.streak)
           if (streakData.xp_awarded > 0) {
@@ -51,8 +51,8 @@ export default function LevelProgress({ profile }: LevelProgressProps) {
 
         // Stats (This should ideally be a single RPC or efficient query, doing separate for MVP speed)
         // We can use count()
-        const { count: dealsCount } = await supabase.from('deals').select('*', { count: 'exact', head: true }).eq('user_id', user.id)
-        const { count: commentsCount } = await supabase.from('comments').select('*', { count: 'exact', head: true }).eq('user_id', user.id)
+        const { count: dealsCount } = await (supabase.from('deals') as any).select('*', { count: 'exact', head: true }).eq('user_id', user.id)
+        const { count: commentsCount } = await (supabase.from('comments') as any).select('*', { count: 'exact', head: true }).eq('user_id', user.id)
         
         // Likes received is harder without a direct counter on user or aggregation.
         // Let's approximate or skip if expensive. 

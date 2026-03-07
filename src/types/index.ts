@@ -33,6 +33,9 @@ export interface Deal {
   image_urls: string[]
   deal_type: 'deal' | 'coupon' | 'discussion'
   availability?: 'online' | 'in_store' | null
+  shipping_cost?: number | null
+  shipping_country?: string | null
+  coupon_code?: string | null
   status: 'active' | 'expired' | 'deleted' | 'pending' | 'rejected' | 'revision'
   moderation_notes?: string
   votes_count?: number

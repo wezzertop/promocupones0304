@@ -31,8 +31,7 @@ export async function submitReport(prevState: any, formData: FormData) {
   const data = validated.data
 
   // 3. Insert into DB
-  const { error } = await supabase
-    .from('reports')
+  const { error } = await (supabase.from('reports') as any)
     .insert({
       reporter_id: user.id,
       target_id: data.target_id,

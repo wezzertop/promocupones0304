@@ -22,20 +22,18 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   }
 
   // 1. Get matching stores
-  const { data: stores } = await supabase
-    .from('stores')
+  const { data: stores } = await (supabase.from('stores') as any)
     .select('id')
     .ilike('name', `%${query}%`)
   
-  const storeIds = stores?.map(s => s.id) || []
+  const storeIds = stores?.map((s: any) => s.id) || []
   
   // 2. Get matching categories
-  const { data: categories } = await supabase
-    .from('categories')
+  const { data: categories } = await (supabase.from('categories') as any)
     .select('id')
     .ilike('name', `%${query}%`)
     
-  const categoryIds = categories?.map(c => c.id) || []
+  const categoryIds = categories?.map((c: any) => c.id) || []
   
   // 3. Build OR query
   let orQuery = `title.ilike.%${query}%,description.ilike.%${query}%`
@@ -49,8 +47,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   }
 
   const now = new Date().toISOString()
-  const { data: dealsData, error } = await supabase
-    .from('deals')
+  const { data: dealsData, error } = await (supabase.from('deals') as any)
     .select(`
       *,
       store:stores(*),
@@ -67,7 +64,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     console.error('Error searching deals:', error)
   }
 
-  const deals = dealsData?.map(deal => ({
+  const deals = dealsData?.map((deal: any) => ({
     ...(deal as any),
     comments_count: (deal as any).comments ? ((deal as any).comments as any)[0]?.count : 0
   }))
@@ -88,7 +85,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
 
       <div className="flex flex-col gap-4">
         {deals && deals.length > 0 ? (
-          deals.map((deal) => (
+          deals.map((deal: any) => (
             // @ts-ignore
             <DealCard key={deal.id} deal={deal as unknown as Deal} />
           ))

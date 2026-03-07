@@ -48,8 +48,7 @@ export default function NotificationCenter() {
   }, [])
 
   const fetchNotifications = async (userId: string) => {
-    const { data } = await supabase
-      .from('notifications')
+    const { data } = await (supabase.from('notifications') as any)
       .select('*')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
@@ -62,8 +61,7 @@ export default function NotificationCenter() {
   }
 
   const markAsRead = async (id: string) => {
-    await supabase
-      .from('notifications')
+    await (supabase.from('notifications') as any)
       .update({ is_read: true })
       .eq('id', id)
     
@@ -77,8 +75,7 @@ export default function NotificationCenter() {
     const { data: { session } } = await supabase.auth.getSession()
     if (!session) return
 
-    await supabase
-      .from('notifications')
+    await (supabase.from('notifications') as any)
       .update({ is_read: true })
       .eq('user_id', session.user.id)
       .eq('is_read', false)
