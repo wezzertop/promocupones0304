@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import ClientLayout from "@/components/ClientLayout";
@@ -6,14 +6,15 @@ import { createClient } from "@/lib/supabase/server";
 
 const inter = Inter({ subsets: ["latin"] });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  // Removed maximumScale: 1 to allow user zooming
+};
+
 export const metadata: Metadata = {
   title: "PromoCupones - Comunidad de Ofertas y Descuentos",
   description: "Descubre y comparte las mejores ofertas, cupones y promociones en México.",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    // Removed maximumScale: 1 to allow user zooming
-  },
 };
 
 export default async function RootLayout({

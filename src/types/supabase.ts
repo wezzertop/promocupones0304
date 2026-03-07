@@ -202,6 +202,40 @@ export interface Database {
           }
         ]
       }
+      saves: {
+        Row: {
+          id: string
+          user_id: string
+          deal_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          deal_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          deal_id?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saves_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saves_deal_id_fkey"
+            columns: ["deal_id"]
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       votes: {
         Row: {
           id: string

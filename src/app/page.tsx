@@ -50,13 +50,13 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
   if (user && deals.length > 0) {
     const dealIds = deals.map(d => d.id)
 
-    const [votesResult, savesResult] = await Promise.all([
-      supabase.from('votes').select('deal_id, vote_type').eq('user_id', user.id).in('deal_id', dealIds),
-      supabase.from('saves').select('deal_id').eq('user_id', user.id).in('deal_id', dealIds)
-    ])
+    const votesPromise = supabase.from('votes').select('deal_id, vote_type').eq('user_id', user.id).in('deal_id', dealIds)
+    const savesPromise = supabase.from('saves').select('deal_id').eq('user_id', user.id).in('deal_id', dealIds)
 
-    const userVotes = new Map(votesResult.data?.map(v => [v.deal_id, v.vote_type]) || [])
-    const userSaves = new Set(savesResult.data?.map(s => s.deal_id) || [])
+    const [votesResult, savesResult] = await Promise.all([votesPromise, savesPromise])
+
+    const userVotes = new Map(votesResult.data?.map((v: any) => [v.deal_id, v.vote_type]) || [])
+    const userSaves = new Set(savesResult.data?.map((s: any) => s.deal_id) || [])
 
     deals = deals.map(deal => ({
       ...deal,
