@@ -123,6 +123,9 @@ export interface Database {
           shipping_country: string | null
           start_date: string | null
           votes_count: number
+          moderated_at: string | null
+          moderated_by: string | null
+          moderation_notes: string | null
         }
         Insert: {
           id?: string
@@ -147,6 +150,9 @@ export interface Database {
           shipping_country?: string | null
           start_date?: string | null
           votes_count?: number
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_notes?: string | null
         }
         Update: {
           id?: string
@@ -171,6 +177,9 @@ export interface Database {
           shipping_country?: string | null
           start_date?: string | null
           votes_count?: number
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_notes?: string | null
         }
         Relationships: [
           {
