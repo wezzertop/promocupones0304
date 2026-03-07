@@ -477,13 +477,13 @@ export default function DealDetailView({
                 {/* Thumbnails */}
                 {hasMultipleImages && (
                   <div className="w-full max-w-full overflow-hidden">
-                    <div className="flex gap-2.5 overflow-x-auto py-1 px-1 scrollbar-hide snap-x snap-mandatory touch-pan-x">
+                    <div className="grid grid-cols-4 gap-2 py-1 px-1">
                       {dealImages.map((url: string, idx: number) => (
                         <button
                           key={idx}
                           onClick={() => setCurrentImageIndex(idx)}
                           className={cn(
-                            "relative w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden border-2 flex-shrink-0 transition-all snap-start",
+                            "relative w-full aspect-square rounded-lg overflow-hidden border-2 transition-all",
                             idx === currentImageIndex ? "border-[#2BD45A] ring-2 ring-[#2BD45A]/20" : "border-transparent opacity-60 hover:opacity-100 bg-zinc-900"
                           )}
                         >
@@ -520,7 +520,7 @@ export default function DealDetailView({
                             dragConstraints={{ left: 0, right: 0 }}
                             dragElastic={1}
                             onDragEnd={handleDragEnd}
-                            className="max-w-full max-h-full w-auto h-auto object-contain select-none touch-pan-y"
+                            className="max-w-full max-h-full w-auto h-auto object-contain select-none touch-none"
                             draggable="false"
                         />
                         </AnimatePresence>
@@ -530,13 +530,13 @@ export default function DealDetailView({
                       <>
                         <button 
                           onClick={(e) => { e.stopPropagation(); prevImage(); }}
-                          className="absolute left-2 md:left-8 top-1/2 -translate-y-1/2 p-3 bg-black/50 text-white rounded-full hover:bg-black/80 transition-colors z-[110]"
+                          className="absolute left-2 top-1/2 -translate-y-1/2 p-4 bg-black/50 text-white rounded-full hover:bg-black/80 transition-colors z-[110]"
                         >
                           <ChevronLeft className="w-8 h-8" />
                         </button>
                         <button 
                           onClick={(e) => { e.stopPropagation(); nextImage(); }}
-                          className="absolute right-2 md:right-8 top-1/2 -translate-y-1/2 p-3 bg-black/50 text-white rounded-full hover:bg-black/80 transition-colors z-[110]"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 p-4 bg-black/50 text-white rounded-full hover:bg-black/80 transition-colors z-[110]"
                         >
                           <ChevronRight className="w-8 h-8" />
                         </button>
