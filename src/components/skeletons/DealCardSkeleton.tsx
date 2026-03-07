@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils'
 
 export default function DealCardSkeleton() {
   return (
-    <div className="flex flex-col md:flex-row bg-[#09090b] rounded-xl md:rounded-3xl overflow-hidden border border-white/5 h-auto md:h-[340px] animate-pulse">
+    <div className="flex flex-col md:flex-row bg-[#09090b] rounded-xl md:rounded-3xl overflow-hidden border border-white/5 h-auto md:h-[340px] animate-pulse mx-2 md:mx-0">
       
       {/* Vertical Voting Sidebar (Desktop Only) */}
       <div className="hidden md:flex flex-col items-center justify-center gap-4 w-16 bg-black/40 border-r border-white/5 py-4 shrink-0">
