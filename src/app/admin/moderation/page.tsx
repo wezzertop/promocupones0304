@@ -75,7 +75,7 @@ export default function ModerationPage() {
         status: 'active',
         moderated_at: new Date().toISOString(),
         // moderated_by: session.user.id (Supabase can handle this with triggers or we pass it)
-      })
+      } as any)
       .eq('id', id)
 
     if (!error) {
@@ -109,7 +109,7 @@ export default function ModerationPage() {
         status: 'rejected',
         moderation_notes: rejectReason,
         moderated_at: new Date().toISOString()
-      })
+      } as any)
       .eq('id', selectedDeal.id)
 
     if (!error) {
