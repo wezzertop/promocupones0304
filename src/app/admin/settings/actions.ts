@@ -23,7 +23,7 @@ async function checkAdmin() {
 export async function addReferralPattern(pattern: string, description: string) {
   const supabase = await checkAdmin()
   
-  const { error } = await supabase.from('referral_patterns').insert({
+  const { error } = await (supabase.from('referral_patterns') as any).insert({
     pattern,
     description,
     is_active: true
@@ -31,7 +31,7 @@ export async function addReferralPattern(pattern: string, description: string) {
 
   if (error) throw new Error(error.message)
 
-  await supabase.from('moderation_logs').insert({
+  await (supabase.from('moderation_logs') as any).insert({
     action_type: 'add_referral_pattern',
     target_type: 'pattern',
     details: { pattern }
@@ -56,13 +56,13 @@ export async function deleteReferralPattern(id: string) {
 export async function addForbiddenWord(word: string) {
   const supabase = await checkAdmin()
 
-  const { error } = await supabase.from('forbidden_words').insert({
+  const { error } = await (supabase.from('forbidden_words') as any).insert({
     word: word.toLowerCase().trim(),
   })
 
   if (error) throw new Error(error.message)
 
-  await supabase.from('moderation_logs').insert({
+  await (supabase.from('moderation_logs') as any).insert({
     action_type: 'add_forbidden_word',
     target_type: 'word',
     details: { word }

@@ -21,8 +21,7 @@ export async function banUser(userId: string, reason: string) {
   }
 
   // Perform ban
-  const { error } = await supabase
-    .from('users')
+  const { error } = await (supabase.from('users') as any)
     .update({ 
       is_banned: true,
       ban_reason: reason,
@@ -33,7 +32,7 @@ export async function banUser(userId: string, reason: string) {
   if (error) throw new Error(error.message)
 
   // Log action
-  await supabase.from('moderation_logs').insert({
+  await (supabase.from('moderation_logs') as any).insert({
     action_type: 'ban_user',
     target_id: userId,
     target_type: 'user',
@@ -61,8 +60,7 @@ export async function unbanUser(userId: string) {
   }
 
   // Perform unban
-  const { error } = await supabase
-    .from('users')
+  const { error } = await (supabase.from('users') as any)
     .update({ 
       is_banned: false,
       ban_reason: null,
@@ -73,7 +71,7 @@ export async function unbanUser(userId: string) {
   if (error) throw new Error(error.message)
 
   // Log action
-  await supabase.from('moderation_logs').insert({
+  await (supabase.from('moderation_logs') as any).insert({
     action_type: 'unban_user',
     target_id: userId,
     target_type: 'user'

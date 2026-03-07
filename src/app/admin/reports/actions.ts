@@ -23,8 +23,7 @@ async function checkAdminOrMod() {
 export async function resolveReport(id: string, status: 'resolved' | 'dismissed') {
   const { supabase } = await checkAdminOrMod()
   
-  const { error } = await supabase
-    .from('reports')
+  const { error } = await (supabase.from('reports') as any)
     .update({ 
       status,
       resolved_at: new Date().toISOString()
@@ -33,7 +32,7 @@ export async function resolveReport(id: string, status: 'resolved' | 'dismissed'
 
   if (error) throw new Error(error.message)
 
-  await supabase.from('moderation_logs').insert({
+  await (supabase.from('moderation_logs') as any).insert({
     action_type: status === 'resolved' ? 'resolve_report' : 'dismiss_report',
     target_id: id,
     target_type: 'report'
@@ -57,7 +56,7 @@ export async function deleteContent(reportId: string, targetId: string, targetTy
 
   if (error) throw new Error(error.message)
 
-  await supabase.from('moderation_logs').insert({
+  await (supabase.from('moderation_logs') as any).insert({
     action_type: 'delete_content',
     target_id: targetId,
     target_type: targetType,
@@ -93,8 +92,7 @@ export async function banAuthor(reportId: string, targetId: string, targetType: 
   }
 
   // 3. Ban user
-  const { error } = await supabase
-    .from('users')
+  const { error } = await (supabase.from('users') as any)
     .update({ 
       is_banned: true, 
       ban_reason: `Baneado por reporte: ${reason}`,
@@ -104,7 +102,7 @@ export async function banAuthor(reportId: string, targetId: string, targetType: 
 
   if (error) throw new Error(error.message)
 
-  await supabase.from('moderation_logs').insert({
+  await (supabase.from('moderation_logs') as any).insert({
     action_type: 'ban_user',
     target_id: userId,
     target_type: 'user',

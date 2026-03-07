@@ -32,8 +32,7 @@ export async function sendNotification(targetUser: string, title: string, messag
   }
 
   // Insert notification
-  const { error: notifError } = await supabase
-    .from('notifications')
+  const { error: notifError } = await (supabase.from('notifications') as any)
     .insert({
       user_id: (target as any).id,
       type: 'system_alert',
@@ -45,7 +44,7 @@ export async function sendNotification(targetUser: string, title: string, messag
   if (notifError) throw new Error(notifError.message)
 
   // Log action
-  await supabase.from('moderation_logs').insert({
+  await (supabase.from('moderation_logs') as any).insert({
     action_type: 'send_notification',
     target_id: (target as any).id,
     target_type: 'user',
