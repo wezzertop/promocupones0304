@@ -250,20 +250,20 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
   const isFreeShipping = deal.shipping_cost === 0 || descriptionLower.includes('envío gratis') || descriptionLower.includes('entrega gratis')
 
   return (
-    <div className="max-w-6xl mx-auto space-y-4 pb-12 px-4 sm:px-6">
+    <div className="max-w-6xl mx-auto space-y-3 md:space-y-4 pb-12 px-3 sm:px-6">
        {/* Back button */}
        <Link href="/" className="inline-flex items-center text-zinc-400 hover:text-white transition-colors group text-sm">
           <ChevronLeft className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" />
           Volver a ofertas
        </Link>
 
-       <div className="flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-6">
+       <div className="flex flex-col lg:grid lg:grid-cols-12 gap-3 lg:gap-6">
           {/* Right Column: Info (4 cols) - Mobile: Order 2, Desktop: Order 2 (Right) */}
-          <div className="lg:col-span-4 space-y-4 order-2 lg:order-2 w-full min-w-0">
+          <div className="lg:col-span-4 space-y-3 md:space-y-4 order-2 lg:order-2 w-full min-w-0">
              <div className="glass-panel rounded-2xl lg:sticky lg:top-24 border border-white/5 flex flex-col md:flex-row overflow-hidden">
                 
                 {/* Main Content Info */}
-                <div className="flex-1 p-5 space-y-4 min-w-0">
+                <div className="flex-1 p-4 md:p-5 space-y-3 md:space-y-4 min-w-0">
                    <div>
                       <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold tracking-wider mb-2 uppercase">
                          {/* Store Name */}
@@ -478,7 +478,7 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
 
           {/* Left Column: Image & Comments (8 cols) - Mobile: Order N/A (contents), Desktop: Order 1 (Left) */}
           <div className="contents lg:block lg:col-span-8 lg:space-y-4 lg:order-1">
-             <div className="glass-panel p-4 relative group overflow-hidden rounded-2xl order-1 flex flex-col gap-3 w-full">
+             <div className="glass-panel p-3 md:p-4 relative group overflow-hidden rounded-2xl order-1 flex flex-col gap-3 w-full">
                 
                 {/* Countdown Banner - Moved to top to avoid overlap */}
                 {expiresAt && !isExpired && (
@@ -527,7 +527,7 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
                    </div>
                    
                    {/* Image Container */}
-                   <div className="relative flex-1 rounded-xl overflow-hidden bg-zinc-900/50 flex items-center justify-center w-full aspect-square sm:aspect-video group/image order-1 md:order-2 border border-white/5">
+                   <div className="relative flex-1 rounded-xl overflow-hidden bg-zinc-900/50 flex items-center justify-center w-full aspect-video group/image order-1 md:order-2 border border-white/5">
                       <AnimatePresence mode="wait">
                         <motion.img
                             key={currentImageIndex}
@@ -660,7 +660,7 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
                 </div>
              )}
 
-             <div className="glass-panel p-5 rounded-2xl space-y-4 border border-white/5 order-3 w-full overflow-hidden">
+             <div className="glass-panel p-4 md:p-5 rounded-2xl space-y-4 border border-white/5 order-3 w-full overflow-hidden">
                 <CommentsSection dealId={id} />
              </div>
           </div>

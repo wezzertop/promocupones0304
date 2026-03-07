@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useUIStore } from '@/lib/store'
 import { Flag, Loader2, X, AlertTriangle } from 'lucide-react'
 import { submitReport } from '@/app/report/actions'
 
@@ -26,6 +27,7 @@ export default function ReportModal({ isOpen, onClose, targetId, targetType }: R
   const [description, setDescription] = useState('')
   const [loading, setLoading] = useState(false)
   const supabase = createClient()
+  const { addToast } = useUIStore()
 
   if (!isOpen) return null
 
@@ -50,11 +52,19 @@ export default function ReportModal({ isOpen, onClose, targetId, targetType }: R
          throw new Error(msg)
       }
 
-      alert('Gracias por tu reporte. Nuestro equipo lo revisará pronto.')
+      addToast({
+        type: 'success',
+        message: 'Reporte enviado',
+        description: 'Gracias por tu reporte. Nuestro equipo lo revisará pronto.'
+      })
       onClose()
     } catch (error: any) {
       console.error('Error reporting:', error)
-      alert(error.message || 'Ocurrió un error al enviar el reporte.')
+      addToast({
+        type: 'error',
+        message: 'Error al enviar reporte',
+        description: error.message || 'Ocurrió un error al enviar el reporte.'
+      })
     } finally {
       setLoading(false)
     }

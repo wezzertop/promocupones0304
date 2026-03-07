@@ -9,6 +9,8 @@ import { Category } from '@/types'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import DealPreviewModal from './DealPreviewModal'
+import { createClient } from '@/lib/supabase/client'
+import { compressImage } from '@/lib/utils'
 
 interface ScraperClientProps {
   categories: Category[]
@@ -28,6 +30,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
   const [logsLoading, setLogsLoading] = useState(false)
   const [sortBy, setSortBy] = useState<'price_asc' | 'price_desc' | 'discount'>('price_asc')
   const [previewDeal, setPreviewDeal] = useState<ScrapedDeal | null>(null)
+  const supabase = createClient()
 
   const sortedResults = [...results].sort((a, b) => {
     if (sortBy === 'price_asc') return a.price - b.price
@@ -107,7 +110,87 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
 
     setPublishing(deal.id)
     try {
-      const res = await publishDeal(deal, selectedCategory)
+      // 1. Descargar y Optimizar Imágenes
+      let optimizedImageUrl = deal.image_url;
+      let optimizedImageUrls: string[] = [];
+      
+      // Determine which images to process: prefer the gallery list if available, otherwise fallback to single image
+      const sourceImages = deal.image_urls && deal.image_urls.length > 0 ? deal.image_urls : [deal.image_url];
+      
+      // Process images sequentially or in parallel? Parallel is faster but might hit rate limits. Let's try parallel.
+      const uploadPromises = sourceImages.map(async (imgUrl) => {
+          try {
+            // Fetch via proxy to avoid CORS
+            const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(imgUrl)}`;
+            const response = await fetch(proxyUrl);
+            
+            if (response.ok) {
+              const blob = await response.blob();
+              // Create file object for compressImage
+              const file = new File([blob], 'image.jpg', { type: blob.type });
+              
+              // Optimizar (Resize + WebP)
+              // Using 0.8 quality and 1200px max width
+              const compressedBlob = await compressImage(file, 0.8, 1200, 'image/webp');
+              
+              // Upload to Supabase Storage
+              // We need a unique filename
+              const timestamp = Date.now();
+              const randomString = Math.random().toString(36).substring(7);
+              const fileName = `scraped/${timestamp}-${randomString}.webp`;
+              
+              const { data, error: uploadError } = await supabase.storage
+                .from('deals')
+                .upload(fileName, compressedBlob, {
+                  contentType: 'image/webp',
+                  upsert: false
+                });
+    
+              if (uploadError) {
+                 console.error('Error subiendo imagen optimizada:', uploadError);
+                 return null; // Return null on error
+              } else {
+                 // Get Public URL
+                 const { data: { publicUrl } } = supabase.storage
+                  .from('deals')
+                  .getPublicUrl(fileName);
+                 
+                 return publicUrl;
+              }
+            } else {
+              console.warn('No se pudo descargar la imagen para optimizar via proxy:', imgUrl);
+              return null;
+            }
+          } catch (imgError) {
+            console.error('Error optimizando imagen:', imgError);
+            return null;
+          }
+      });
+
+      const uploadedUrls = await Promise.all(uploadPromises);
+      
+      // Filter out failed uploads
+      const validUploadedUrls = uploadedUrls.filter((url): url is string => url !== null);
+      
+      if (validUploadedUrls.length > 0) {
+          optimizedImageUrls = validUploadedUrls;
+          optimizedImageUrl = validUploadedUrls[0]; // Set the first one as main image
+      } else {
+          // Fallback: If ALL optimizations failed, try to use original URLs? 
+          // Or just fail gracefully? Let's use originals as fallback if optimization fails completely
+          console.warn('Todas las optimizaciones fallaron, usando URLs originales');
+          optimizedImageUrl = deal.image_url;
+          optimizedImageUrls = deal.image_urls || [deal.image_url];
+      }
+
+      // 2. Publicar con las nuevas URLs
+      const dealToPublish = {
+        ...deal,
+        image_url: optimizedImageUrl,
+        image_urls: optimizedImageUrls
+      };
+
+      const res = await publishDeal(dealToPublish, selectedCategory)
       if (res.error) {
         alert(res.error)
       } else {

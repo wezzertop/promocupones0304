@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/tooltip"
 import { isReferralUrl, canUserPostReferral, checkForbiddenWords } from '@/lib/moderation'
 import PublicationSuccessModal from '@/components/PublicationSuccessModal'
-import { createNotification } from '@/lib/notifications'
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, rectSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from '@/components/SortableItem'
@@ -325,25 +324,6 @@ export default function CreateDealPage() {
 
       if (error) {
         throw new Error(`Error al guardar la oferta: ${error.message}`)
-      }
-
-      // Notificación de sistema (para que aparezca en la campanita)
-      if (initialStatus === 'pending') {
-        await createNotification(
-          session.user.id,
-          'system_alert',
-          'Oferta en revisión',
-          `Tu oferta "${title}" ha sido enviada y está siendo revisada por nuestro equipo.`,
-          '/mis-publicaciones'
-        )
-      } else {
-        await createNotification(
-          session.user.id,
-          'post_approved',
-          'Oferta publicada',
-          `Tu oferta "${title}" ha sido publicada exitosamente.`,
-          '/mis-publicaciones'
-        )
       }
 
       // Mostrar modal en lugar de alerta y redirección inmediata

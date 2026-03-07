@@ -12,8 +12,7 @@ export const metadata: Metadata = {
   viewport: {
     width: "device-width",
     initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
+    // Removed maximumScale: 1 to allow user zooming
   },
 };
 

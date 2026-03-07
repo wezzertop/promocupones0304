@@ -109,7 +109,7 @@ export default function DealDetailView({
   const storeName = deal.store?.name || (deal.source === 'amazon' ? 'Amazon' : deal.source === 'mercadolibre' ? 'Mercado Libre' : deal.source) || 'Tienda'
 
   return (
-    <div className="max-w-6xl mx-auto space-y-4 pb-12 px-4 sm:px-6">
+    <div className="max-w-6xl mx-auto space-y-3 md:space-y-4 pb-12 px-3 sm:px-6">
        {/* Back button */}
        {!isPreview && (
            <Link href="/" className="inline-flex items-center text-zinc-400 hover:text-white transition-colors group text-sm">
@@ -118,13 +118,13 @@ export default function DealDetailView({
            </Link>
        )}
 
-       <div className="flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-6">
+       <div className="flex flex-col lg:grid lg:grid-cols-12 gap-3 lg:gap-6">
           {/* Right Column: Info (4 cols) */}
-          <div className="lg:col-span-4 space-y-4 order-2 lg:order-2 w-full min-w-0">
+          <div className="lg:col-span-4 space-y-3 md:space-y-4 order-2 lg:order-2 w-full min-w-0">
              <div className="glass-panel rounded-2xl lg:sticky lg:top-24 border border-white/5 flex flex-col md:flex-row overflow-hidden">
                 
                 {/* Main Content Info */}
-                <div className="flex-1 p-5 space-y-4 min-w-0">
+                <div className="flex-1 p-4 md:p-5 space-y-3 md:space-y-4 min-w-0">
                    <div>
                       <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold tracking-wider mb-2 uppercase">
                          {/* Store Name */}
@@ -352,7 +352,7 @@ export default function DealDetailView({
 
           {/* Left Column: Image & Comments (8 cols) */}
           <div className="contents lg:block lg:col-span-8 lg:space-y-4 lg:order-1">
-             <div className="glass-panel p-4 relative group overflow-hidden rounded-2xl order-1 flex flex-col gap-3 w-full">
+             <div className="glass-panel p-3 md:p-4 relative group overflow-hidden rounded-2xl order-1 flex flex-col gap-3 w-full">
                 
                 {/* Countdown Banner */}
                 {expiresAt && !isExpired && (
@@ -405,24 +405,23 @@ export default function DealDetailView({
                    </div>
                    
                    {/* Image Container */}
-                   <div className="relative flex-1 rounded-xl overflow-hidden bg-zinc-900/50 flex items-center justify-center w-full aspect-square sm:aspect-video group/image order-1 md:order-2 border border-white/5">
+                   <div className="relative flex-1 rounded-xl overflow-hidden bg-white flex items-center justify-center w-full aspect-video group/image order-1 md:order-2 border border-white/5">
                       <AnimatePresence mode="wait">
-                        <motion.img
+                        <motion.div
                             key={currentImageIndex}
-                            src={imageUrl}
-                            alt={deal.title}
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -20 }}
                             transition={{ duration: 0.2 }}
-                            whileHover={{ scale: 1.05 }}
-                            drag={hasMultipleImages ? "x" : false}
-                            dragConstraints={{ left: 0, right: 0 }}
-                            dragElastic={0.2}
-                            onDragEnd={handleDragEnd}
-                            className="object-contain w-full h-full p-2 cursor-pointer touch-pan-y"
-                            onClick={() => setIsLightboxOpen(true)}
-                        />
+                            className="relative w-full h-full flex items-center justify-center p-2"
+                        >
+                             <img 
+                                src={imageUrl}
+                                alt={deal.title}
+                                className="max-w-full max-h-full w-auto h-auto object-contain cursor-zoom-in"
+                                onClick={() => setIsLightboxOpen(true)}
+                             />
+                        </motion.div>
                       </AnimatePresence>
                       
                       {/* Zoom Button */}
@@ -488,51 +487,49 @@ export default function DealDetailView({
 
              {/* Lightbox Modal */}
              {isLightboxOpen && (
-                <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 animate-in fade-in duration-200">
+                <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 animate-in fade-in duration-200 backdrop-blur-sm">
                   <button 
                     onClick={() => setIsLightboxOpen(false)}
-                    className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-white transition-colors"
+                    className="absolute top-4 right-4 p-2 bg-black/50 text-white/80 hover:text-white rounded-full transition-colors z-[110]"
                   >
                     <X className="w-8 h-8" />
                   </button>
                   
-                  <div className="relative w-full h-full max-w-7xl flex items-center justify-center">
-                    <AnimatePresence mode="wait">
-                      <motion.img 
-                        key={currentImageIndex}
-                        src={imageUrl} 
-                        alt={deal.title} 
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.2 }}
-                        drag={hasMultipleImages ? "x" : false}
-                        dragConstraints={{ left: 0, right: 0 }}
-                        dragElastic={0.2}
-                        onDragEnd={handleDragEnd}
-                        className="max-w-full max-h-full object-contain touch-pan-y"
-                      />
-                    </AnimatePresence>
-                    
+                  <div className="relative w-full h-full flex items-center justify-center" onClick={() => setIsLightboxOpen(false)}>
+                    <div className="relative w-full h-full max-w-5xl max-h-[90vh] flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+                        <AnimatePresence mode="wait">
+                        <motion.img 
+                            key={currentImageIndex}
+                            src={imageUrl} 
+                            alt={deal.title} 
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            transition={{ duration: 0.2 }}
+                            className="max-w-full max-h-full w-auto h-auto object-contain select-none"
+                        />
+                        </AnimatePresence>
+                    </div>
+
                     {hasMultipleImages && (
                       <>
                         <button 
                           onClick={(e) => { e.stopPropagation(); prevImage(); }}
-                          className="absolute left-4 top-1/2 -translate-y-1/2 p-4 text-white/50 hover:text-white transition-colors"
+                          className="absolute left-2 md:left-8 top-1/2 -translate-y-1/2 p-3 bg-black/50 text-white rounded-full hover:bg-black/80 transition-colors z-[110]"
                         >
-                          <ChevronLeft className="w-12 h-12" />
+                          <ChevronLeft className="w-8 h-8" />
                         </button>
                         <button 
                           onClick={(e) => { e.stopPropagation(); nextImage(); }}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 p-4 text-white/50 hover:text-white transition-colors"
+                          className="absolute right-2 md:right-8 top-1/2 -translate-y-1/2 p-3 bg-black/50 text-white rounded-full hover:bg-black/80 transition-colors z-[110]"
                         >
-                          <ChevronRight className="w-12 h-12" />
+                          <ChevronRight className="w-8 h-8" />
                         </button>
                       </>
                     )}
                   </div>
                   
-                  <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 font-medium">
+                  <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-black/50 px-4 py-2 rounded-full text-white font-medium z-[110]">
                     {currentImageIndex + 1} / {dealImages.length}
                   </div>
                 </div>
@@ -540,7 +537,7 @@ export default function DealDetailView({
 
              {/* Comments (Hidden in Preview if desired, or mocked) */}
              {!isPreview && deal.id && (
-                <div className="glass-panel p-5 rounded-2xl space-y-4 border border-white/5 order-3 w-full overflow-hidden">
+                <div className="glass-panel p-4 md:p-5 rounded-2xl space-y-4 border border-white/5 order-3 w-full overflow-hidden">
                     <CommentsSection dealId={deal.id} />
                 </div>
              )}

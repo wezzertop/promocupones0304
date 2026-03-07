@@ -47,6 +47,11 @@ export interface Deal {
   category?: Category
 }
 
+export interface DealWithRelations extends Deal {
+  user_vote?: 'hot' | 'cold' | null
+  is_saved?: boolean
+}
+
 export interface GamificationLevel {
   level: number
   xp_required: number

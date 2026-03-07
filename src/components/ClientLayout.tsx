@@ -8,6 +8,7 @@ import { useUIStore } from '@/lib/store'
 import { User as SupabaseUser } from '@supabase/supabase-js'
 import { usePathname } from 'next/navigation'
 import GamificationToast from '@/components/gamification/GamificationToast'
+import ToastSystem from '@/components/ui/ToastSystem'
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -29,13 +30,14 @@ export default function ClientLayout({ children, user }: ClientLayoutProps) {
         isHeaderVisible ? 'lg:pl-64' : 'lg:pl-0'
       }`}>
         <Header user={user} />
-        <main className="flex-1 p-4 lg:p-8 max-w-[1920px] mx-auto w-full">
+        <main className="flex-1 p-2 md:p-4 lg:p-8 max-w-[1920px] mx-auto w-full">
           {children}
         </main>
         <Footer />
       </div>
       <FloatingActionButton />
       <GamificationToast />
+      <ToastSystem />
     </div>
   )
 }

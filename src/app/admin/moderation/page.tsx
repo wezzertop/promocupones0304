@@ -6,7 +6,6 @@ import { Check, X, AlertTriangle, Eye, ExternalLink, History } from 'lucide-reac
 import Image from 'next/image'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { createNotification } from '@/lib/notifications'
 import { addKarmaPoints, POINT_SYSTEM } from '@/lib/moderation'
 
 export default function ModerationPage() {
@@ -86,15 +85,6 @@ export default function ModerationPage() {
         
         // Update UI
         setDeals(deals.filter(d => d.id !== id))
-        
-        // Create notification
-        await createNotification(
-          deal.user_id,
-          'post_approved',
-          '¡Tu oferta ha sido aprobada!',
-          `Tu publicación "${deal.title}" ya está visible para todos.`,
-          `/oferta/${deal.id}`
-        )
       }
     }
   }
@@ -111,13 +101,6 @@ export default function ModerationPage() {
       .eq('id', selectedDeal.id)
 
     if (!error) {
-      await createNotification(
-        selectedDeal.user_id,
-        'post_rejected',
-        'Tu oferta no ha sido aprobada',
-        `Razón: ${rejectReason}`,
-        '#'
-      )
       setDeals(deals.filter(d => d.id !== selectedDeal.id))
       setIsRejectModalOpen(false)
       setRejectReason('')

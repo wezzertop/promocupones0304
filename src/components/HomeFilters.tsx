@@ -17,7 +17,7 @@ export default function HomeFilters({ dealsCount }: { dealsCount: number }) {
   }
 
   return (
-    <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 sticky top-16 z-20 bg-[#0f1012]/95 backdrop-blur-xl py-4 -mx-4 px-4 border-b border-[#2d2e33]/50 transition-transform duration-300 ${
+    <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 sticky top-16 z-20 bg-[#0f1012]/95 backdrop-blur-xl py-4 -mx-2 px-2 md:-mx-4 md:px-4 lg:-mx-8 lg:px-8 border-b border-[#2d2e33]/50 transition-transform duration-300 ${
       isHeaderVisible ? 'translate-y-0' : '-translate-y-full'
     }`}>
       <div className="flex items-center gap-2 p-1 bg-[#18191c] rounded-xl border border-[#2d2e33] overflow-x-auto max-w-full scrollbar-hide">

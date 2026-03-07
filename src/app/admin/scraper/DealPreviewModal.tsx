@@ -88,7 +88,7 @@ export default function DealPreviewModal({ deal, isOpen, onClose, categoryName =
                     <div className="glass-panel p-4 relative group overflow-hidden rounded-2xl bg-[#18191c] border border-white/5 flex flex-col gap-3">
                         
                         {/* Main Image */}
-                        <div className="relative rounded-xl overflow-hidden bg-white p-8 flex items-center justify-center w-full aspect-square sm:aspect-video group/image border border-white/5">
+                        <div className="relative rounded-xl overflow-hidden bg-white p-2 flex items-center justify-center w-full aspect-video group/image border border-white/5">
                             <AnimatePresence mode="wait">
                                 <motion.img
                                     key={currentImageIndex}
