@@ -84,7 +84,7 @@ export async function updateDeal(dealId: string, prevState: any, formData: FormD
   // 6. Update Deal
   // Calculate discount
   let discount_percentage = null
-  if (data.original_price && data.original_price > data.price) {
+  if (data.original_price && data.price && data.original_price > data.price) {
     discount_percentage = Math.round(((data.original_price - data.price) / data.original_price) * 100)
   }
 
