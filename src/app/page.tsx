@@ -84,6 +84,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
       {/* Filters & Actions */}
       <HomeFilters dealsCount={deals?.length || 0} />
 
+      {/* Top Ad */}
+      <FeedAd className="my-6" />
+
       {/* Main Grid */}
       <div className="flex flex-col gap-4">
         {deals && deals.length > 0 ? (

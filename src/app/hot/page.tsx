@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import DealCard from '@/components/DealCard'
+import FeedAd from '@/components/FeedAd'
 import { Deal } from '@/types'
 import { Flame } from 'lucide-react'
 import HomeFilters from '@/components/HomeFilters'
@@ -58,12 +59,20 @@ export default async function HotPage() {
 
       <HomeFilters dealsCount={deals?.length || 0} />
 
+      {/* Top Ad */}
+      <FeedAd className="my-6" />
+
       {/* Main Grid */}
       <div className="flex flex-col gap-4">
         {deals && deals.length > 0 ? (
-          deals.map((deal: any) => (
-            // @ts-ignore
-            <DealCard key={deal.id} deal={deal as unknown as Deal} />
+          deals.map((deal: any, index: number) => (
+            <div key={deal.id}>
+                {/* @ts-ignore */}
+                <DealCard deal={deal as unknown as Deal} />
+                {(index + 1) % 5 === 0 && (
+                  <FeedAd className="mt-4" />
+                )}
+            </div>
           ))
         ) : (
           <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-[#18191c] rounded-3xl border border-[#2d2e33] border-dashed">

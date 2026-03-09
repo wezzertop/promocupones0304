@@ -11,6 +11,8 @@ export default function FeedAd({ className }: FeedAdProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [isMobile, setIsMobile] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
+  // Check if we are in sidebar context
+  const isSidebar = className?.includes('w-full') && className?.includes('h-auto')
 
   useEffect(() => {
     setIsMounted(true)
@@ -45,7 +47,8 @@ export default function FeedAd({ className }: FeedAdProps) {
       url: 'https://crateworkshop.com/4019062959f736f8d1b350a78242d5ea/invoke.js'
     }
 
-    const config = isMobile ? mobileConfig : desktopConfig
+    // If sidebar, force mobile ad (small banner) because sidebar is narrow
+    const config = (isMobile || isSidebar) ? mobileConfig : desktopConfig
 
     // Create iframe element
     const iframe = document.createElement('iframe')
@@ -99,20 +102,26 @@ export default function FeedAd({ className }: FeedAdProps) {
         container.innerHTML = ''
       }
     }
-  }, [isMobile, isMounted])
+  }, [isMobile, isMounted, isSidebar])
 
   if (!isMounted) return null
 
   return (
     <div className={cn(
       "flex flex-col items-center justify-center p-4 bg-[#18191c] rounded-xl md:rounded-3xl border border-[#2d2e33] overflow-hidden my-4",
+      isSidebar && "bg-transparent border-none p-0 my-0",
       className
     )}>
+      {!isSidebar && (
+        <div className="w-full flex justify-center text-xs text-gray-500 mb-2 uppercase tracking-wider font-semibold">
+          Publicidad
+        </div>
+      )}
       <div 
         ref={containerRef} 
         className={cn(
           "bg-transparent flex items-center justify-center overflow-hidden transition-all duration-300",
-          isMobile ? "w-[320px] h-[50px]" : "w-[728px] h-[90px]"
+          (isMobile || isSidebar) ? "w-[320px] h-[50px]" : "w-[728px] h-[90px]"
         )}
       />
     </div>
