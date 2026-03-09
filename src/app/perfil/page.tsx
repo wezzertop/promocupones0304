@@ -85,7 +85,7 @@ export default async function ProfilePage() {
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-[#2BD45A] bg-[#2BD45A]/10 text-4xl font-bold">
-                  {profile?.username?.[0]?.toUpperCase() || session.user.email?.[0]?.toUpperCase()}
+                  {profile?.username?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase()}
                 </div>
               )}
             </div>
@@ -105,7 +105,7 @@ export default async function ProfilePage() {
             </h1>
             <p className="text-gray-400 text-sm mb-4 flex items-center justify-center md:justify-start gap-2">
               <Calendar size={14} />
-              Miembro desde {formatDistanceToNow(new Date(profile?.created_at || session.user.created_at || new Date()), { addSuffix: true, locale: es })}
+              Miembro desde {formatDistanceToNow(new Date(profile?.created_at || user.created_at || new Date()), { addSuffix: true, locale: es })}
             </p>
 
             {/* Stats Badges */}
