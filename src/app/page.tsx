@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import DealCard from '@/components/DealCard'
+import FeedAd from '@/components/FeedAd'
 import { Deal, DealWithRelations } from '@/types'
 import { Tag } from 'lucide-react'
 import HomeFilters from '@/components/HomeFilters'
@@ -86,13 +87,18 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
       {/* Main Grid */}
       <div className="flex flex-col gap-4">
         {deals && deals.length > 0 ? (
-          deals.map((deal) => (
-            <DealCard 
-              key={deal.id} 
-              deal={deal} 
-              initialUserVote={deal.user_vote || null}
-              initialIsSaved={deal.is_saved || false}
-            />
+          deals.map((deal, index) => (
+            <div key={deal.id}>
+              <DealCard 
+                deal={deal} 
+                initialUserVote={deal.user_vote || null}
+                initialIsSaved={deal.is_saved || false}
+              />
+              {/* Insert Ad every 5 deals */}
+              {(index + 1) % 5 === 0 && (
+                <FeedAd className="mt-4" />
+              )}
+            </div>
           ))
         ) : (
           <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-[#18191c] rounded-3xl border border-[#2d2e33] border-dashed">
