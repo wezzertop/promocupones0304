@@ -108,15 +108,10 @@ export default function FeedAd({ className }: FeedAdProps) {
 
   return (
     <div className={cn(
-      "flex flex-col items-center justify-center p-4 bg-[#18191c] rounded-xl md:rounded-3xl border border-[#2d2e33] overflow-hidden my-4",
-      isSidebar && "bg-transparent border-none p-0 my-0",
+      "flex flex-col items-center justify-center overflow-hidden my-4 w-full",
+      isSidebar && "my-0",
       className
     )}>
-      {!isSidebar && (
-        <div className="w-full flex justify-center text-xs text-gray-500 mb-2 uppercase tracking-wider font-semibold">
-          Publicidad
-        </div>
-      )}
       <div 
         ref={containerRef} 
         className={cn(
