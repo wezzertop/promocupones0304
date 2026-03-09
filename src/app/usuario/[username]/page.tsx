@@ -45,7 +45,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
       votes(count)
     `)
     .ilike('username', decodedUsername)
-    .maybeSingle()
+    .maybeSingle() as { data: any, error: any }
 
   if (error || !profile) {
     console.error('Error fetching profile:', error)
@@ -89,7 +89,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
       .from('users')
       .select('karma_points')
       .eq('id', currentUserId)
-      .single()
+      .single() as { data: any, error: any }
       
     currentUserPoints = currentUser?.karma_points || 0
   }

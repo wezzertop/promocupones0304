@@ -22,7 +22,7 @@ export async function giveReputationAction(receiverId: string, amount: number) {
   }
 
   try {
-    const { error } = await supabase.rpc('transfer_reputation_points', {
+    const { error } = await (supabase.rpc as any)('transfer_reputation_points', {
       p_sender_id: user.id,
       p_receiver_id: receiverId,
       p_amount: amount

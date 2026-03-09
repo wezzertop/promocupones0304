@@ -116,7 +116,7 @@ export async function createDeal(formData: FormData) {
 
   // 7. Insert Deal
   let discount_percentage = null
-  if (data.original_price && data.original_price > data.price) {
+  if (data.original_price && data.price != null && data.original_price > data.price) {
     discount_percentage = Math.round(((data.original_price - data.price) / data.original_price) * 100)
   }
 
