@@ -9,11 +9,15 @@ interface CountdownProps {
   className?: string
   size?: 'sm' | 'md' | 'lg'
   minimal?: boolean // Add minimal mode for small cards
+  isCoupon?: boolean
 }
 
-export default function Countdown({ targetDate, className, size = 'sm', minimal = false }: CountdownProps) {
+export default function Countdown({ targetDate, className, size = 'sm', minimal = false, isCoupon = false }: CountdownProps) {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
   const [isExpired, setIsExpired] = useState(false)
+
+  const colorClass = isCoupon ? "text-purple-500" : "text-[#2BD45A]"
+  const borderColorClass = isCoupon ? "border-purple-500/30" : "border-[#2BD45A]/30"
 
   useEffect(() => {
     const calculateTimeLeft = () => {
@@ -45,7 +49,7 @@ export default function Countdown({ targetDate, className, size = 'sm', minimal 
 
   if (minimal) {
       return (
-          <span className={cn("font-mono font-bold tracking-tight text-[#2BD45A]", className)}>
+          <span className={cn("font-mono font-bold tracking-tight", colorClass, className)}>
               {timeLeft.days > 0 ? `${timeLeft.days}d ` : ''}
               {timeLeft.hours.toString().padStart(2, '0')}:
               {timeLeft.minutes.toString().padStart(2, '0')}:
@@ -79,11 +83,12 @@ export default function Countdown({ targetDate, className, size = 'sm', minimal 
 
   return (
     <div className={cn(
-      "absolute bottom-0 left-0 right-0 z-20 bg-black/80 backdrop-blur-md border-t border-[#2BD45A]/30 flex items-center justify-center shadow-[0_-4px_20px_rgba(0,0,0,0.5)]",
+      "absolute bottom-0 left-0 right-0 z-20 bg-black/80 backdrop-blur-md border-t flex items-center justify-center shadow-[0_-4px_20px_rgba(0,0,0,0.5)]",
+      borderColorClass,
       s.container,
       className
     )}>
-      <div className="flex items-center gap-1.5 font-bold uppercase tracking-wide text-[#2BD45A] animate-pulse">
+      <div className={cn("flex items-center gap-1.5 font-bold uppercase tracking-wide animate-pulse", colorClass)}>
         <Clock className={s.icon} />
         <span className="hidden sm:inline">Termina en:</span>
       </div>

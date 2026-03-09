@@ -7,7 +7,7 @@ import { useEffect, useState, useRef } from 'react'
 export default function AdSidebars() {
   const { isHeaderVisible } = useUIStore()
   const [windowWidth, setWindowWidth] = useState(0)
-  const [reachedFooter, setReachedFooter] = useState(false)
+  const [offsetY, setOffsetY] = useState(0)
 
   // Track window width and scroll position
   useEffect(() => {
@@ -21,15 +21,20 @@ export default function AdSidebars() {
         // Ad is centered in viewport. 
         // Ad height is 600px.
         // Ad bottom edge relative to viewport top is (window.innerHeight / 2) + 300.
-        // We want to hide the ad when the footer top gets close to this position.
         
-        // We add a generous buffer to make sure it disappears well before overlap
-        const adBottomPos = (window.innerHeight / 2) + 300
-        const buffer = 150 
+        const adHalfHeight = 300
+        const viewportCenter = window.innerHeight / 2
+        const adBottomPos = viewportCenter + adHalfHeight
+        const margin = 20 // Space between ad and footer
         
-        // footerRect.top is the distance from viewport top to footer top.
-        // If footerTop < adBottomPos, they are overlapping.
-        setReachedFooter(footerRect.top < (adBottomPos + buffer))
+        // If footer comes up (footerRect.top decreases), we check if it hits the ad bottom
+        // We want the ad bottom to be at most at (footerRect.top - margin)
+        // If adBottomPos > (footerRect.top - margin), we need to shift up
+        
+        const limitY = footerRect.top - margin
+        const overlap = adBottomPos - limitY
+        
+        setOffsetY(overlap > 0 ? overlap : 0)
       }
     }
     
@@ -56,21 +61,26 @@ export default function AdSidebars() {
   // We use 1400px as cutoff.
 
   // Don't render on server or if header is visible or if screen is too narrow
-  // Also hide if we reached the footer
-  if (isHeaderVisible || windowWidth < 1400 || reachedFooter) {
+  if (isHeaderVisible || windowWidth < 1400) {
     return null
   }
 
   return (
     <>
       {/* Left Ad */}
-      <div className="fixed right-1/2 mr-[544px] top-1/2 -translate-y-1/2 z-50 flex flex-col items-center justify-center transition-opacity duration-300">
+      <div 
+        className="fixed right-1/2 mr-[544px] top-1/2 z-50 flex flex-col items-center justify-center transition-opacity duration-300"
+        style={{ transform: `translate(0, calc(-50% - ${offsetY}px))` }}
+      >
         <AdUnit />
       </div>
 
       {/* Right Ad */}
       {/* Moved up slightly (top-[45%]) to avoid covering the floating button at bottom-right */}
-      <div className="fixed left-1/2 ml-[544px] top-[45%] -translate-y-1/2 z-50 flex flex-col items-center justify-center transition-opacity duration-300">
+      <div 
+        className="fixed left-1/2 ml-[544px] top-[45%] z-50 flex flex-col items-center justify-center transition-opacity duration-300"
+        style={{ transform: `translate(0, calc(-50% - ${offsetY}px))` }}
+      >
         <AdUnit />
       </div>
     </>

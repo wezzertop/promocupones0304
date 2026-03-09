@@ -56,7 +56,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   }))
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8 animate-fade-in max-w-5xl mx-auto">
       {/* Header Banner */}
       <div className="bg-gradient-to-r from-[#18191c] to-[#222327] rounded-3xl p-8 border border-[#2d2e33] relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-green-500 opacity-5 blur-[100px] rounded-full pointer-events-none"></div>
@@ -90,7 +90,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                 {/* @ts-ignore */}
                 <DealCard deal={deal as unknown as Deal} />
                 {(index + 1) % 5 === 0 && (
-                  <FeedAd className="mt-4" />
+                  <FeedAd key={`ad-${deal.id}`} variant="banner2" className="mt-4" />
                 )}
             </div>
           ))

@@ -36,7 +36,7 @@ export default async function HotPage() {
   }))
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8 animate-fade-in max-w-5xl mx-auto">
       {/* Header Banner */}
       <GenericBanner 
         id="hot_deals"
@@ -70,7 +70,7 @@ export default async function HotPage() {
                 {/* @ts-ignore */}
                 <DealCard deal={deal as unknown as Deal} />
                 {(index + 1) % 5 === 0 && (
-                  <FeedAd className="mt-4" />
+                  <FeedAd key={`ad-${deal.id}`} variant="banner2" className="mt-4" />
                 )}
             </div>
           ))

@@ -36,6 +36,9 @@ export interface Deal {
   shipping_cost?: number | null
   shipping_country?: string | null
   coupon_code?: string | null
+  usage_limit?: number | null
+  restrictions?: string | null
+  discount_amount?: number | null
   status: 'active' | 'expired' | 'deleted' | 'pending' | 'rejected' | 'revision'
   moderation_notes?: string
   votes_count?: number

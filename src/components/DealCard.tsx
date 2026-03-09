@@ -5,22 +5,25 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence, PanInfo } from 'framer-motion'
 import { 
-  MessageSquare, 
-  Share2, 
-  ExternalLink, 
-  Clock, 
-  Bookmark, 
-  ArrowUp,
-  ArrowDown,
-  Store as StoreIcon,
-  Tag,
-  Truck,
-  ChevronLeft,
-  ChevronRight,
-  Flag,
-  Flame,
-  Globe
-} from 'lucide-react'
+    MessageSquare, 
+    Share2, 
+    ExternalLink, 
+    Clock, 
+    Bookmark, 
+    ArrowUp,
+    ArrowDown,
+    Store as StoreIcon,
+    Tag,
+    Truck,
+    ChevronLeft,
+    ChevronRight,
+    Flag,
+    Flame,
+    Globe,
+    Copy,
+    Check,
+    Ticket
+  } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { Deal } from '@/types'
@@ -42,6 +45,7 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
   const [isSaved, setIsSaved] = useState(initialIsSaved)
   const [isVoting, setIsVoting] = useState(false)
   const [isReportModalOpen, setIsReportModalOpen] = useState(false)
+  const [isCopied, setIsCopied] = useState(false)
   const { addToast } = useUIStore()
   
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
@@ -50,6 +54,7 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
   const isExpired = deal.status === 'expired' || (deal.expires_at && new Date(deal.expires_at) < new Date())
   const hasMultipleImages = deal.image_urls && deal.image_urls.length > 1
   const isFreeShipping = deal.shipping_cost === 0 || deal.description?.toLowerCase().includes('envío gratis') || deal.description?.toLowerCase().includes('entrega gratis');
+  const isCoupon = deal.deal_type === 'coupon'
 
   // Removed useEffect for data fetching to solve N+1 problem
   
@@ -210,6 +215,24 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
     }
   }
 
+  const handleCopyCode = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (deal.coupon_code) {
+      navigator.clipboard.writeText(deal.coupon_code)
+      setIsCopied(true)
+      addToast({
+        type: 'success',
+        message: 'Cupón copiado',
+        description: 'El código se ha guardado en tu portapapeles'
+      })
+      setTimeout(() => setIsCopied(false), 2000)
+      
+      // Also open the link
+      window.open(deal.deal_url, '_blank')
+    }
+  }
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('es-MX', {
       style: 'currency',
@@ -233,7 +256,8 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
 
   return (
     <div className={cn(
-      "group relative flex flex-col md:flex-row bg-[#09090b] rounded-xl md:rounded-3xl overflow-hidden border border-white/5 hover:border-[#2BD45A]/50 transition-all duration-300 md:hover:scale-[1.01] shadow-xl shadow-black/50 hover:shadow-2xl hover:shadow-[#2BD45A]/10 h-auto md:h-[340px] mx-2 md:mx-0",
+      "group relative flex flex-col md:flex-row bg-[#09090b] rounded-xl md:rounded-3xl overflow-hidden border border-white/5 transition-all duration-300 md:hover:scale-[1.01] shadow-xl shadow-black/50 hover:shadow-2xl h-auto md:h-[340px] mx-2 md:mx-0",
+      isCoupon ? "hover:border-purple-500/50 hover:shadow-purple-500/10" : "hover:border-[#2BD45A]/50 hover:shadow-[#2BD45A]/10",
       isExpired && "opacity-60 grayscale"
     )}>
       
@@ -243,7 +267,7 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
           onClick={() => handleVote('hot')}
           className={cn(
             "p-2 rounded-xl transition-all hover:scale-110 active:scale-95 hover:bg-white/10",
-            userVote === 'hot' ? "text-[#2BD45A]" : "text-zinc-500"
+            userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#2BD45A]") : "text-zinc-500"
           )}
         >
           <ArrowUp size={24} strokeWidth={3} />
@@ -254,13 +278,13 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
                 size={20} 
                 className={cn(
                     "transition-colors",
-                    userVote === 'hot' ? "text-[#2BD45A] fill-[#2BD45A]" :
+                    userVote === 'hot' ? (isCoupon ? "text-purple-500 fill-purple-500" : "text-[#2BD45A] fill-[#2BD45A]") :
                     userVote === 'cold' ? "text-blue-500 fill-blue-500" : "text-zinc-600"
                 )} 
             />
             <span className={cn(
                 "font-black text-sm",
-                userVote === 'hot' ? "text-[#2BD45A]" :
+                userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#2BD45A]") :
                 userVote === 'cold' ? "text-blue-500" : "text-white"
             )}>
                 {votes}°
@@ -372,8 +396,11 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
 
           {deal.expires_at && !isExpired && (
             <div className="absolute top-2 right-2 z-30 pointer-events-none md:hidden">
-                 <div className="bg-black/60 backdrop-blur-sm text-white text-[10px] px-2 py-0.5 rounded font-mono border border-white/10">
-                    ⏳ <Countdown targetDate={deal.expires_at} className="inline-flex" size="sm" minimal />
+                 <div className={cn(
+                   "bg-black/60 backdrop-blur-sm px-2 py-0.5 rounded font-mono border",
+                   isCoupon ? "border-purple-500/30" : "border-white/10"
+                 )}>
+                    <Countdown targetDate={deal.expires_at} className="inline-flex" size="sm" minimal isCoupon={isCoupon} />
                  </div>
             </div>
           )}
@@ -383,13 +410,26 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
       {/* Content Section */}
       <div className="flex-1 flex flex-col p-4 md:p-6 justify-between relative overflow-hidden">
         {/* Background Glow */}
-        <div className="absolute -top-20 -right-20 w-64 h-64 bg-[#2BD45A] opacity-5 blur-[80px] rounded-full pointer-events-none group-hover:opacity-10 transition-opacity duration-500" />
+        <div className={cn(
+          "absolute -top-20 -right-20 w-64 h-64 opacity-5 blur-[80px] rounded-full pointer-events-none group-hover:opacity-10 transition-opacity duration-500",
+          isCoupon ? "bg-purple-500" : "bg-[#2BD45A]"
+        )} />
 
         {/* Header Meta */}
         <div className="flex items-center justify-between mb-3 relative z-10">
           <div className="flex items-center gap-2">
+            {isCoupon && (
+              <span className="bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+                <Ticket size={10} /> Cupón
+              </span>
+            )}
+            {!isCoupon && (
+              <span className="bg-[#2BD45A]/10 text-[#2BD45A] border border-[#2BD45A]/20 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+                <Tag size={10} /> Oferta
+              </span>
+            )}
             {deal.user?.avatar_url ? (
-               <div className="relative w-6 h-6 rounded-full overflow-hidden ring-2 ring-[#2BD45A]/20">
+               <div className="relative w-6 h-6 rounded-full overflow-hidden ring-2 ring-white/5">
                  <Image src={deal.user.avatar_url} alt={deal.user.username} fill className="object-cover" />
                </div>
             ) : (
@@ -425,18 +465,28 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
           <div className="flex flex-col">
             <span className="hidden text-xs text-zinc-500 font-medium mb-0.5 uppercase tracking-wider">Precio</span>
             <div className="flex items-baseline gap-2 flex-wrap">
-              <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#2BD45A] to-emerald-400">
-                {deal.deal_price ? formatPrice(deal.deal_price) : 'Gratis'}
-              </span>
-              {deal.original_price && deal.original_price > (deal.deal_price || 0) && (
-                <span className="text-sm text-zinc-600 line-through font-medium decoration-2 decoration-zinc-700">
-                  {formatPrice(deal.original_price)}
-                </span>
-              )}
-              {deal.discount_percentage && (
-                <span className="bg-[#2BD45A] text-black text-xs font-black px-2 py-0.5 rounded ml-1">
-                  -{deal.discount_percentage}%
-                </span>
+              {isCoupon ? (
+                <>
+                  <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                    {deal.discount_percentage ? `${deal.discount_percentage}% OFF` : (deal.discount_amount ? `${formatPrice(deal.discount_amount)} OFF` : 'Cupón')}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#2BD45A] to-emerald-400">
+                    {deal.deal_price ? formatPrice(deal.deal_price) : 'Gratis'}
+                  </span>
+                  {deal.original_price && deal.original_price > (deal.deal_price || 0) && (
+                    <span className="text-sm text-zinc-600 line-through font-medium decoration-2 decoration-zinc-700">
+                      {formatPrice(deal.original_price)}
+                    </span>
+                  )}
+                  {deal.discount_percentage && (
+                    <span className="bg-[#2BD45A] text-black text-xs font-black px-2 py-0.5 rounded ml-1">
+                      -{deal.discount_percentage}%
+                    </span>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -470,7 +520,7 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
             {deal.category && (
               <>
                 <span className="text-zinc-700">|</span>
-                <div className="flex items-center gap-1.5 text-[#2BD45A]">
+                <div className={cn("flex items-center gap-1.5", isCoupon ? "text-purple-500" : "text-[#2BD45A]")}>
                    <Tag size={14} />
                    <span>{deal.category.name}</span>
                 </div>
@@ -497,13 +547,13 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
         {/* Desktop Countdown */}
         {deal.expires_at && !isExpired && (
             <div className="hidden md:block mb-2">
-                 <Countdown targetDate={deal.expires_at} className="relative w-full rounded-lg border border-white/10" size="sm" />
+                 <Countdown targetDate={deal.expires_at} className={cn("relative w-full rounded-lg border", isCoupon ? "border-purple-500/10" : "border-white/10")} size="sm" isCoupon={isCoupon} />
             </div>
         )}
 
         {/* Mobile Countdown */}
         {deal.expires_at && !isExpired && (
-           <Countdown targetDate={deal.expires_at} className="md:hidden relative w-full mb-3 rounded-lg border border-white/10" size="sm" />
+           <Countdown targetDate={deal.expires_at} className={cn("md:hidden relative w-full mb-3 rounded-lg border", isCoupon ? "border-purple-500/10" : "border-white/10")} size="sm" isCoupon={isCoupon} />
         )}
 
         {/* Unified Footer Actions */}
@@ -563,27 +613,70 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
           </button>
         </div>
 
-        <a 
-          href={deal.deal_url} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="hidden md:flex items-center gap-2 bg-[#2BD45A] text-black font-black px-6 py-3 rounded-xl transition-all hover:scale-105 active:scale-95 hover:shadow-[0_0_20px_rgba(43,212,90,0.3)] text-sm uppercase tracking-wide ml-2"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <span>Ver Oferta</span>
-          <ExternalLink size={16} strokeWidth={3} />
-        </a>
+        {isCoupon ? (
+          <button 
+            onClick={handleCopyCode}
+            className={cn(
+              "hidden md:flex items-center group/coupon relative h-[42px] ml-2 min-w-[240px] rounded-full border-2 border-dashed border-purple-500/50 hover:border-purple-500 transition-colors bg-white/5 overflow-hidden",
+              isCopied ? "border-green-500/50 hover:border-green-500" : ""
+            )}
+            onClickCapture={(e) => e.stopPropagation()}
+          >
+             <div className="flex-1 px-4 text-base font-mono font-bold text-zinc-300 truncate text-left">
+                {deal.coupon_code || 'Ver Cupón'}
+             </div>
+             <div className={cn(
+               "h-full px-4 flex items-center gap-2 text-sm font-bold text-white transition-colors",
+               isCopied ? "bg-green-500" : "bg-purple-500 group-hover/coupon:bg-purple-600"
+             )}>
+                <span>{isCopied ? 'Copiado' : 'Copiar y visitar'}</span>
+                {isCopied ? <Check size={14} strokeWidth={3} /> : <ExternalLink size={14} strokeWidth={3} />}
+             </div>
+          </button>
+        ) : (
+          <a 
+            href={deal.deal_url} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="hidden md:flex items-center gap-2 bg-[#2BD45A] text-black font-black px-6 py-3 rounded-xl transition-all hover:scale-105 active:scale-95 hover:shadow-[0_0_20px_rgba(43,212,90,0.3)] text-sm uppercase tracking-wide ml-2"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <span>Ver Oferta</span>
+            <ExternalLink size={16} strokeWidth={3} />
+          </a>
+        )}
 
         {/* Mobile External Link (Icon only or compacted) */}
-         <a 
-          href={deal.deal_url} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="md:hidden flex items-center justify-center bg-[#2BD45A] text-black p-3 rounded-xl transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(43,212,90,0.3)] ml-2"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <ExternalLink size={20} strokeWidth={3} />
-        </a>
+        {isCoupon ? (
+          <button 
+            onClick={handleCopyCode}
+            className={cn(
+              "md:hidden flex items-center group/coupon relative h-[42px] ml-2 w-full rounded-full border-2 border-dashed border-purple-500/50 hover:border-purple-500 transition-colors bg-white/5 overflow-hidden max-w-[200px]",
+              isCopied ? "border-green-500/50" : ""
+            )}
+            onClickCapture={(e) => e.stopPropagation()}
+          >
+             <div className="flex-1 px-3 text-[10px] font-mono text-zinc-300 truncate text-left">
+                {deal.coupon_code || 'Ver'}
+             </div>
+             <div className={cn(
+               "h-full px-3 flex items-center justify-center text-white transition-colors",
+               isCopied ? "bg-green-500" : "bg-purple-500"
+             )}>
+                {isCopied ? <Check size={16} strokeWidth={3} /> : <ExternalLink size={16} strokeWidth={3} />}
+             </div>
+          </button>
+        ) : (
+          <a 
+            href={deal.deal_url} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="md:hidden flex items-center justify-center bg-[#2BD45A] text-black p-3 rounded-xl transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(43,212,90,0.3)] ml-2"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <ExternalLink size={20} strokeWidth={3} />
+          </a>
+        )}
       </div>
     </div>
     

@@ -70,7 +70,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   }))
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8 animate-fade-in max-w-5xl mx-auto">
       <div className="bg-[#18191c] border border-[#2d2e33] rounded-2xl p-6">
         <h1 className="text-2xl font-bold text-white flex items-center gap-3">
           <Search className="text-[#2BD45A]" />

@@ -99,7 +99,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
               />
               {/* Insert Ad every 5 deals */}
               {(index + 1) % 5 === 0 && (
-                <FeedAd className="mt-4" />
+                <FeedAd key={`ad-${deal.id}`} variant="banner2" className="mt-4" />
               )}
             </div>
           ))

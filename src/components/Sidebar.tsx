@@ -21,7 +21,7 @@ import { useUIStore } from '@/lib/store'
 const MENU_ITEMS = [
   { icon: Home, label: 'Inicio', href: '/' },
   { icon: Flame, label: 'Lo más Hot', href: '/hot' },
-  { icon: Tag, label: 'Ofertas', href: '/deals' },
+  { icon: Tag, label: 'Descuentos', href: '/deals' },
   { icon: Ticket, label: 'Cupones', href: '/cupones' },
   { icon: MessageSquare, label: 'Discusiones', href: '/discusiones' },
 ]

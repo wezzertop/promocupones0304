@@ -30,7 +30,11 @@ export async function createDeal(formData: FormData) {
     original_price: formData.get('original_price') ? Number(formData.get('original_price')) : null,
     url: formData.get('url'),
     category_id: formData.get('category_id'),
+    deal_type: formData.get('deal_type') || 'deal',
     coupon_code: formData.get('coupon_code') || null,
+    usage_limit: formData.get('usage_limit') ? Number(formData.get('usage_limit')) : null,
+    restrictions: formData.get('restrictions') || null,
+    discount_amount: formData.get('discount_amount') ? Number(formData.get('discount_amount')) : null,
     availability: formData.get('availability') || null,
     shipping_cost: Number(formData.get('shipping_cost') || 0),
     shipping_type: formData.get('shipping_type') || 'none',
@@ -127,7 +131,7 @@ export async function createDeal(formData: FormData) {
     discount_percentage,
     deal_url: data.url,
     image_urls: data.image_urls,
-    deal_type: data.coupon_code ? 'coupon' : 'deal',
+    deal_type: data.deal_type,
     status: initialStatus,
     expires_at: data.expires_at ? new Date(data.expires_at).toISOString() : (() => {
       const defaultDate = new Date();
@@ -135,9 +139,12 @@ export async function createDeal(formData: FormData) {
       return defaultDate.toISOString();
     })(),
     coupon_code: data.coupon_code,
+    usage_limit: data.usage_limit,
+    restrictions: data.restrictions,
+    discount_amount: data.discount_amount,
     availability: data.availability,
     shipping_cost: data.shipping_cost,
-    shipping_type: (data as any).shipping_type, // Use type assertion if schema not updated yet
+    shipping_type: data.shipping_type,
     shipping_country: data.shipping_country,
     start_date: data.start_date ? new Date(data.start_date).toISOString() : null,
     is_referral: is_referral, // Ensure column exists or remove if not in schema yet (checked migration, it's not in schema but `canUserPostReferral` logic implies it. Wait, `isReferralUrl` returns bool. `deals` table might not have `is_referral` column yet? Migration `20260228000000_add_deal_fields.sql` might have it. Let's assume yes or add it safely. Wait, the previous client code tried to insert it. If it fails, I'll catch it.)

@@ -35,11 +35,24 @@ interface CommentVote {
 
 interface CommentsSectionProps {
   dealId: string
+  isCoupon?: boolean
 }
 
-export default function CommentsSection({ dealId }: CommentsSectionProps) {
+export default function CommentsSection({ dealId, isCoupon = false }: CommentsSectionProps) {
   const [comments, setComments] = useState<Comment[]>([])
   const [loading, setLoading] = useState(true)
+
+  // Color Constants
+  const accentText = isCoupon ? "text-purple-500" : "text-[#2BD45A]"
+  const accentBg = isCoupon ? "bg-purple-500" : "bg-[#2BD45A]"
+  const accentBgHover = isCoupon ? "hover:bg-purple-600" : "hover:bg-[#25b84e]"
+  const accentBorder = isCoupon ? "border-purple-500" : "border-[#2BD45A]"
+  const accentFocusBorder = isCoupon ? "focus:border-purple-500/50" : "focus:border-[#2BD45A]/50"
+  const accentFocusRing = isCoupon ? "focus:ring-purple-500/50" : "focus:ring-[#2BD45A]/50"
+  const accentTargetBg = isCoupon ? "target:bg-purple-500/10" : "target:bg-[#2BD45A]/10"
+  const accentTargetBorder = isCoupon ? "target:border-purple-500/30" : "target:border-[#2BD45A]/30"
+  const accentTextHover = isCoupon ? "hover:text-purple-500" : "hover:text-[#2BD45A]"
+  const accentBgLight = isCoupon ? "bg-purple-500/10" : "bg-[#2BD45A]/10"
   const [newComment, setNewComment] = useState('')
   const [replyTo, setReplyTo] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
@@ -387,7 +400,9 @@ export default function CommentsSection({ dealId }: CommentsSectionProps) {
       className={cn(
         "flex gap-2.5 transition-colors duration-500 rounded-xl p-2", 
         isReply ? "mt-3 ml-6 border-l-2 border-white/5 pl-3" : "mt-4",
-        "target:bg-[#2BD45A]/10 target:border-[#2BD45A]/30 target:border"
+        "target:border",
+        accentTargetBg,
+        accentTargetBorder
       )}
     >
       <div className="flex-shrink-0">
@@ -423,7 +438,7 @@ export default function CommentsSection({ dealId }: CommentsSectionProps) {
             onClick={() => handleVote(comment.id, 'like')}
             className={cn(
               "flex items-center gap-1 text-[10px] font-medium transition-colors",
-              comment.user_vote === 'like' ? "text-[#2BD45A]" : "text-zinc-500 hover:text-white"
+              comment.user_vote === 'like' ? accentText : "text-zinc-500 hover:text-white"
             )}
           >
             <ThumbsUp size={12} className={comment.user_vote === 'like' ? "fill-current" : ""} />
@@ -452,7 +467,10 @@ export default function CommentsSection({ dealId }: CommentsSectionProps) {
                 if (mainInput) (mainInput as HTMLTextAreaElement).focus();
               }
             }}
-            className="flex items-center gap-1 text-[10px] font-medium text-zinc-500 hover:text-[#2BD45A] transition-colors"
+            className={cn(
+              "flex items-center gap-1 text-[10px] font-medium text-zinc-500 transition-colors",
+              accentTextHover
+            )}
           >
             <Reply size={12} />
             Responder
@@ -542,7 +560,7 @@ export default function CommentsSection({ dealId }: CommentsSectionProps) {
     <div className="" id="comments">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
-          <MessageSquare className="text-[#2BD45A] w-4 h-4" />
+          <MessageSquare className={cn("w-4 h-4", accentText)} />
           Comentarios ({totalCount})
         </h3>
       </div>
@@ -569,7 +587,11 @@ export default function CommentsSection({ dealId }: CommentsSectionProps) {
             <p className="text-zinc-400 text-sm mb-3">Inicia sesión para unirte a la conversación</p>
             <Link 
               href="/auth/login" 
-              className="inline-block px-4 py-2 bg-[#2BD45A] text-black text-sm font-bold rounded-lg hover:bg-[#25b84e] transition-colors"
+              className={cn(
+                "inline-block px-4 py-2 text-black text-sm font-bold rounded-lg transition-colors",
+                accentBg,
+                accentBgHover
+              )}
             >
               Iniciar Sesión
             </Link>
@@ -578,7 +600,11 @@ export default function CommentsSection({ dealId }: CommentsSectionProps) {
           <div className="flex gap-3">
             <div className="shrink-0 hidden sm:block">
               {/* Current User Avatar Placeholder */}
-              <div className="w-10 h-10 rounded-full bg-[#2BD45A]/10 flex items-center justify-center text-[#2BD45A] font-bold">
+              <div className={cn(
+                "w-10 h-10 rounded-full flex items-center justify-center font-bold",
+                accentBgLight,
+                accentText
+              )}>
                 Me
               </div>
             </div>
@@ -602,14 +628,22 @@ export default function CommentsSection({ dealId }: CommentsSectionProps) {
                 onChange={(e) => setNewComment(e.target.value)}
                 placeholder={replyTo ? "Escribe tu respuesta..." : "¿Qué opinas de esta oferta?"}
                 rows={3}
-                className="w-full bg-black/20 border border-white/10 rounded-xl p-3 text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#2BD45A]/50 focus:ring-1 focus:ring-[#2BD45A]/50 transition-all resize-none text-sm"
+                className={cn(
+                  "w-full bg-black/20 border border-white/10 rounded-xl p-3 text-white placeholder:text-zinc-600 focus:outline-none focus:ring-1 transition-all resize-none text-sm",
+                  accentFocusBorder,
+                  accentFocusRing
+                )}
                 autoFocus={!!replyTo}
               />
               <div className="flex justify-end mt-2">
                 <button
                   onClick={() => handleSubmit(replyTo)}
                   disabled={submitting || !newComment.trim()}
-                  className="px-6 py-2 bg-[#2BD45A] text-black font-bold rounded-lg text-sm hover:bg-[#25b84e] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className={cn(
+                    "px-6 py-2 text-black font-bold rounded-lg text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2",
+                    accentBg,
+                    accentBgHover
+                  )}
                 >
                   {submitting ? (
                     <>
@@ -629,7 +663,7 @@ export default function CommentsSection({ dealId }: CommentsSectionProps) {
       {/* Comments List */}
       {loading ? (
         <div className="flex justify-center py-12">
-          <Loader2 className="w-8 h-8 text-[#2BD45A] animate-spin" />
+          <Loader2 className={cn("w-8 h-8 animate-spin", accentText)} />
         </div>
       ) : comments.length > 0 ? (
         <div className="space-y-2">
