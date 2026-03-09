@@ -13,7 +13,7 @@ export function useScrollDirection() {
   useEffect(() => {
     // Disable scroll hide logic on specific pages
     // The user wants navigation to stay visible on these pages
-    const alwaysVisibleRoutes = ['/oferta', '/perfil', '/ajustes', '/settings', '/publicar', '/login', '/registro']
+    const alwaysVisibleRoutes = ['/oferta', '/perfil', '/ajustes', '/settings', '/publicar', '/login', '/registro', '/usuario']
     const shouldAlwaysShow = alwaysVisibleRoutes.some(route => pathname?.startsWith(route))
 
     if (shouldAlwaysShow) {

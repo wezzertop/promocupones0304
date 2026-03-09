@@ -113,7 +113,7 @@ export default function CommentsSection({ dealId, isCoupon = false }: CommentsSe
           created_at: raw.created_at,
           user_id: raw.user_id,
           parent_id: raw.parent_id ?? null,
-          user: raw.user || { username: 'Usuario', avatar_url: null },
+          user: raw.user || null,
           likes_count: raw.likes_count || 0,
           replies: [],
           user_vote: voteInfo?.type || null,
@@ -425,7 +425,13 @@ export default function CommentsSection({ dealId, isCoupon = false }: CommentsSe
       <div className="flex-1">
         <div className="bg-white/5 rounded-xl p-3 border border-white/5">
           <div className="flex items-center justify-between mb-1.5">
-            <span className="font-bold text-xs text-zinc-200">{comment.user?.username || 'Usuario'}</span>
+            {comment.user?.username ? (
+               <Link href={`/usuario/${encodeURIComponent(comment.user.username)}`} className="hover:underline">
+                 <span className="font-bold text-xs text-zinc-200">{comment.user.username}</span>
+               </Link>
+            ) : (
+              <span className="font-bold text-xs text-zinc-200">Usuario</span>
+            )}
             <span className="text-[10px] text-zinc-500">
               {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true, locale: es })}
             </span>

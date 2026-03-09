@@ -355,19 +355,31 @@ export default function DealDetailView({
                       )}
 
                       <div className="flex items-center justify-between text-sm gap-2">
-                         <div className="flex items-center gap-2.5 min-w-0 overflow-hidden">
-                            <div className="shrink-0 w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center overflow-hidden ring-2 ring-black">
-                               {userAvatar ? (
-                                  <img src={userAvatar} alt={userName} className="w-full h-full object-cover" />
-                               ) : (
-                                  <span className="font-bold text-zinc-400 text-xs">{userName?.[0] || 'U'}</span>
-                               )}
-                            </div>
-                            <div className="flex flex-col min-w-0 overflow-hidden">
-                               <span className="text-[10px] text-zinc-500 uppercase tracking-wider truncate">Publicado por</span>
-                               <span className="text-white font-medium text-xs md:text-sm truncate">{userName}</span>
-                            </div>
-                         </div>
+                         {deal.user?.username ? (
+                            <Link href={`/usuario/${encodeURIComponent(deal.user.username)}`} className="flex items-center gap-2.5 min-w-0 overflow-hidden group/author hover:bg-white/5 p-1 -ml-1 rounded-lg transition-colors">
+                              <div className="shrink-0 w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center overflow-hidden ring-2 ring-black">
+                                 {userAvatar ? (
+                                    <img src={userAvatar} alt={userName} className="w-full h-full object-cover" />
+                                 ) : (
+                                    <span className="font-bold text-zinc-400 text-xs">{userName?.[0] || 'U'}</span>
+                                 )}
+                              </div>
+                              <div className="flex flex-col min-w-0 overflow-hidden">
+                                 <span className="text-[10px] text-zinc-500 uppercase tracking-wider truncate">Publicado por</span>
+                                 <span className="text-white font-medium text-xs md:text-sm truncate group-hover/author:text-yellow-500 transition-colors">{userName}</span>
+                              </div>
+                           </Link>
+                         ) : (
+                           <div className="flex items-center gap-2.5 min-w-0 overflow-hidden p-1 -ml-1">
+                              <div className="shrink-0 w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center overflow-hidden ring-2 ring-black">
+                                 <span className="font-bold text-zinc-400 text-xs">U</span>
+                              </div>
+                              <div className="flex flex-col min-w-0 overflow-hidden">
+                                 <span className="text-[10px] text-zinc-500 uppercase tracking-wider truncate">Publicado por</span>
+                                 <span className="text-white font-medium text-xs md:text-sm truncate">Anónimo</span>
+                              </div>
+                           </div>
+                         )}
                          
                          {/* Owner Controls */}
                          {!isPreview && deal.user_id && currentUserId === deal.user_id && (

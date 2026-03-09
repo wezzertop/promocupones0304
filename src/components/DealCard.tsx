@@ -218,6 +218,13 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
   const handleCopyCode = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
+    
+    // Si ya está copiado y el usuario vuelve a hacer clic, abrir el enlace
+    if (isCopied) {
+       window.open(deal.deal_url, '_blank')
+       return
+    }
+
     if (deal.coupon_code) {
       navigator.clipboard.writeText(deal.coupon_code)
       setIsCopied(true)
@@ -226,10 +233,14 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
         message: 'Cupón copiado',
         description: 'El código se ha guardado en tu portapapeles'
       })
-      setTimeout(() => setIsCopied(false), 2000)
+      // No resetear isCopied automáticamente tan rápido, o manejarlo diferente
+      // setTimeout(() => setIsCopied(false), 2000) 
       
-      // Also open the link
+      // Also open the link automatically
       window.open(deal.deal_url, '_blank')
+    } else {
+        // Fallback si no hay código (solo visitar)
+        window.open(deal.deal_url, '_blank')
     }
   }
 
@@ -396,12 +407,6 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
 
           {deal.expires_at && !isExpired && (
             <div className="absolute top-2 right-2 z-30 pointer-events-none md:hidden">
-                 <div className={cn(
-                   "bg-black/60 backdrop-blur-sm px-2 py-0.5 rounded font-mono border",
-                   isCoupon ? "border-purple-500/30" : "border-white/10"
-                 )}>
-                    <Countdown targetDate={deal.expires_at} className="inline-flex" size="sm" minimal isCoupon={isCoupon} />
-                 </div>
             </div>
           )}
         </div>
@@ -428,18 +433,31 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
                 <Tag size={10} /> Oferta
               </span>
             )}
-            {deal.user?.avatar_url ? (
-               <div className="relative w-6 h-6 rounded-full overflow-hidden ring-2 ring-white/5">
-                 <Image src={deal.user.avatar_url} alt={deal.user.username} fill className="object-cover" />
-               </div>
+            {deal.user?.username ? (
+              <Link href={`/usuario/${encodeURIComponent(deal.user.username)}`} className="hover:underline z-20 relative flex items-center gap-2">
+                {deal.user?.avatar_url ? (
+                   <div className="relative w-6 h-6 rounded-full overflow-hidden ring-2 ring-white/5">
+                     <Image src={deal.user.avatar_url} alt={deal.user.username} fill className="object-cover" />
+                   </div>
+                ) : (
+                   <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center text-[10px] text-white ring-2 ring-white/5">
+                     {deal.user?.username?.[0]?.toUpperCase() || 'U'}
+                   </div>
+                )}
+                <span className="text-zinc-400 max-w-[120px] truncate text-xs">
+                  <span className="text-zinc-200 font-semibold">{deal.user.username}</span>
+                </span>
+              </Link>
             ) : (
-               <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center text-[10px] text-white ring-2 ring-white/5">
-                 {deal.user?.username?.[0]?.toUpperCase() || 'U'}
-               </div>
+              <div className="flex items-center gap-2 z-20 relative">
+                <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center text-[10px] text-white ring-2 ring-white/5">
+                  U
+                </div>
+                <span className="text-zinc-400 max-w-[120px] truncate text-xs">
+                  <span className="text-zinc-200 font-semibold">Anónimo</span>
+                </span>
+              </div>
             )}
-            <span className="text-zinc-400 max-w-[120px] truncate text-xs">
-              <span className="text-zinc-200 font-semibold">{deal.user?.username || 'Anónimo'}</span>
-            </span>
           </div>
           
           <span className="flex items-center gap-1.5 bg-zinc-800/80 px-2 py-1 rounded text-[10px] md:text-xs text-zinc-400">
@@ -551,12 +569,12 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
             </div>
         )}
 
+
+
         {/* Mobile Countdown */}
         {deal.expires_at && !isExpired && (
            <Countdown targetDate={deal.expires_at} className={cn("md:hidden relative w-full mb-3 rounded-lg border", isCoupon ? "border-purple-500/10" : "border-white/10")} size="sm" isCoupon={isCoupon} />
         )}
-
-        {/* Unified Footer Actions */}
       <div className="flex mt-auto items-center justify-between relative z-10 pt-3 border-t border-white/5">
         
         {/* Mobile Vote Actions (Shown only on mobile) */}

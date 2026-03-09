@@ -23,7 +23,7 @@ export default function ClientLayout({ children, user }: ClientLayoutProps) {
 
   // Force header/sidebar visible on specific routes
   useEffect(() => {
-    const alwaysVisibleRoutes = ['/oferta', '/perfil', '/ajustes']
+    const alwaysVisibleRoutes = ['/oferta', '/perfil', '/ajustes', '/usuario']
     if (alwaysVisibleRoutes.some(route => pathname?.startsWith(route))) {
       setHeaderVisible(true)
     }

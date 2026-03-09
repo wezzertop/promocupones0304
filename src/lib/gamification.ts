@@ -72,7 +72,7 @@ export async function getLeaderboard(period: 'weekly' | 'monthly' | 'all_time' =
       user_id,
       current_xp,
       current_level,
-      users:users(username, avatar_url)
+      users:users!gamification_profiles_user_id_fkey(username, avatar_url)
     `)
     .order('current_xp', { ascending: false })
     .limit(limit)

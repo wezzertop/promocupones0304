@@ -18,9 +18,9 @@ export default async function ProfilePage() {
   const supabase = await createClient()
 
   // 1. Get current user session
-  const { data: { session } } = await supabase.auth.getSession()
+  const { data: { user } } = await supabase.auth.getUser()
 
-  if (!session) {
+  if (!user) {
     redirect('/auth/login')
   }
 
@@ -28,12 +28,12 @@ export default async function ProfilePage() {
   const { data: profile } = await supabase
     .from('users')
     .select('*')
-    .eq('id', session.user.id)
+    .eq('id', user.id)
     .single() as { data: any, error: any }
 
   // Fetch gamification data
-  const gamificationProfile = await getUserGamificationProfile(session.user.id)
-  const userBadges = await getUserBadges(session.user.id)
+  const gamificationProfile = await getUserGamificationProfile(user.id)
+  const userBadges = await getUserBadges(user.id)
   const allBadges = await getAllBadges()
 
   // 3. Fetch user's deals
@@ -46,7 +46,7 @@ export default async function ProfilePage() {
       category:categories(*),
       comments(count)
     `)
-    .eq('user_id', session.user.id)
+    .eq('user_id', user.id)
     .order('created_at', { ascending: false })
 
   if (dealsError) {
