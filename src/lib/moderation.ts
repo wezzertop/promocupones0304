@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/client'
+import { SupabaseClient } from '@supabase/supabase-js'
 
 export const REFERRAL_PATTERNS = [
   'ref=',
@@ -30,7 +31,7 @@ export const POINT_SYSTEM = {
   POST_REJECTED: -5
 }
 
-export async function isReferralUrl(url: string): Promise<{ isReferral: boolean; reason?: string }> {
+export async function isReferralUrl(url: string, supabaseClient?: SupabaseClient): Promise<{ isReferral: boolean; reason?: string }> {
   const lowerUrl = url.toLowerCase()
   
   // 1. Check hardcoded patterns
@@ -41,7 +42,7 @@ export async function isReferralUrl(url: string): Promise<{ isReferral: boolean;
   }
 
   // 2. Check DB patterns
-  const supabase = createClient()
+  const supabase = supabaseClient || createClient()
   const { data: dbPatterns } = await (supabase.from('referral_patterns') as any)
     .select('pattern')
     .eq('is_active', true)
@@ -57,8 +58,8 @@ export async function isReferralUrl(url: string): Promise<{ isReferral: boolean;
   return { isReferral: false }
 }
 
-export async function canUserPostReferral(userId: string): Promise<{ canPost: boolean; limit: number; used: number }> {
-  const supabase = createClient()
+export async function canUserPostReferral(userId: string, supabaseClient?: SupabaseClient): Promise<{ canPost: boolean; limit: number; used: number }> {
+  const supabase = supabaseClient || createClient()
   
   // Get user gamification level
   const { data: profile } = await (supabase.from('gamification_profiles') as any)
@@ -100,8 +101,8 @@ export async function canUserPostReferral(userId: string): Promise<{ canPost: bo
   return { canPost: used < limit, limit, used }
 }
 
-export async function addKarmaPoints(userId: string, points: number, reason: string) {
-  const supabase = createClient()
+export async function addKarmaPoints(userId: string, points: number, reason: string, supabaseClient?: SupabaseClient) {
+  const supabase = supabaseClient || createClient()
   
   // 1. Update user points
   const { error } = await (supabase.rpc as any)('increment_karma', { 
@@ -126,10 +127,10 @@ export async function addKarmaPoints(userId: string, points: number, reason: str
   // 2. Log activity (optional, if we had an activity log table)
 }
 
-export async function checkForbiddenWords(text: string): Promise<{ hasForbidden: boolean; word?: string }> {
+export async function checkForbiddenWords(text: string, supabaseClient?: SupabaseClient): Promise<{ hasForbidden: boolean; word?: string }> {
   if (!text) return { hasForbidden: false }
   
-  const supabase = createClient()
+  const supabase = supabaseClient || createClient()
   const { data: forbidden } = await (supabase.from('forbidden_words') as any)
     .select('word')
   

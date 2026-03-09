@@ -15,6 +15,7 @@ export interface ScrapedDeal {
   availability: 'online' | 'out_of_stock';
   expires_at?: string; // Add expiration date
   suggested_category?: string; // Add suggested category from breadcrumbs
+  shipping_type?: 'none' | 'free' | 'prime' | 'meliplus' | 'full'; // Add detected shipping type
   raw_data?: any;
   shipping_info?: {
     // Amazon
@@ -314,6 +315,14 @@ export async function scrapeAmazonUrl(url: string): Promise<ScrapedDeal | null> 
         return null;
     }
 
+    // Determine shipping_type
+    let shipping_type: 'none' | 'free' | 'prime' | 'meliplus' | 'full' = 'none';
+    if (has_prime) {
+        shipping_type = 'prime';
+    } else if (free_shipping_label) {
+        shipping_type = 'free';
+    }
+
     return {
       id: asin,
       title,
@@ -328,6 +337,7 @@ export async function scrapeAmazonUrl(url: string): Promise<ScrapedDeal | null> 
       availability,
       expires_at,
       suggested_category,
+      shipping_type,
       raw_data: { asin, title, price, original_price },
       shipping_info: {
         has_prime,
@@ -403,6 +413,16 @@ export async function scrapeMercadoLibreUrl(url: string): Promise<ScrapedDeal | 
         expires_at = item.stop_time;
     }
 
+    // Determine shipping_type
+    let shipping_type: 'none' | 'free' | 'prime' | 'meliplus' | 'full' = 'none';
+    if (has_meli_plus) {
+        shipping_type = 'meliplus';
+    } else if (is_full) {
+        shipping_type = 'full';
+    } else if (free_shipping_label) {
+        shipping_type = 'free';
+    }
+
     return {
       id: item.id,
       title: item.title,
@@ -416,6 +436,7 @@ export async function scrapeMercadoLibreUrl(url: string): Promise<ScrapedDeal | 
       currency: item.currency_id,
       availability: item.status === 'active' ? 'online' : 'out_of_stock',
       expires_at,
+      shipping_type,
       raw_data: item,
       shipping_info: {
         has_meli_plus,
@@ -458,6 +479,7 @@ export async function searchMercadoLibre(query: string): Promise<ScrapedDeal[]> 
       description: `Oferta encontrada en Mercado Libre. Condición: ${item.condition === 'new' ? 'Nuevo' : 'Usado'}.`,
       currency: item.currency_id,
       availability: 'online', // Search results are usually active
+      shipping_type: item.shipping?.tags?.includes('meli_plus') ? 'meliplus' : (item.shipping?.logistic_type === 'fulfillment' ? 'full' : (item.shipping?.free_shipping ? 'free' : 'none')),
       raw_data: item,
       shipping_info: {
         has_meli_plus: item.shipping?.tags?.includes('meli_plus') || false,
@@ -538,6 +560,14 @@ export async function searchAmazon(query: string): Promise<ScrapedDeal[]> {
 
           if (isNaN(price)) return;
 
+          // Determine shipping_type
+          let shipping_type: 'none' | 'free' | 'prime' | 'meliplus' | 'full' = 'none';
+          if (has_prime) {
+              shipping_type = 'prime';
+          } else if (free_shipping_label) {
+              shipping_type = 'free';
+          }
+
           deals.push({
             id: asin,
             title,
@@ -550,6 +580,7 @@ export async function searchAmazon(query: string): Promise<ScrapedDeal[]> {
             description: 'Oferta encontrada en Amazon México. Ver detalles en la página oficial.',
             currency: 'MXN',
             availability: 'online',
+            shipping_type,
             raw_data: { asin, title, price },
             shipping_info: {
                 has_prime,

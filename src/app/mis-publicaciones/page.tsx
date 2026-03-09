@@ -110,12 +110,12 @@ export default async function MyDealsPage() {
       </div>
 
       {/* List */}
-      <div className="space-y-4">
+      <div className="space-y-4 px-4 py-2 -mx-4">
         {deals && deals.length > 0 ? (
           deals.map((deal) => (
             <div 
               key={deal.id} 
-              className="bg-[#18191c] border border-[#2d2e33] rounded-2xl overflow-hidden hover:border-[#2BD45A]/30 transition-all group"
+              className="bg-[#18191c] border border-[#2d2e33] rounded-2xl overflow-hidden hover:border-[#2BD45A]/30 transition-all group hover:scale-[1.01] shadow-md hover:shadow-xl transform-gpu"
             >
               <div className="p-4 md:p-6 flex flex-col md:flex-row gap-6">
                 {/* Image */}

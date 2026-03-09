@@ -3,11 +3,12 @@
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { motion, AnimatePresence, PanInfo } from 'framer-motion'
-import { ExternalLink, ThumbsUp, Share2, Clock, Tag, ChevronLeft, ChevronRight, Calendar, MapPin, AlertCircle, ArrowUp, ArrowDown, Edit2, Flame, Maximize2, X, Store as StoreIcon, Globe, Truck } from 'lucide-react'
+import { ExternalLink, ThumbsUp, Share2, Clock, Tag, ChevronLeft, ChevronRight, Calendar, MapPin, AlertCircle, ArrowUp, ArrowDown, Edit2, Flame, Maximize2, X, Store as StoreIcon, Globe, Truck, PauseCircle, PlayCircle, Loader2 } from 'lucide-react'
 import CommentsSection from '@/components/CommentsSection'
 import Map from '@/components/DynamicMap'
 import { useEffect, useState, use } from 'react'
 import { useUIStore } from '@/lib/store'
+import { toggleDealStatus } from '../actions'
 
 import { cn } from '@/lib/utils'
 
@@ -56,6 +57,28 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
 
   // Description state
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
+  
+  // Pause/Resume state
+  const [isToggling, setIsToggling] = useState(false)
+
+  const handleToggleStatus = async () => {
+    if (isToggling) return
+    setIsToggling(true)
+    try {
+        const result = await toggleDealStatus(id)
+        if (result.error) {
+            alert(result.error)
+        } else if (result.newStatus) {
+            // Update local state
+            setDeal((prev: any) => ({ ...prev, status: result.newStatus }))
+        }
+    } catch (e) {
+        console.error(e)
+        alert('Error al cambiar estado')
+    } finally {
+        setIsToggling(false)
+    }
+  }
   
   // Countdown Timer State removed - now using component
 
@@ -297,73 +320,47 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
                          <div className="flex items-center gap-1.5 text-zinc-500">
                            <Truck className="w-3 h-3" />
                            <span className="whitespace-nowrap">
-                             {isFreeShipping ? 'Envío Gratis' : 
-                              deal.shipping_cost ? `+${new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(deal.shipping_cost)}` : 
-                              'Envío no incl.'}
+                             {deal.shipping_type && deal.shipping_type !== 'none' ? (
+                               deal.shipping_type === 'prime' ? 'Gratis con Prime' :
+                               deal.shipping_type === 'meliplus' ? 'Gratis con Meli+' :
+                               deal.shipping_type === 'full' ? 'Gratis con Full' :
+                               'Envío Gratis'
+                             ) : (
+                               isFreeShipping ? 'Envío Gratis' : 
+                               deal.shipping_cost ? `+${new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(deal.shipping_cost)}` : 
+                               'Envío no incl.'
+                             )}
                            </span>
                          </div>
                       </div>
                       
-                      <h1 className="text-xl md:text-2xl font-bold text-white leading-tight mb-3">
+                      <h1 className="text-base md:text-lg font-bold text-white leading-tight mb-3">
                          {deal.title}
                       </h1>
                       
-                      <div className="flex flex-wrap items-center justify-between gap-3 mb-5 bg-black/20 p-3 rounded-xl border border-white/5">
+                      <div className="flex flex-wrap items-center gap-3 mb-5 bg-black/20 p-3 rounded-xl border border-white/5">
                          <div className="flex flex-col min-w-0">
-                            <span className="text-2xl md:text-3xl font-bold text-white tracking-tight truncate">
-                               ${dealPrice.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-                            </span>
+                            <div className="flex items-center gap-2">
+                               <span className="text-lg md:text-xl font-bold text-white tracking-tight truncate">
+                                  ${dealPrice.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                               </span>
+                               {/* Discount Badge moved here to be inline/aligned */}
+                               {discount > 0 && (
+                                  <div className="bg-[#2BD45A] text-black px-1.5 py-0.5 rounded text-[10px] font-bold shadow-lg shadow-[#2BD45A]/20 self-start">
+                                     -{discount}%
+                                  </div>
+                               )}
+                            </div>
                             {originalPrice > 0 && (
-                               <span className="text-xs md:text-sm text-zinc-500 line-through">
+                               <span className="text-xs text-zinc-500 line-through">
                                   ${originalPrice.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                                </span>
                             )}
                          </div>
-                         
-                         {/* Discount Badge moved here */}
-                         {discount > 0 && (
-                            <div className="bg-[#2BD45A] text-black px-2.5 py-1 rounded-lg font-black text-xs md:text-sm shadow-lg shadow-[#2BD45A]/20 transform -rotate-2">
-                               -{discount}%
-                            </div>
-                         )}
                       </div>
 
-                      {/* Shipping & Payment Badges Block */}
-                      {(hasPrime || hasMeliPlus || hasFull || isFreeShipping || hasCoupon || hasMSI) && (
-                          <div className="flex flex-wrap gap-2 mb-4">
-                              {hasPrime && (
-                                  <span className="bg-[#00A8E1] text-white text-xs px-2 py-0.5 rounded font-bold flex items-center gap-1">
-                                      <span className="italic font-black">prime</span>
-                                  </span>
-                              )}
-                              {hasMeliPlus && (
-                                  <span className="bg-[#9c27b0] text-white text-xs px-2 py-0.5 rounded font-bold flex items-center gap-1">
-                                      <span>Meli+</span>
-                                  </span>
-                              )}
-                              {hasFull && (
-                                  <span className="bg-[#00a650] text-white text-xs px-2 py-0.5 rounded font-bold flex items-center gap-1">
-                                      <span className="italic font-black">FULL</span>
-                                  </span>
-                              )}
-                              {hasCoupon && (
-                                  <span className="bg-orange-500/20 text-orange-500 text-xs px-2 py-0.5 rounded font-bold border border-orange-500/20 border-dashed">
-                                      Cupón
-                                  </span>
-                              )}
-                              {isFreeShipping && (
-                                  <span className="bg-green-600/20 text-green-500 text-xs px-2 py-0.5 rounded font-bold border border-green-600/20">
-                                      Envío Gratis
-                                  </span>
-                              )}
-                              {hasMSI && (
-                                  <span className="bg-blue-600/20 text-blue-400 text-xs px-2 py-0.5 rounded font-bold border border-blue-600/20">
-                                      MSI
-                                  </span>
-                              )}
-                          </div>
-                      )}
-
+                      {/* Shipping & Payment Badges Block - REMOVED as requested since they appear above */}
+                      
                       {isExpired ? (
                          <div className="w-full flex items-center justify-center gap-2 bg-zinc-800 text-zinc-400 font-bold py-3 rounded-xl cursor-not-allowed border border-white/5 text-sm">
                             <AlertCircle className="w-4 h-4" /> Oferta Expirada
@@ -421,15 +418,36 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
                             </div>
                          </div>
                          
-                         {/* Edit Button if owner */}
+                         {/* Owner Controls */}
                          {deal.user_id && currentUserId === deal.user_id && (
-                           <Link 
-                              href={`/oferta/${id}/edit`}
-                              className="p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-                              title="Editar oferta"
-                           >
-                              <Edit2 className="w-3.5 h-3.5" />
-                           </Link>
+                           <div className="flex items-center gap-1">
+                             <button
+                                onClick={handleToggleStatus}
+                                disabled={isToggling}
+                                className={cn(
+                                    "p-2 rounded-lg transition-colors",
+                                    deal.status === 'paused' 
+                                        ? "text-yellow-500 hover:bg-yellow-500/10" 
+                                        : "text-zinc-500 hover:text-white hover:bg-white/5"
+                                )}
+                                title={deal.status === 'paused' ? "Reactivar oferta" : "Pausar oferta"}
+                             >
+                                {isToggling ? (
+                                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                ) : deal.status === 'paused' ? (
+                                    <PlayCircle className="w-3.5 h-3.5" />
+                                ) : (
+                                    <PauseCircle className="w-3.5 h-3.5" />
+                                )}
+                             </button>
+                             <Link 
+                                href={`/oferta/${id}/edit`}
+                                className="p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                                title="Editar oferta"
+                             >
+                                <Edit2 className="w-3.5 h-3.5" />
+                             </Link>
+                           </div>
                          )}
                       </div>
                       <div className="flex items-center gap-2 text-[10px] text-zinc-500 bg-white/5 p-2 rounded-lg">
@@ -469,7 +487,13 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
              <div className="glass-panel p-3 md:p-4 relative group overflow-hidden rounded-2xl order-1 flex flex-col gap-3 w-full">
                 
                 {/* Countdown Banner - Moved to top to avoid overlap */}
-                {expiresAt && !isExpired && (
+                {deal.status === 'paused' && (
+                    <div className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 p-3 rounded-xl mb-4 flex items-center gap-2 text-sm font-medium">
+                        <PauseCircle className="w-4 h-4" />
+                        Esta oferta está pausada y no es visible para otros usuarios.
+                    </div>
+                )}
+                {expiresAt && !isExpired && deal.status !== 'paused' && (
                    <Countdown targetDate={expiresAt} className="relative bg-black/40 rounded-xl mb-4 border border-[#2BD45A]/20" size="md" />
                 )}
 

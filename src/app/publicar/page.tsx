@@ -36,6 +36,8 @@ const COUNTRIES = [
   "México", "Estados Unidos", "China", "España", "Internacional", "Otro"
 ]
 
+import { createDeal } from './actions'
+
 export default function CreateDealPage() {
   const [loading, setLoading] = useState(false)
   const [categories, setCategories] = useState<Category[]>([])
@@ -161,19 +163,7 @@ export default function CreateDealPage() {
     
     // Capturar datos del formulario antes de operaciones asíncronas
     const formData = new FormData(e.currentTarget)
-    const title = formData.get('title')
-    const description = formData.get('description')
-    const price = formData.get('price')
-    const original_price = formData.get('original_price')
-    const url = formData.get('url')
-    const categoryId = formData.get('category')
-    const expires_at = formData.get('expires_at')
-    const start_date = formData.get('start_date')
-    const coupon_code = formData.get('coupon_code')
-    const availability = formData.get('availability')
-    const shipping_cost = formData.get('shipping_cost')
-    const shipping_country = formData.get('shipping_country')
-
+    
     try {
       // Verificar sesión
       const { data: { session } } = await supabase.auth.getSession()
@@ -183,76 +173,9 @@ export default function CreateDealPage() {
         return
       }
 
-      // Validaciones básicas
-      if (!title || !price || !url || !categoryId) {
-        throw new Error('Por favor completa todos los campos obligatorios')
-      }
-
-      // 1. Resolver Store ID
-      let finalStoreId = null
-
-      if (selectedStore) {
-        finalStoreId = selectedStore.id
-      } else if (customStoreName.trim()) {
-        const slug = slugify(customStoreName)
-        
-        // Intentar crear la tienda
-        // Primero verificamos si ya existe por slug para evitar errores
-        const { data: existingStore } = await (supabase.from('stores') as any)
-          .select('id')
-          .eq('slug', slug)
-          .maybeSingle()
-
-        if (existingStore) {
-          finalStoreId = (existingStore as any).id
-        } else {
-          const { data: newStore, error: createStoreError } = await (supabase.from('stores') as any)
-            .insert({
-              name: customStoreName.trim(),
-              slug: slug,
-              is_verified: false
-            })
-            .select('id')
-            .single()
-
-          if (createStoreError) {
-            console.error('Error creando tienda:', createStoreError)
-            // Si falla, podríamos ignorarlo o mostrar error. 
-            // Para robustez, seguimos sin store_id o lanzamos error.
-          } else if (newStore) {
-            finalStoreId = (newStore as any).id
-          }
-        }
-      }
-
-      // MODERATION CHECK: Forbidden Words
-      const titleCheck = await checkForbiddenWords(title.toString())
-      if (titleCheck.hasForbidden) {
-        throw new Error(`El título contiene palabras prohibidas: ${titleCheck.word}`)
-      }
-      
-      const descCheck = await checkForbiddenWords(description?.toString() || '')
-      if (descCheck.hasForbidden) {
-         throw new Error(`La descripción contiene palabras prohibidas: ${descCheck.word}`)
-      }
-
-      // MODERATION CHECK: Referral Links
-      const { isReferral, reason } = await isReferralUrl(url.toString())
-      if (isReferral) {
-        // Check if user is allowed to post referrals
-        const { canPost, limit, used } = await canUserPostReferral(session.user.id)
-        if (!canPost) {
-           if (limit === 0) {
-             throw new Error(`No tienes nivel suficiente para publicar enlaces de referidos (mínimo nivel 10). ${reason}`)
-           } else {
-             throw new Error(`Has alcanzado tu límite semanal de enlaces de referidos (${used}/${limit}). Intenta la próxima semana.`)
-           }
-        }
-      }
-
       const uploadedImageUrls: string[] = []
 
-      // Subir imágenes
+      // Subir imágenes (Client Side Upload)
       if (items.length > 0) {
         for (const item of items) {
           if (!item.file) continue
@@ -283,53 +206,26 @@ export default function CreateDealPage() {
         throw new Error('Debes subir al menos una imagen')
       }
 
-      // Calcular porcentaje de descuento si hay precio original
-      let discount_percentage = null
-      if (original_price && Number(original_price) > Number(price)) {
-        discount_percentage = Math.round(((Number(original_price) - Number(price)) / Number(original_price)) * 100)
+      // Add extra data to FormData
+      formData.append('image_urls', JSON.stringify(uploadedImageUrls))
+      if (selectedStore) {
+        formData.append('store_id', selectedStore.id)
+      } else if (customStoreName) {
+        formData.append('store_name', customStoreName)
       }
 
-      // Get User Role to determine status
-      const { data: userProfile } = await (supabase.from('users') as any)
-        .select('role')
-        .eq('id', session.user.id)
-        .single()
-      
-      // 2. Determinar estado inicial
-      // Por defecto PENDING. El backend también forzará esto via trigger, pero aquí lo mostramos para la UI
-      const userRole = (userProfile as any)?.role || 'user'
-      const initialStatus = ['admin', 'moderator'].includes(userRole) ? 'active' : 'pending'
+      // Call Server Action
+      const result = await createDeal(formData)
 
-      console.log('User Role:', userRole, 'Initial Status:', initialStatus) // Debug
-
-      // Preparar payload
-      const deal = {
-        user_id: session.user.id,
-        category_id: categoryId,
-        store_id: finalStoreId,
-        title,
-        description,
-        deal_price: Number(price),
-        original_price: original_price ? Number(original_price) : null,
-        discount_percentage,
-        deal_url: url,
-        image_urls: uploadedImageUrls,
-        deal_type: coupon_code ? 'coupon' : 'deal',
-        status: initialStatus,
-        expires_at: expires_at ? new Date(expires_at as string).toISOString() : null,
-        // New fields
-        coupon_code: coupon_code || null,
-        availability: availability || null,
-        shipping_cost: shipping_cost ? Number(shipping_cost) : 0,
-        shipping_country: shipping_country || null,
-        start_date: start_date ? new Date(start_date as string).toISOString() : null,
-        is_referral: isReferral
-      }
-      
-      const { error } = await (supabase.from('deals') as any).insert(deal)
-
-      if (error) {
-        throw new Error(`Error al guardar la oferta: ${error.message}`)
+      if (result.error) {
+        // Handle Validation Errors (Object) or String Error
+        if (typeof result.error === 'string') {
+           throw new Error(result.error)
+        } else {
+           // Flatten validation errors
+           const errorMsg = Object.values(result.error).flat().join(', ')
+           throw new Error(errorMsg)
+        }
       }
 
       // Mostrar modal en lugar de alerta y redirección inmediata
@@ -537,7 +433,39 @@ export default function CreateDealPage() {
                 </div>
                 <div>
                   <label className="flex items-center gap-2 text-sm font-medium text-zinc-300 mb-1.5 ml-1">
-                    Costo de Envío
+                    Tipo de Envío
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Selecciona si el envío requiere membresía.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Truck className="h-4 w-4 text-zinc-500" />
+                    </div>
+                    <select
+                      name="shipping_type"
+                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all appearance-none cursor-pointer"
+                    >
+                      <option value="none" className="bg-zinc-900">No especificado / Con costo</option>
+                      <option value="free" className="bg-zinc-900">Envío Gratis (Para todos)</option>
+                      <option value="prime" className="bg-zinc-900">Gratis con Amazon Prime</option>
+                      <option value="meliplus" className="bg-zinc-900">Gratis con Meli+</option>
+                      <option value="full" className="bg-zinc-900">Gratis con Envío Full</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Costo Envío y País */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium text-zinc-300 mb-1.5 ml-1">
+                    Costo de Envío (Opcional)
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
@@ -562,34 +490,8 @@ export default function CreateDealPage() {
                 </div>
               </div>
 
-              {/* País y Fechas */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                 <div>
-                  <label className="flex items-center gap-2 text-sm font-medium text-zinc-300 mb-1.5 ml-1">
-                    Enviado desde
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>País de origen del envío.</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Globe className="h-4 w-4 text-zinc-500" />
-                    </div>
-                    <select
-                      name="shipping_country"
-                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all appearance-none cursor-pointer"
-                    >
-                      {COUNTRIES.map(country => (
-                        <option key={country} value={country} className="bg-zinc-900">{country}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
+              {/* Fechas */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="flex items-center gap-2 text-sm font-medium text-zinc-300 mb-1.5 ml-1">
                     Empieza
@@ -625,6 +527,9 @@ export default function CreateDealPage() {
                     type="datetime-local"
                     className="w-full bg-black/20 border border-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600 [color-scheme:dark]"
                   />
+                  <p className="text-xs text-zinc-500 mt-1.5 ml-1">
+                    Si no seleccionas fecha, expirará en 2 días automáticamente.
+                  </p>
                 </div>
               </div>
 

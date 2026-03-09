@@ -217,11 +217,6 @@ export default function DealDetailView({
                                       Cupón
                                   </span>
                               )}
-                              {isFreeShipping && (
-                                  <span className="bg-green-600/20 text-green-500 text-xs px-2 py-0.5 rounded font-bold border border-green-600/20">
-                                      Envío Gratis
-                                  </span>
-                              )}
                               {hasMSI && (
                                   <span className="bg-blue-600/20 text-blue-400 text-xs px-2 py-0.5 rounded font-bold border border-blue-600/20">
                                       MSI

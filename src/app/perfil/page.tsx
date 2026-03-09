@@ -10,6 +10,7 @@ import { es } from 'date-fns/locale'
 import { getUserGamificationProfile, getUserBadges, getAllBadges } from '@/lib/gamification'
 import LevelProgress from '@/components/gamification/LevelProgress'
 import BadgeList from '@/components/gamification/BadgeList'
+import ProfileTabs from '@/components/ProfileTabs'
 
 export const dynamic = 'force-dynamic'
 
@@ -52,17 +53,17 @@ export default async function ProfilePage() {
     console.error('Error fetching user deals:', dealsError)
   }
 
-  const deals = userDeals?.map(deal => ({
-    ...(deal as any),
-    comments_count: (deal as any).comments ? ((deal as any).comments as any)[0]?.count : 0
-  }))
+  const deals = userDeals?.map((deal: any) => ({
+    ...deal,
+    comments_count: deal.comments?.[0]?.count || 0
+  })) as Deal[]
 
   // Calculate stats
   const totalDeals = deals?.length || 0
   const totalVotes = deals?.reduce((acc, deal) => acc + (deal.votes_count || 0), 0) || 0
   
   // Identify pending/rejected deals
-  const pendingDealsCount = deals?.filter((d: any) => ['pending', 'rejected', 'revision'].includes(d.status)).length || 0
+  const pendingDealsCount = deals?.filter((d) => ['pending', 'rejected', 'revision'].includes(d.status)).length || 0
 
   return (
     <div className="space-y-8 animate-fade-in w-full max-w-[100vw] overflow-x-hidden">
@@ -171,29 +172,14 @@ export default async function ProfilePage() {
         </div>
       )}
 
-      {/* Content Tabs (Visual only for now) */}
-      <div className="flex items-center gap-1 border-b border-[#2d2e33] pb-1 overflow-x-auto scrollbar-hide">
-        <Link 
-          href="/mis-publicaciones"
-          className="px-6 py-3 text-sm font-bold text-white border-b-2 border-[#2BD45A] bg-[#2BD45A]/5 rounded-t-lg transition-colors whitespace-nowrap flex items-center gap-2 shrink-0"
-        >
-          Gestionar Publicaciones
-          <ExternalLink size={14} />
-        </Link>
-        <button className="px-6 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors whitespace-nowrap shrink-0">
-          Guardados
-        </button>
-        <button className="px-6 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors whitespace-nowrap shrink-0">
-          Comentarios
-        </button>
-      </div>
+      {/* Content Tabs (Functional) */}
+      <ProfileTabs />
 
       {/* User Deals Grid */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 p-1">
         {deals && deals.length > 0 ? (
           deals.map((deal) => (
-            // @ts-ignore
-            <DealCard key={deal.id} deal={deal as unknown as Deal} />
+            <DealCard key={deal.id} deal={deal} />
           ))
         ) : (
           <div className="py-20 flex flex-col items-center justify-center text-center bg-[#18191c] rounded-3xl border border-[#2d2e33] border-dashed">
