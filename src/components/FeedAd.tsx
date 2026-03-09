@@ -108,7 +108,10 @@ export default function FeedAd({ className }: FeedAdProps) {
 
   return (
     <div className={cn(
-      "flex flex-col items-center justify-center overflow-hidden my-4 w-full",
+      "flex flex-col items-center justify-center overflow-hidden w-full",
+      // Remove specific margins here to control them better from parent
+      // but keep a default safe margin if not specified
+      !className?.includes('my-') && "my-6", 
       isSidebar && "my-0",
       className
     )}>

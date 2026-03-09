@@ -53,8 +53,23 @@ function extractASIN(url: string): string | null {
 
 // Helper to extract ML ID from URL
 function extractMLID(url: string): string | null {
-  const match = url.match(/(MLM-?\d+)/);
-  return match ? match[1].replace('-', '') : null;
+  // Pattern 1: /MLM-12345678-title...
+  let match = url.match(/MLM[-_]?(\d+)/);
+  if (match) return `MLM${match[1]}`;
+
+  // Pattern 2: /p/MLM12345678 (Catalog product)
+  match = url.match(/\/p\/(MLM\d+)/);
+  if (match) return match[1];
+
+  // Pattern 3: query param id=MLM12345678
+  match = url.match(/[?&]id=(MLM\d+)/);
+  if (match) return match[1];
+  
+  // Pattern 4: /MLM-12345678 (without title suffix, sometimes happens)
+  match = url.match(/MLM-(\d+)/);
+  if (match) return `MLM${match[1]}`;
+
+  return null;
 }
 
 // Helper to extract Amazon Image ID for deduplication
@@ -91,23 +106,63 @@ export async function scrapeAmazonUrl(url: string): Promise<ScrapedDeal | null> 
     
     const title = $('#productTitle').text().trim();
     
-    // Price extraction logic
-    let priceWhole = $('.a-price.a-text-price.a-size-medium .a-offscreen').first().text().replace('$', '').replace(/,/g, '');
-    if (!priceWhole) {
-        priceWhole = $('.a-price .a-offscreen').first().text().replace('$', '').replace(/,/g, '');
+    // Price extraction logic - Improved for accuracy
+    let priceText = '';
+    
+    // Priority 1: "Price To Pay" (Standard Amazon selling price class)
+    // We look for the visible price block that is NOT a label/text price
+    const priceToPay = $('.priceToPay .a-offscreen, #corePrice_feature_div .a-price:not(.a-text-price) .a-offscreen').first();
+    if (priceToPay.length > 0) {
+        priceText = priceToPay.text().trim();
     }
-    // Fallback for some layouts
-    if (!priceWhole) {
-        priceWhole = $('#corePriceDisplay_desktop_feature_div .a-price-whole').first().text().replace(/,/g, '').replace(/\./g, '');
-        const priceFraction = $('#corePriceDisplay_desktop_feature_div .a-price-fraction').first().text();
-        if (priceWhole && priceFraction) priceWhole = `${priceWhole}.${priceFraction}`;
+    
+    // Priority 2: Apex Price (often used in deals/lightning deals)
+    if (!priceText) {
+        const apexPrice = $('.apexPriceToPay .a-offscreen').first();
+        if (apexPrice.length > 0) {
+            priceText = apexPrice.text().trim();
+        }
     }
 
-    const price = parseFloat(priceWhole);
+    // Priority 3: Legacy ID selectors
+    if (!priceText) {
+        const dealPrice = $('#priceblock_dealprice, #priceblock_ourprice, #priceblock_saleprice').first();
+        if (dealPrice.length > 0) {
+            priceText = dealPrice.text().trim();
+        }
+    }
 
-    // Original Price
-    let originalPriceText = $('.a-price.a-text-price[data-a-strike="true"] .a-offscreen').first().text().replace('$', '').replace(/,/g, '');
-    const original_price = originalPriceText ? parseFloat(originalPriceText) : null;
+    // Priority 4: Center column fallback (safest area)
+    if (!priceText) {
+         const centerColPrice = $('#centerCol .a-price:not(.a-text-price) .a-offscreen').first();
+         if (centerColPrice.length > 0) {
+             priceText = centerColPrice.text().trim();
+         }
+    }
+
+    // Fallback: Whole/Fraction method (sometimes offscreen is missing or weird)
+    if (!priceText) {
+        const priceWhole = $('.a-price-whole').first().text().replace(/,/g, '').replace(/\./g, '').trim();
+        const priceFraction = $('.a-price-fraction').first().text().trim();
+        if (priceWhole) {
+            priceText = `${priceWhole}.${priceFraction || '00'}`;
+        }
+    }
+
+    // Clean and parse price
+    // Remove currency symbol, commas, and any non-numeric chars except dot
+    const priceClean = priceText.replace(/[^\d.]/g, ''); 
+    const price = parseFloat(priceClean);
+
+    // Original Price (List Price / Previous Price)
+    // This usually HAS the .a-text-price class
+    let originalPriceText = $('.a-price.a-text-price[data-a-strike="true"] .a-offscreen').first().text().trim();
+    if (!originalPriceText) {
+        // Try finding "List Price" label
+        originalPriceText = $('#basis-price .a-offscreen, .basisPrice .a-offscreen').first().text().trim();
+    }
+    const originalPriceClean = originalPriceText.replace(/[^\d.]/g, '');
+    const original_price = originalPriceClean ? parseFloat(originalPriceClean) : null;
 
     // Extract multiple images
     const image_urls: string[] = [];
@@ -357,13 +412,66 @@ export async function scrapeAmazonUrl(url: string): Promise<ScrapedDeal | null> 
 }
 
 export async function scrapeMercadoLibreUrl(url: string): Promise<ScrapedDeal | null> {
-  const mlId = extractMLID(url);
-  if (!mlId) return null;
+  let mlId = extractMLID(url);
+  
+  if (!mlId) {
+      console.error('Could not extract ML ID from URL:', url);
+      return null;
+  }
+  
+  // Clean ID just in case
+  mlId = mlId.replace('-', '');
 
   try {
-    // Use API for details
-    const response = await axios.get(`https://api.mercadolibre.com/items/${mlId}`);
-    const item = response.data;
+    // Try to get item details from API
+    let item;
+    try {
+        const response = await axios.get(`https://api.mercadolibre.com/items/${mlId}`);
+        item = response.data;
+    } catch (e) {
+        // If it's a catalog product (MLM123...), the items endpoint might fail or return a parent.
+        // Sometimes we need to search for it.
+        // Or if it fails, maybe it's a variation.
+        console.warn(`Direct item fetch failed for ${mlId}, trying catalog fallback...`);
+    }
+
+    // If direct fetch failed or returned partial data, and it looks like a catalog ID
+    if (!item) {
+         // Fallback: This might be a catalog product ID, which is different from an Item ID.
+         // We can try to "search" for it or get product details.
+         try {
+             const productResponse = await axios.get(`https://api.mercadolibre.com/products/${mlId}`);
+             const product = productResponse.data;
+             
+             // Map product to deal format (limited info compared to item)
+             // We need to find an active item for this product to get the price
+             const searchResponse = await axios.get(`https://api.mercadolibre.com/sites/MLM/search`, {
+                 params: { q: product.name, limit: 1 }
+             });
+             
+             if (searchResponse.data.results.length > 0) {
+                 item = searchResponse.data.results[0];
+             } else {
+                 // Return minimal info from product
+                 return {
+                     id: product.id,
+                     title: product.name,
+                     price: 0, // Unknown
+                     original_price: null,
+                     image_url: product.pictures[0]?.url || '',
+                     image_urls: product.pictures.map((p:any) => p.url),
+                     url: product.permalink,
+                     source: 'mercadolibre',
+                     description: 'Producto de catálogo',
+                     currency: 'MXN',
+                     availability: 'online',
+                     shipping_type: 'none'
+                 };
+             }
+         } catch (e2) {
+             throw new Error(`Failed to fetch ML item/product: ${mlId}`);
+         }
+    }
 
     if (!item) return null;
 
@@ -494,6 +602,279 @@ export async function searchMercadoLibre(query: string): Promise<ScrapedDeal[]> 
 
   } catch (error) {
     console.error('Error searching Mercado Libre:', error);
+    return [];
+  }
+}
+
+export async function scrapeMercadoLibreDeals(): Promise<ScrapedDeal[]> {
+  try {
+    // 1. Try fetching the main deals page directly
+    try {
+        const userAgent = getRandomUserAgent();
+        const htmlResponse = await axios.get('https://www.mercadolibre.com.mx/ofertas', {
+            headers: {
+                'User-Agent': userAgent,
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Accept-Language': 'es-MX,es;q=0.9,en-US;q=0.8,en;q=0.7',
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache',
+                'Referer': 'https://www.google.com/'
+            },
+            timeout: 8000
+        });
+        
+        if (htmlResponse.data) {
+            const dealsFromHtml = parseMercadoLibreHtml(htmlResponse.data);
+            if (dealsFromHtml.length > 0) {
+                console.log(`Scraped ${dealsFromHtml.length} deals from ML HTML page`);
+                return dealsFromHtml;
+            }
+        }
+    } catch (htmlError) {
+        console.warn('ML HTML scrape failed, falling back to API:', htmlError instanceof Error ? htmlError.message : String(htmlError));
+    }
+
+    // 2. Fallback to API (if not blocked)
+    const response = await axios.get(`https://api.mercadolibre.com/sites/MLM/search`, {
+      params: {
+        q: 'ofertas',
+        sort: 'relevance',
+        limit: 50
+      },
+      headers: {
+        'User-Agent': getRandomUserAgent()
+      }
+    });
+
+    const items = response.data.results;
+    return mapMercadoLibreItems(items);
+  } catch (error) {
+    console.error('Error scraping Mercado Libre deals (HTML & API):', error);
+    return [];
+  }
+}
+
+function mapMercadoLibreItems(items: any[]): ScrapedDeal[] {
+    return items.map((item: any) => ({
+      id: item.id,
+      title: item.title,
+      price: item.price,
+      original_price: item.original_price || null,
+      image_url: item.thumbnail ? item.thumbnail.replace('I.jpg', 'O.jpg') : '',
+      image_urls: item.thumbnail ? [item.thumbnail.replace('I.jpg', 'O.jpg')] : [],
+      url: item.permalink,
+      source: 'mercadolibre',
+      description: `Oferta encontrada en Mercado Libre. Condición: ${item.condition === 'new' ? 'Nuevo' : 'Usado'}.`,
+      currency: item.currency_id,
+      availability: 'online',
+      shipping_type: item.shipping?.tags?.includes('meli_plus') ? 'meliplus' : (item.shipping?.logistic_type === 'fulfillment' ? 'full' : (item.shipping?.free_shipping ? 'free' : 'none')),
+      raw_data: item,
+      shipping_info: {
+        has_meli_plus: item.shipping?.tags?.includes('meli_plus') || false,
+        is_full: item.shipping?.logistic_type === 'fulfillment',
+        free_shipping_label: item.shipping?.free_shipping || false,
+        shipping_text: `Envío ${item.shipping?.free_shipping ? 'Gratis' : 'con costo'}`
+      },
+      payment_info: {
+        has_msi: item.installments?.quantity > 0 && item.installments?.rate === 0
+      }
+    }));
+}
+
+export function parseMercadoLibreHtml(html: string): ScrapedDeal[] {
+    const $ = cheerio.load(html);
+    const deals: ScrapedDeal[] = [];
+
+    // Strategy 1: Search Results (.ui-search-layout__item)
+    $('.ui-search-layout__item').each((_, el) => {
+        try {
+            const title = $(el).find('.ui-search-item__title').text().trim();
+            const url = $(el).find('a.ui-search-link').attr('href');
+            const priceText = $(el).find('.ui-search-price__part--medium .andes-money-amount__fraction').first().text().replace(/\./g, '');
+            const price = parseFloat(priceText);
+            const originalPriceText = $(el).find('.ui-search-price__part--medium .ui-search-price__original-value .andes-money-amount__fraction').text().replace(/\./g, '');
+            const original_price = originalPriceText ? parseFloat(originalPriceText) : null;
+            const image_url = $(el).find('img.ui-search-result-image__element').attr('data-src') || $(el).find('img.ui-search-result-image__element').attr('src');
+            
+            // Shipping
+            const is_full = $(el).find('.ui-search-item__fulfillment-label').length > 0;
+            const free_shipping = $(el).find('.ui-search-item__shipping--free').length > 0;
+            const has_meli_plus = $(el).find('.ui-search-item__meli-plus-label').length > 0;
+
+            if (title && !isNaN(price) && url) {
+                deals.push({
+                    id: extractMLID(url) || Math.random().toString(36).substring(7),
+                    title,
+                    price,
+                    original_price: original_price && original_price > price ? original_price : null,
+                    image_url: image_url || '',
+                    image_urls: image_url ? [image_url] : [],
+                    url,
+                    source: 'mercadolibre',
+                    description: 'Oferta importada desde HTML.',
+                    currency: 'MXN',
+                    availability: 'online',
+                    shipping_type: has_meli_plus ? 'meliplus' : (is_full ? 'full' : (free_shipping ? 'free' : 'none')),
+                    shipping_info: {
+                        has_meli_plus,
+                        is_full,
+                        free_shipping_label: free_shipping,
+                        shipping_text: free_shipping ? 'Envío Gratis' : ''
+                    }
+                });
+            }
+        } catch (e) { console.error('Error parsing ML item', e); }
+    });
+
+    // Strategy 2: Deals Page Cards (.promotion-item)
+    $('.promotion-item').each((_, el) => {
+        try {
+            const title = $(el).find('.promotion-item__title').text().trim();
+            const url = $(el).find('.promotion-item__link-container').attr('href');
+            const priceContainer = $(el).find('.promotion-item__price');
+            const priceText = priceContainer.find('.andes-money-amount__fraction').first().text().replace(/\./g, '');
+            const price = parseFloat(priceText);
+            
+            // Original price might be hidden or different structure
+            // Sometimes it's in a separate element
+            
+            const image_url = $(el).find('img.promotion-item__img').attr('src') || $(el).find('img.promotion-item__img').attr('data-src');
+
+             if (title && !isNaN(price) && url) {
+                deals.push({
+                    id: extractMLID(url) || Math.random().toString(36).substring(7),
+                    title,
+                    price,
+                    original_price: null, // Hard to extract reliably from this view sometimes
+                    image_url: image_url || '',
+                    image_urls: image_url ? [image_url] : [],
+                    url,
+                    source: 'mercadolibre',
+                    description: 'Oferta del día importada.',
+                    currency: 'MXN',
+                    availability: 'online',
+                    shipping_type: 'none', // Badges often missing in this view
+                });
+            }
+        } catch (e) { console.error('Error parsing ML deal item', e); }
+    });
+
+    return deals;
+}
+
+export function parseAmazonHtml(html: string): ScrapedDeal[] {
+    const $ = cheerio.load(html);
+    const deals: ScrapedDeal[] = [];
+
+    // Strategy 1: Search Results
+    $('.s-result-item[data-component-type="s-search-result"]').each((_, el) => {
+         try {
+            const title = $(el).find('h2 a span').text().trim();
+            const urlSuffix = $(el).find('h2 a').attr('href');
+            const image_url = $(el).find('img.s-image').attr('src');
+            
+            // Improve price extraction to avoid List Price
+            const priceElement = $(el).find('.a-price:not(.a-text-price)').first();
+            const priceWhole = priceElement.find('.a-price-whole').first().text().replace(/,/g, '').replace(/\./g, '');
+            const priceFraction = priceElement.find('.a-price-fraction').first().text();
+            
+            const price = parseFloat(`${priceWhole}.${priceFraction || '00'}`);
+            
+            const originalPriceText = $(el).find('.a-text-price .a-offscreen').first().text().replace('$', '').replace(/,/g, '');
+            const original_price = originalPriceText ? parseFloat(originalPriceText) : null;
+            const asin = $(el).attr('data-asin');
+
+            if (title && !isNaN(price) && urlSuffix) {
+                deals.push({
+                    id: asin || Math.random().toString(36).substring(7),
+                    title,
+                    price,
+                    original_price: original_price && original_price > price ? original_price : null,
+                    image_url: image_url || '',
+                    image_urls: image_url ? [image_url] : [],
+                    url: urlSuffix.startsWith('http') ? urlSuffix : `https://www.amazon.com.mx${urlSuffix}`,
+                    source: 'amazon',
+                    description: 'Oferta importada desde HTML.',
+                    currency: 'MXN',
+                    availability: 'online',
+                    shipping_type: $(el).find('.a-icon-prime').length > 0 ? 'prime' : 'none'
+                });
+            }
+         } catch(e) {}
+    });
+
+    // Strategy 2: Carousel/Grid Cards (Deals Page)
+    // Look for cards with "Deal" badge or similar
+    $('div[class*="DealGridItem-module__dealItemContent"]').each((_, el) => {
+        try {
+            const title = $(el).find('a[class*="DealContent-module__truncate"]').text().trim() || 
+                          $(el).find('div[class*="DealContent-module__truncate"]').text().trim();
+            const urlSuffix = $(el).find('a.a-link-normal').attr('href');
+            const image_url = $(el).find('img').attr('src');
+            
+            // Price is tricky here, often dynamic.
+            // But sometimes rendered.
+            // If not found, skip.
+        } catch(e) {}
+    });
+
+    // If no deals found, try generic card search
+    if (deals.length === 0) {
+        // Fallback for generic grid
+        $('.a-cardui').each((_, el) => {
+            // Implementation depends on specific layout
+        });
+    }
+
+    return deals;
+}
+
+export async function scrapeAmazonDeals(): Promise<ScrapedDeal[]> {
+  try {
+    // 1. Try fetching the main deals page directly
+    try {
+        const userAgent = getRandomUserAgent();
+        const htmlResponse = await axios.get('https://www.amazon.com.mx/deals?ref_=nav_cs_gb', {
+            headers: {
+                'User-Agent': userAgent,
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Accept-Language': 'es-MX,es;q=0.9,en-US;q=0.8,en;q=0.7',
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache',
+                'Referer': 'https://www.google.com/'
+            },
+            timeout: 8000
+        });
+        
+        if (htmlResponse.data) {
+            const dealsFromHtml = parseAmazonHtml(htmlResponse.data);
+            if (dealsFromHtml.length > 0) {
+                console.log(`Scraped ${dealsFromHtml.length} deals from Amazon HTML page`);
+                return dealsFromHtml;
+            }
+        }
+    } catch (htmlError) {
+        console.warn('Amazon HTML scrape failed, falling back to Search:', htmlError instanceof Error ? htmlError.message : String(htmlError));
+    }
+
+    // 2. Fallback to Search simulation
+    const queries = ['ofertas', 'descuentos', 'remates', 'promociones'];
+    const promises = queries.map(q => searchAmazon(q));
+    const results = await Promise.all(promises);
+    
+    // Flatten and deduplicate by ID
+    const allDeals = results.flat();
+    const uniqueDeals = Array.from(new Map(allDeals.map(item => [item.id, item])).values());
+    
+    // Sort by discount percentage (if available) or price
+    return uniqueDeals.sort((a, b) => {
+        const discountA = a.original_price ? (a.original_price - a.price) / a.original_price : 0;
+        const discountB = b.original_price ? (b.original_price - b.price) / b.original_price : 0;
+        return discountB - discountA;
+    }).slice(0, 50); // Limit to 50 top deals
+
+  } catch (error) {
+    console.error('Error scraping Amazon deals:', error);
     return [];
   }
 }

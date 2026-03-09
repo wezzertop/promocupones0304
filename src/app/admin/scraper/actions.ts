@@ -1,7 +1,31 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { searchMercadoLibre, searchAmazon, scrapeAmazonUrl, scrapeMercadoLibreUrl, ScrapedDeal } from '@/lib/scraper'
+import { searchMercadoLibre, searchAmazon, scrapeAmazonUrl, scrapeMercadoLibreUrl, scrapeAmazonDeals, scrapeMercadoLibreDeals, parseAmazonHtml, parseMercadoLibreHtml, ScrapedDeal } from '@/lib/scraper'
+
+// ... existing code ...
+
+export async function processHtmlImport(html: string, source: 'amazon' | 'mercadolibre') {
+    const { authorized } = await checkPermissions()
+    if (!authorized) throw new Error('Unauthorized')
+
+    try {
+        let deals: ScrapedDeal[] = []
+        if (source === 'amazon') {
+            deals = parseAmazonHtml(html)
+        } else {
+            deals = parseMercadoLibreHtml(html)
+        }
+        
+        await logScraperAction('search', source, 'success', { query: 'html_import', count: deals.length })
+        return deals
+    } catch (error) {
+        console.error('HTML import error:', error)
+        await logScraperAction('search', source, 'error', { query: 'html_import', error: String(error) })
+        return []
+    }
+}
+
 import { revalidatePath } from 'next/cache'
 import { Database } from '@/types/supabase'
 
@@ -30,6 +54,36 @@ async function checkPermissions() {
   const role = (userData as any)?.role
   const authorized = role && (role === 'admin' || role === 'moderator')
   return { authorized, user }
+}
+
+export async function getAmazonDeals() {
+  const { authorized } = await checkPermissions()
+  if (!authorized) throw new Error('Unauthorized')
+
+  try {
+    const results = await scrapeAmazonDeals()
+    await logScraperAction('search', 'amazon', 'success', { query: 'bulk_deals', count: results.length })
+    return results
+  } catch (error) {
+    console.error('Amazon deals error:', error)
+    await logScraperAction('search', 'amazon', 'error', { query: 'bulk_deals', error: String(error) })
+    return []
+  }
+}
+
+export async function getMercadoLibreDeals() {
+  const { authorized } = await checkPermissions()
+  if (!authorized) throw new Error('Unauthorized')
+
+  try {
+    const results = await scrapeMercadoLibreDeals()
+    await logScraperAction('search', 'mercadolibre', 'success', { query: 'bulk_deals', count: results.length })
+    return results
+  } catch (error) {
+    console.error('Mercado Libre deals error:', error)
+    await logScraperAction('search', 'mercadolibre', 'error', { query: 'bulk_deals', error: String(error) })
+    return []
+  }
 }
 
 export async function searchDeals(query: string, source: string) {

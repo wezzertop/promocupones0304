@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence, PanInfo } from 'framer-motion'
 import { ExternalLink, ThumbsUp, Share2, Clock, Tag, ChevronLeft, ChevronRight, Calendar, MapPin, AlertCircle, ArrowUp, ArrowDown, Edit2, Flame, Maximize2, X, Store as StoreIcon, Globe, Truck, PauseCircle, PlayCircle, Loader2 } from 'lucide-react'
 import CommentsSection from '@/components/CommentsSection'
+import FeedAd from '@/components/FeedAd'
 import Map from '@/components/DynamicMap'
 import { useEffect, useState, use } from 'react'
 import { useUIStore } from '@/lib/store'
@@ -480,6 +481,11 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
                    </div>
                 </div>
              </div>
+
+             {/* Right Column Ad - Desktop Only */}
+             <div className="hidden lg:block">
+               <FeedAd className="my-0" />
+             </div>
           </div>
 
           {/* Left Column: Image & Comments (8 cols) - Mobile: Order N/A (contents), Desktop: Order 1 (Left) */}
@@ -671,6 +677,9 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
                   </div>
                 </div>
              )}
+             
+             {/* Middle Ad for Detail Page */}
+             <FeedAd className="my-6" />
 
              <div className="glass-panel p-4 md:p-5 rounded-2xl space-y-4 border border-white/5 order-3 w-full overflow-hidden">
                 <CommentsSection dealId={id} />

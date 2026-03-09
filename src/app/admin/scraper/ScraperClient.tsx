@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { searchDeals, publishDeal, scrapeUrl, getScraperLogs } from './actions'
+import { searchDeals, publishDeal, scrapeUrl, getScraperLogs, getAmazonDeals, getMercadoLibreDeals, processHtmlImport } from './actions'
 import { ScrapedDeal } from '@/lib/scraper'
-import { Search, ShoppingCart, Loader2, Upload, ExternalLink, CheckCircle, Tag, Link as LinkIcon, FileText, RefreshCw, AlertCircle, Truck, Info, Eye } from 'lucide-react'
+import { Search, ShoppingCart, Loader2, Upload, ExternalLink, CheckCircle, Tag, Link as LinkIcon, FileText, RefreshCw, AlertCircle, Truck, Info, Eye, Zap, Code } from 'lucide-react'
 import Image from 'next/image'
 import { Category } from '@/types'
 import { formatDistanceToNow } from 'date-fns'
@@ -17,7 +17,7 @@ interface ScraperClientProps {
 }
 
 export default function ScraperClient({ categories }: ScraperClientProps) {
-  const [activeTab, setActiveTab] = useState<'search' | 'url' | 'logs'>('search')
+  const [activeTab, setActiveTab] = useState<'search' | 'url' | 'logs' | 'bulk'>('search')
   const [query, setQuery] = useState('')
   const [urlInput, setUrlInput] = useState('')
   const [source, setSource] = useState<'mercadolibre' | 'amazon'>('mercadolibre')
@@ -31,6 +31,9 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
   const [sortBy, setSortBy] = useState<'price_asc' | 'price_desc' | 'discount'>('price_asc')
   const [previewDeal, setPreviewDeal] = useState<ScrapedDeal | null>(null)
   const supabase = createClient()
+
+  const [htmlInput, setHtmlInput] = useState('')
+  const [showHtmlImport, setShowHtmlImport] = useState(false)
 
   const sortedResults = [...results].sort((a, b) => {
     if (sortBy === 'price_asc') return a.price - b.price
@@ -97,6 +100,62 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
     } catch (error) {
       console.error(error)
       alert('Error al extraer información de la URL')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleBulkScrape = async (selectedSource: 'amazon' | 'mercadolibre') => {
+    setLoading(true)
+    setResults([])
+    setSource(selectedSource)
+    
+    try {
+      let deals: ScrapedDeal[] = []
+      if (selectedSource === 'amazon') {
+        deals = await getAmazonDeals()
+      } else {
+        deals = await getMercadoLibreDeals()
+      }
+      
+      if (deals.length === 0) {
+        // Show HTML import automatically
+        setShowHtmlImport(true)
+        setSource(selectedSource)
+        // Scroll to import section
+        setTimeout(() => {
+            const importSection = document.getElementById('html-import-section');
+            if (importSection) importSection.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+        
+        // Show specific message
+        alert(`No se pudieron extraer ofertas automáticamente debido a la seguridad de ${selectedSource === 'amazon' ? 'Amazon' : 'Mercado Libre'}. \n\nPor favor, usa la opción de "Importar HTML Manualmente" que se ha activado abajo.`);
+      } else {
+        setResults(deals)
+      }
+    } catch (error) {
+      console.error(error)
+      alert('Error al obtener ofertas masivas')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleHtmlImport = async () => {
+    if (!htmlInput.trim()) return
+    setLoading(true)
+    setResults([])
+    try {
+      const deals = await processHtmlImport(htmlInput, source)
+      if (deals.length === 0) {
+        alert('No se encontraron ofertas en el HTML proporcionado. Verifica que sea el código fuente correcto.')
+      }
+      setResults(deals)
+      setShowHtmlImport(false)
+      setHtmlInput('')
+    } catch (error) {
+      console.error(error)
+      alert('Error al procesar HTML')
     } finally {
       setLoading(false)
     }
@@ -280,6 +339,20 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
             <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#2BD45A]" />
           )}
         </button>
+        <button
+          onClick={() => setActiveTab('bulk')}
+          className={`pb-4 px-4 font-medium transition-colors relative ${
+            activeTab === 'bulk' ? 'text-[#2BD45A]' : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <Zap size={18} />
+            Ofertas Masivas
+          </div>
+          {activeTab === 'bulk' && (
+            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#2BD45A]" />
+          )}
+        </button>
       </div>
 
       {activeTab === 'logs' ? (
@@ -356,7 +429,100 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
         </div>
       ) : (
         <>
-          {/* Input Section */}
+          {/* Input Section or Bulk Section */}
+          {activeTab === 'bulk' ? (
+             <>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <button
+                onClick={() => handleBulkScrape('amazon')}
+                disabled={loading}
+                className="flex flex-col items-center justify-center p-8 bg-[#18191c] border border-[#2d2e33] rounded-2xl hover:border-[#2BD45A] hover:bg-[#222327] transition-all group disabled:opacity-50 relative overflow-hidden"
+              >
+                <div className="absolute top-0 right-0 p-4 opacity-10">
+                    <ShoppingCart size={120} />
+                </div>
+                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform z-10">
+                   <span className="text-black font-bold text-2xl">A</span>
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2 z-10">Ofertas Amazon</h3>
+                <p className="text-gray-400 text-center z-10">Extraer las mejores ofertas del día</p>
+                {loading && source === 'amazon' && !showHtmlImport && <Loader2 className="animate-spin mt-4 text-[#2BD45A]" />}
+              </button>
+
+              <button
+                onClick={() => handleBulkScrape('mercadolibre')}
+                disabled={loading}
+                className="flex flex-col items-center justify-center p-8 bg-[#18191c] border border-[#2d2e33] rounded-2xl hover:border-[#ffe600] hover:bg-[#222327] transition-all group disabled:opacity-50 relative overflow-hidden"
+              >
+                 <div className="absolute top-0 right-0 p-4 opacity-10">
+                    <Tag size={120} />
+                </div>
+                <div className="w-16 h-16 bg-[#ffe600] rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform z-10">
+                   <span className="text-[#2d3277] font-bold text-2xl">ML</span>
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2 z-10">Ofertas Mercado Libre</h3>
+                <p className="text-gray-400 text-center z-10">Extraer ofertas destacadas</p>
+                {loading && source === 'mercadolibre' && !showHtmlImport && <Loader2 className="animate-spin mt-4 text-[#ffe600]" />}
+              </button>
+            </div>
+
+            <div className="flex justify-center mb-6">
+                <button 
+                    onClick={() => setShowHtmlImport(!showHtmlImport)}
+                    className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm"
+                >
+                    <Code size={16} />
+                    {showHtmlImport ? 'Ocultar importación manual' : '¿Problemas con la extracción automática? Importar HTML manualmente'}
+                </button>
+            </div>
+
+            {showHtmlImport && (
+                <div id="html-import-section" className="bg-[#18191c] p-6 rounded-2xl border border-[#2d2e33] mb-6 animate-fade-in">
+                    <h3 className="text-white font-bold mb-4">Importar HTML Manualmente</h3>
+                    <p className="text-sm text-gray-400 mb-4">
+                        Si la extracción automática falla (por bloqueos de seguridad), copia el código fuente de la página de ofertas:
+                        <br/>1. Ve a la página de ofertas (Amazon o ML).
+                        <br/>2. Presiona <strong>Ctrl+U</strong> para ver el código fuente, o haz clic derecho &gt; <strong>Inspeccionar</strong> en el listado de productos.
+                        <br/>3. Copia todo el HTML y pégalo aquí.
+                    </p>
+                    
+                    <div className="mb-4">
+                        <label className="block text-sm text-gray-400 mb-2">Plataforma</label>
+                        <div className="flex gap-4">
+                            <button 
+                                onClick={() => setSource('amazon')}
+                                className={`px-4 py-2 rounded-lg border ${source === 'amazon' ? 'bg-[#2BD45A]/20 border-[#2BD45A] text-[#2BD45A]' : 'border-[#2d2e33] text-gray-400'}`}
+                            >
+                                Amazon
+                            </button>
+                            <button 
+                                onClick={() => setSource('mercadolibre')}
+                                className={`px-4 py-2 rounded-lg border ${source === 'mercadolibre' ? 'bg-[#ffe600]/20 border-[#ffe600] text-[#ffe600]' : 'border-[#2d2e33] text-gray-400'}`}
+                            >
+                                Mercado Libre
+                            </button>
+                        </div>
+                    </div>
+
+                    <textarea
+                        value={htmlInput}
+                        onChange={(e) => setHtmlInput(e.target.value)}
+                        placeholder="Pega el código HTML aquí..."
+                        className="w-full h-40 bg-[#222327] text-white p-4 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#2BD45A] font-mono text-xs mb-4"
+                    />
+                    
+                    <button
+                        onClick={handleHtmlImport}
+                        disabled={loading || !htmlInput.trim()}
+                        className="bg-[#2BD45A] text-black font-bold px-6 py-3 rounded-xl hover:bg-[#25b84e] transition-colors disabled:opacity-50 flex items-center gap-2"
+                    >
+                        {loading ? <Loader2 className="animate-spin" /> : <Upload size={20} />}
+                        Procesar HTML
+                    </button>
+                </div>
+            )}
+            </>
+           ) : (
           <div className="bg-[#18191c] p-6 rounded-2xl border border-[#2d2e33]">
             <form onSubmit={activeTab === 'search' ? handleSearch : handleUrlScrape} className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
@@ -402,11 +568,12 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
                 disabled={loading || (activeTab === 'search' ? !query.trim() : !urlInput.trim())}
                 className="bg-[#2BD45A] text-black font-bold px-6 py-3 rounded-xl hover:bg-[#25b84e] transition-colors disabled:opacity-50 flex items-center gap-2 whitespace-nowrap"
               >
-                {loading ? <Loader2 className="animate-spin" /> : (activeTab === 'search' ? <Search size={20} /> : <DownloadIcon />)}
+                {loading ? <Loader2 className="animate-spin" /> : (activeTab === 'search' ? <Search size={20} /> : <Upload />)}
                 {activeTab === 'search' ? 'Buscar' : 'Extraer'}
               </button>
             </form>
           </div>
+          )}
 
           {/* Category Selection for Publishing */}
           <div className="flex flex-col md:flex-row gap-4 bg-[#18191c] p-4 rounded-xl border border-[#2d2e33]">
