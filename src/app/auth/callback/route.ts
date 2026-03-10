@@ -5,11 +5,20 @@ export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
   const next = searchParams.get('next') ?? '/'
+  
+  // Check for errors returned by the provider
+  const error = searchParams.get('error')
+  const error_description = searchParams.get('error_description')
+  
+  if (error) {
+    console.error('Auth error from provider:', error, error_description)
+    return NextResponse.redirect(`${origin}/auth/auth-code-error?error=${encodeURIComponent(error_description || error)}`)
+  }
 
   if (code) {
     const supabase = await createClient()
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
-    if (!error) {
+    const { error: sessionError } = await supabase.auth.exchangeCodeForSession(code)
+    if (!sessionError) {
       // If we have a next parameter, redirect to it
       if (next && next !== '/') {
          return NextResponse.redirect(`${origin}${next}`)
@@ -17,8 +26,8 @@ export async function GET(request: Request) {
       // Otherwise, redirect to home
       return NextResponse.redirect(`${origin}/`)
     } else {
-        console.error('Auth callback error:', error)
-        return NextResponse.redirect(`${origin}/auth/auth-code-error?error=${encodeURIComponent(error.message)}`)
+        console.error('Auth callback error:', sessionError)
+        return NextResponse.redirect(`${origin}/auth/auth-code-error?error=${encodeURIComponent(sessionError.message)}`)
     }
   }
 
