@@ -28,7 +28,7 @@ export default function RegisterPage() {
         data: {
           username,
         },
-        emailRedirectTo: typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : undefined,
+        emailRedirectTo: typeof window !== 'undefined' ? `${process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}/auth/callback` : undefined,
       },
     })
 
