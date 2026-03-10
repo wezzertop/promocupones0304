@@ -1,8 +1,9 @@
 import { isReferralUrl, getUserReferralLimit, POINT_SYSTEM } from '../src/lib/moderation'
+import { vi } from 'vitest'
 
 // Mock Supabase client if needed, but for unit tests of pure functions we might not need it
 // For isReferralUrl, we need to mock createClient because it calls the DB
-jest.mock('@/lib/supabase/client', () => ({
+vi.mock('@/lib/supabase/client', () => ({
   createClient: () => ({
     from: () => ({
       select: () => ({

@@ -9,7 +9,6 @@ export const REFERRAL_PATTERNS = [
   'tag=',
   'utm_source=',
   'click_id=',
-  'amazon.com/dp/', // Often has tracking
   'amzn.to',
   'bit.ly', // Shorteners often hide referrals
   'goo.gl',
@@ -21,6 +20,12 @@ export const REFERRAL_TIERS = {
   NO_REFERRALS: { min: 0, max: 100, limit: 0 },
   LOW_TIER: { min: 101, max: 500, limit: 1 }, 
   HIGH_TIER: { min: 501, max: Infinity, limit: 3 },
+}
+
+export function getUserReferralLimit(points: number): number {
+  if (points >= REFERRAL_TIERS.HIGH_TIER.min) return REFERRAL_TIERS.HIGH_TIER.limit
+  if (points >= REFERRAL_TIERS.LOW_TIER.min) return REFERRAL_TIERS.LOW_TIER.limit
+  return REFERRAL_TIERS.NO_REFERRALS.limit
 }
 
 export const POINT_SYSTEM = {

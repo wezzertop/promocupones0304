@@ -1,0 +1,115 @@
+version: "2"
+type: frontend
+tech_stack:
+  - Next.js
+  - React
+  - TypeScript
+  - Tailwind CSS
+  - Supabase
+  - shadcn/ui
+  - Leaflet
+  - Recharts
+  - DnD Kit
+routes:
+  - path: /
+    file: src/app/page.tsx
+    auth_required: false
+    description: Home page with deals feed
+  - path: /auth/login
+    file: src/app/auth/login/page.tsx
+    auth_required: false
+    description: User login page
+  - path: /auth/register
+    file: src/app/auth/register/page.tsx
+    auth_required: false
+    description: User registration page
+  - path: /publicar
+    file: src/app/publicar/page.tsx
+    auth_required: true
+    description: Create new deal or coupon
+  - path: /oferta/[id]
+    file: src/app/oferta/[id]/page.tsx
+    auth_required: false
+    description: View deal details
+  - path: /perfil
+    file: src/app/perfil/page.tsx
+    auth_required: true
+    description: User profile and settings
+  - path: /search
+    file: src/app/search/page.tsx
+    auth_required: false
+    description: Search deals and coupons
+  - path: /admin
+    file: src/app/admin/page.tsx
+    auth_required: true
+    description: Admin dashboard overview
+  - path: /logros
+    file: src/app/logros/page.tsx
+    auth_required: true
+    description: Gamification achievements and badges
+  - path: /discusiones
+    file: src/app/discusiones/page.tsx
+    auth_required: false
+    description: Discussions and community chat
+features:
+  - name: Authentication
+    description: User registration and login using Supabase Auth
+    files:
+      - src/app/auth/login/page.tsx
+      - src/app/auth/register/page.tsx
+      - src/lib/supabase/client.ts
+    entry_route: /auth/login
+    user_interactions:
+      - Fill email and password
+      - Click Login/Register
+      - Receive confirmation email (if applicable)
+    api_calls:
+      - method: POST
+        endpoint: /auth/v1/token
+    auth_required: false
+  - name: Deal Management
+    description: Create, edit, and view deals
+    files:
+      - src/app/publicar/page.tsx
+      - src/app/oferta/[id]/page.tsx
+      - src/components/DealCard.tsx
+    entry_route: /publicar
+    user_interactions:
+      - Fill deal form (title, price, description, link)
+      - Upload image
+      - Submit deal
+    api_calls:
+      - method: POST
+        endpoint: /rest/v1/deals
+    auth_required: true
+  - name: Gamification
+    description: Badges, levels, and leaderboard system
+    files:
+      - src/app/logros/page.tsx
+      - src/components/gamification/BadgeList.tsx
+      - src/lib/gamification.ts
+    entry_route: /logros
+    user_interactions:
+      - View earned badges
+      - Check level progress
+      - View leaderboard
+    api_calls:
+      - method: GET
+        endpoint: /rest/v1/gamification_profiles
+    auth_required: true
+  - name: Admin Dashboard
+    description: Manage users, reports, moderation, and system settings
+    files:
+      - src/app/admin/page.tsx
+      - src/app/admin/moderation/page.tsx
+      - src/app/admin/users/page.tsx
+    entry_route: /admin
+    user_interactions:
+      - View statistics
+      - Moderate content
+      - Manage users
+    api_calls:
+      - method: GET
+        endpoint: /rest/v1/admin_stats
+    auth_required: true
+known_limitations: []

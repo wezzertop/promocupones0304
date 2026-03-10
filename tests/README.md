@@ -1,21 +1,35 @@
-# Pruebas del Sistema de Moderación
+# Pruebas del Sistema - Promocupones
 
-Para ejecutar las pruebas unitarias, se recomienda instalar `jest` y `ts-jest`.
+Este proyecto utiliza **Vitest** para pruebas unitarias y de integración.
 
-## Instalación
+## Instalación de Dependencias
+
+Asegúrate de haber instalado las dependencias del proyecto:
 
 ```bash
-npm install --save-dev jest ts-jest @types/jest
-npx ts-jest config:init
+npm install
 ```
 
-## Ejecución
+## Ejecución de Pruebas
+
+Para ejecutar la suite de pruebas completa:
 
 ```bash
 npm test
 ```
 
-## Estructura de Pruebas
+Para ejecutar en modo "watch" (desarrollo):
 
-*   `tests/moderation.test.ts`: Pruebas para la lógica de detección de referidos y cálculo de puntos.
-*   Se pueden añadir más pruebas para componentes React usando `@testing-library/react`.
+```bash
+npx vitest
+```
+
+## Estructura
+
+*   `tests/gamification.test.ts`: Lógica de niveles y gamificación.
+*   `tests/moderation.test.ts`: Sistema de moderación y detección de spam.
+*   `tests/schemas.test.ts`: Validaciones de esquemas de datos.
+
+## Plan de Pruebas (TestSprite)
+
+Consulta `TESTSPRITE_PLAN.md` en la raíz del proyecto para ver la estrategia completa de pruebas y flujos de usuario.

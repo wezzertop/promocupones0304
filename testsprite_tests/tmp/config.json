@@ -1,0 +1,20 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:3000",
+  "loginUser": "wezzertop@gmail.com",
+  "loginPassword": "Cheese12!",
+  "executionArgs": {
+    "projectName": "Promocupones",
+    "projectPath": "c:\\Users\\duart\\Downloads\\Proyectos\\Promocupones",
+    "testIds": [],
+    "additionalInstruction": "",
+    "serverMode": "development",
+    "envs": {
+      "API_KEY": "sk-user-zRzhALZHYPjejfUd0j0USLQMzypO2UKJ_lICo26OdGR9pYf0hc-J4JhRSz_HxwDXZ3gAIiMyZ_PoSqmIYsiauFd8wYIUe2OfWuHfDsDexri2KcBluMdjy3dZj6zrXrTM-Q8"
+    }
+  },
+  "serverPort": 63027,
+  "proxy": "http://543da341-8d03-44b7-b8e9-a95443201bdd:gdGl8FI68WMuypFF3ES2Yb9B8WrjVGvI@tun.testsprite.com:8080"
+}

@@ -13,8 +13,8 @@ export function calculateLevelProgress(currentXp: number, levelXpRequired: numbe
 export function getReferralLimit(level: number): number {
   if (level >= 80) return 20
   if (level >= 20) return 10
-  if (level >= 10) return 2
-  return 0
+  if (level >= 10) return 5
+  return 2
 }
 
 export function calculateXpToNextLevel(currentXp: number, nextLevelXp: number): number {
