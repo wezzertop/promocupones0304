@@ -363,6 +363,7 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
                       className="object-contain p-2 md:p-4"
                       sizes="(max-width: 768px) 100vw, 240px"
                       priority={currentImageIndex === 0}
+                      unoptimized
                    />
                 </motion.div>
               </AnimatePresence>
@@ -437,7 +438,7 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
               <Link href={`/usuario/${encodeURIComponent(deal.user.username)}`} className="hover:underline z-20 relative flex items-center gap-2">
                 {deal.user?.avatar_url ? (
                    <div className="relative w-6 h-6 rounded-full overflow-hidden ring-2 ring-white/5">
-                     <Image src={deal.user.avatar_url} alt={deal.user.username} fill className="object-cover" />
+                     <Image src={deal.user.avatar_url} alt={deal.user.username} fill className="object-cover" sizes="24px" unoptimized />
                    </div>
                 ) : (
                    <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center text-[10px] text-white ring-2 ring-white/5">

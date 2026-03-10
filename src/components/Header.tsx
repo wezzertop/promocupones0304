@@ -134,6 +134,7 @@ export default function Header({ user }: HeaderProps) {
                     fill
                     sizes="36px"
                     className="object-cover rounded-full"
+                    unoptimized
                   />
                 ) : (
                   (user.user_metadata?.username?.[0] || user.email?.[0] || 'U').toUpperCase()
