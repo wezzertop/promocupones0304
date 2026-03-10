@@ -17,6 +17,7 @@ import {
   MoreHorizontal
 } from 'lucide-react'
 import { useUIStore } from '@/lib/store'
+import Image from 'next/image'
 
 const MENU_ITEMS = [
   { icon: Home, label: 'Inicio', href: '/' },
@@ -57,13 +58,14 @@ export default function Sidebar() {
 
         {/* Logo Area */}
         <div className="h-16 flex items-center px-6 border-b border-[#2d2e33]">
-          <Link href="/" className="flex items-center gap-2 group" onClick={closeSidebar}>
-            <div className="w-8 h-8 rounded-lg bg-[#2BD45A] flex items-center justify-center text-black font-bold text-xl group-hover:rotate-12 transition-transform">
-              P
-            </div>
-            <span className="text-xl font-bold tracking-tight text-white">
-              Promo<span className="text-[#2BD45A]">Cupones</span>
-            </span>
+          <Link href="/" className="relative h-10 w-40 block" onClick={closeSidebar}>
+            <Image 
+              src="/logo.png" 
+              alt="Cupoferta" 
+              fill
+              className="object-contain object-left"
+              priority
+            />
           </Link>
         </div>
 

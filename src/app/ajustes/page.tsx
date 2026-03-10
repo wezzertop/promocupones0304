@@ -351,7 +351,7 @@ export default function SettingsPage() {
               </div>
               <div>
                 <span className="block text-sm font-bold text-white">Tema Oscuro</span>
-                <span className="text-xs text-gray-500">Siempre activo en Promocupones</span>
+                <span className="text-xs text-gray-500">Siempre activo en Cupoferta</span>
               </div>
             </div>
             <span className="text-xs font-bold text-[#2BD45A] px-3 py-1 bg-[#2BD45A]/10 rounded-full">Activo</span>
@@ -387,7 +387,7 @@ export default function SettingsPage() {
       </div>
 
       <div className="text-center text-xs text-gray-600 pb-8">
-        Promocupones v1.0.0 • Hecho con ❤️ por la comunidad
+        Cupoferta v1.0.0 • Hecho con ❤️ por la comunidad
       </div>
     </div>
   )

@@ -2,8 +2,13 @@
 
 import Link from 'next/link'
 import { AlertCircle, Home } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 
-export default function AuthCodeError() {
+function ErrorContent() {
+  const searchParams = useSearchParams()
+  const error = searchParams.get('error')
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] p-4">
       <div className="bg-[#09090b] border border-red-500/20 rounded-2xl p-8 max-w-md w-full text-center relative overflow-hidden">
@@ -17,8 +22,8 @@ export default function AuthCodeError() {
           </div>
           
           <h1 className="text-2xl font-bold text-white mb-2">Error de Autenticación</h1>
-          <p className="text-zinc-400 mb-8">
-            Hubo un problema al verificar tu cuenta. Esto puede suceder si el enlace ha expirado o ya ha sido utilizado.
+          <p className="text-zinc-400 mb-8 text-center break-words max-w-full">
+            {error ? `Detalle del error: ${error}` : 'Hubo un problema al verificar tu cuenta. Esto puede suceder si el enlace ha expirado o ya ha sido utilizado.'}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 w-full">
@@ -39,5 +44,13 @@ export default function AuthCodeError() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function AuthCodeError() {
+  return (
+    <Suspense fallback={<div>Cargando...</div>}>
+      <ErrorContent />
+    </Suspense>
   )
 }

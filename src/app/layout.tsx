@@ -13,7 +13,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "PromoCupones - Comunidad de Ofertas y Descuentos",
+  title: "Cupoferta - Comunidad de Ofertas y Descuentos",
   description: "Descubre y comparte las mejores ofertas, cupones y promociones en México.",
 };
 

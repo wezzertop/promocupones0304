@@ -2,7 +2,7 @@ import Leaderboard from '@/components/gamification/Leaderboard'
 import { Trophy, Star, Users, AlertTriangle, ShieldAlert } from 'lucide-react'
 
 export const metadata = {
-  title: 'Tabla de Clasificación | Promocupones',
+  title: 'Tabla de Clasificación | Cupoferta',
   description: 'Descubre a los usuarios más activos de nuestra comunidad.',
 }
 

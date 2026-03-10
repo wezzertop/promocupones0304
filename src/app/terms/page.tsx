@@ -24,10 +24,10 @@ export default function TermsPage() {
           <section className="bg-[#18191c] p-6 rounded-2xl border border-[#2d2e33]">
             <h2 className="text-xl font-bold text-white mb-4">1. Exención de Responsabilidad de Precios</h2>
             <p className="mb-4">
-              PromoCupones es una plataforma informativa que recopila ofertas y cupones de diversas tiendas en línea. No somos una tienda ni vendemos productos directamente.
+              Cupoferta es una plataforma informativa que recopila ofertas y cupones de diversas tiendas en línea. No somos una tienda ni vendemos productos directamente.
             </p>
             <p className="mb-4">
-              <strong>Importante:</strong> Todos los precios, ofertas y promociones mostrados en este sitio están sujetos a cambios sin previo aviso por parte de los vendedores originales. PromoCupones no garantiza la disponibilidad, el precio o la exactitud de las ofertas en todo momento.
+              <strong>Importante:</strong> Todos los precios, ofertas y promociones mostrados en este sitio están sujetos a cambios sin previo aviso por parte de los vendedores originales. Cupoferta no garantiza la disponibilidad, el precio o la exactitud de las ofertas en todo momento.
             </p>
             <p>
               Las ofertas pueden cambiar, expirar o agotarse en cualquier periodo de tiempo, ya sea corto o largo. No nos hacemos responsables de las discrepancias entre el precio mostrado aquí y el precio final en la tienda del vendedor.
@@ -37,7 +37,7 @@ export default function TermsPage() {
           <section className="bg-[#18191c] p-6 rounded-2xl border border-[#2d2e33]">
             <h2 className="text-xl font-bold text-white mb-4">2. Uso del Servicio</h2>
             <p className="mb-4">
-              Al acceder y utilizar PromoCupones, aceptas que el uso del sitio es bajo tu propio riesgo. La plataforma se proporciona "tal cual" y "según disponibilidad".
+              Al acceder y utilizar Cupoferta, aceptas que el uso del sitio es bajo tu propio riesgo. La plataforma se proporciona "tal cual" y "según disponibilidad".
             </p>
             <p>
               Es responsabilidad exclusiva del usuario verificar todas las condiciones, precios, costos de envío y detalles del producto directamente en el sitio web del vendedor antes de realizar cualquier compra.
@@ -47,14 +47,14 @@ export default function TermsPage() {
           <section className="bg-[#18191c] p-6 rounded-2xl border border-[#2d2e33]">
             <h2 className="text-xl font-bold text-white mb-4">3. Enlaces a Terceros</h2>
             <p>
-              Este sitio web contiene enlaces a sitios web de terceros que no son propiedad ni están controlados por PromoCupones. No tenemos control sobre, y no asumimos responsabilidad por, el contenido, las políticas de privacidad o las prácticas de sitios web de terceros.
+              Este sitio web contiene enlaces a sitios web de terceros que no son propiedad ni están controlados por Cupoferta. No tenemos control sobre, y no asumimos responsabilidad por, el contenido, las políticas de privacidad o las prácticas de sitios web de terceros.
             </p>
           </section>
 
           <section className="bg-[#18191c] p-6 rounded-2xl border border-[#2d2e33]">
             <h2 className="text-xl font-bold text-white mb-4">4. Propiedad Intelectual</h2>
             <p className="mb-4">
-              Todo el contenido generado por los usuarios (comentarios, ofertas, imágenes) sigue siendo propiedad de sus respectivos autores, pero al publicarlo en PromoCupones, nos otorgas una licencia mundial, no exclusiva y libre de regalías para usar, reproducir y mostrar dicho contenido.
+              Todo el contenido generado por los usuarios (comentarios, ofertas, imágenes) sigue siendo propiedad de sus respectivos autores, pero al publicarlo en Cupoferta, nos otorgas una licencia mundial, no exclusiva y libre de regalías para usar, reproducir y mostrar dicho contenido.
             </p>
             <p>
               Las marcas registradas y logotipos de las tiendas y productos mencionados pertenecen a sus respectivos propietarios y se utilizan únicamente con fines informativos.
@@ -84,7 +84,7 @@ export default function TermsPage() {
           <section className="bg-[#18191c] p-6 rounded-2xl border border-[#2d2e33]">
             <h2 className="text-xl font-bold text-white mb-4">7. Limitación de Responsabilidad</h2>
             <p>
-              En la máxima medida permitida por la ley, PromoCupones no será responsable de ningún daño indirecto, incidental, especial, consecuente o punitivo, incluyendo pero no limitado a pérdida de beneficios, datos o uso, que surja de tu acceso o uso de la plataforma.
+              En la máxima medida permitida por la ley, Cupoferta no será responsable de ningún daño indirecto, incidental, especial, consecuente o punitivo, incluyendo pero no limitado a pérdida de beneficios, datos o uso, que surja de tu acceso o uso de la plataforma.
             </p>
           </section>
         </div>

@@ -17,7 +17,7 @@ export default function RulesPage() {
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-white mb-4">Reglas de la Comunidad</h1>
         <p className="text-zinc-400 max-w-2xl mx-auto">
-          Para mantener PromoCupones como un espacio seguro y útil para todos, hemos establecido estas reglas básicas. Al participar, aceptas seguir estos lineamientos.
+          Para mantener Cupoferta como un espacio seguro y útil para todos, hemos establecido estas reglas básicas. Al participar, aceptas seguir estos lineamientos.
         </p>
       </div>
 

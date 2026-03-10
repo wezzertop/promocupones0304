@@ -61,8 +61,8 @@ export default function ContactPage() {
               </div>
               <div>
                 <h3 className="font-bold text-white mb-1">Email</h3>
-                <p className="text-sm text-zinc-400">soporte@promocupones.com</p>
-                <p className="text-sm text-zinc-400">negocios@promocupones.com</p>
+                <p className="text-sm text-zinc-400">soporte@cupoferta.com</p>
+                <p className="text-sm text-zinc-400">negocios@cupoferta.com</p>
               </div>
             </div>
             

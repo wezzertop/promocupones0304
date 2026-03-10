@@ -24,7 +24,7 @@ export default function PrivacyPage() {
           <section className="bg-[#18191c] p-6 rounded-2xl border border-[#2d2e33]">
             <h2 className="text-xl font-bold text-white mb-4">1. Recopilación de Información</h2>
             <p className="mb-4">
-              PromoCupones respeta tu privacidad y se compromete a proteger los datos personales que puedas compartir con nosotros. Recopilamos información limitada necesaria para el funcionamiento de la plataforma.
+              Cupoferta respeta tu privacidad y se compromete a proteger los datos personales que puedas compartir con nosotros. Recopilamos información limitada necesaria para el funcionamiento de la plataforma.
             </p>
             <p>
               Esto puede incluir información proporcionada al registrarse, como correo electrónico y nombre de usuario, así como datos de uso anónimos para mejorar nuestros servicios.

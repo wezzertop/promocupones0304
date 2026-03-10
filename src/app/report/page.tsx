@@ -31,7 +31,7 @@ export default function ReportPage() {
             <input 
               type="text" 
               className="w-full bg-black/20 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-[#2BD45A]/50"
-              placeholder="https://promocupones.com/..."
+              placeholder="https://cupoferta.com/..."
             />
           </div>
           

@@ -77,7 +77,7 @@ const FAQ_ITEMS = [
     id: 'contact-support',
     category: 'general',
     question: '¿Cómo contacto al soporte?',
-    answer: 'Puedes contactarnos a través del enlace "Contacto" en el pie de página o enviando un correo electrónico a soporte@promocupones.com.',
+    answer: 'Puedes contactarnos a través del enlace "Contacto" en el pie de página o enviando un correo electrónico a soporte@cupoferta.com.',
   },
 ]
 
@@ -107,7 +107,7 @@ export default function HelpCenterPage() {
           Centro de Ayuda
         </h1>
         <p className="text-lg text-zinc-400 max-w-2xl mx-auto mb-10">
-          Encuentra respuestas a tus preguntas y aprende a sacar el máximo provecho de PromoCupones.
+          Encuentra respuestas a tus preguntas y aprende a sacar el máximo provecho de Cupoferta.
         </p>
 
         {/* Search Bar */}
