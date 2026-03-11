@@ -489,6 +489,11 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
                   <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
                     {deal.discount_percentage ? `${deal.discount_percentage}% OFF` : (deal.discount_amount ? `${formatPrice(deal.discount_amount)} OFF` : 'Cupón')}
                   </span>
+                  {deal.coupon_code && (
+                    <span className="md:hidden ml-1 bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider font-mono self-center">
+                      {deal.coupon_code}
+                    </span>
+                  )}
                 </>
               ) : (
                 <>
@@ -670,20 +675,13 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
           <button 
             onClick={handleCopyCode}
             className={cn(
-              "md:hidden flex items-center group/coupon relative h-[42px] ml-2 w-full rounded-full border-2 border-dashed border-purple-500/50 hover:border-purple-500 transition-colors bg-white/5 overflow-hidden max-w-[200px]",
-              isCopied ? "border-green-500/50" : ""
+              "md:hidden flex items-center justify-center bg-purple-500 text-white p-3 rounded-xl transition-all active:scale-95 shadow-[0_0_15px_rgba(168,85,247,0.3)] ml-2",
+              isCopied ? "bg-green-500 shadow-green-500/30" : ""
             )}
             onClickCapture={(e) => e.stopPropagation()}
+            title={deal.coupon_code || 'Copiar cupón'}
           >
-             <div className="flex-1 px-3 text-[10px] font-mono text-zinc-300 truncate text-left">
-                {deal.coupon_code || 'Ver'}
-             </div>
-             <div className={cn(
-               "h-full px-3 flex items-center justify-center text-white transition-colors",
-               isCopied ? "bg-green-500" : "bg-purple-500"
-             )}>
-                {isCopied ? <Check size={16} strokeWidth={3} /> : <ExternalLink size={16} strokeWidth={3} />}
-             </div>
+             {isCopied ? <Check size={20} strokeWidth={3} /> : <ExternalLink size={20} strokeWidth={3} />}
           </button>
         ) : (
           <a 
