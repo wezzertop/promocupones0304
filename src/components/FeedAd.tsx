@@ -44,8 +44,8 @@ export default function FeedAd({ className, variant = 'banner1' }: FeedAdProps) 
     url: 'https://crateworkshop.com/d2d4c8f711abc6418d6c13518f6b8a2b/invoke.js'
   }
 
-  // Use mobile config if on mobile screen OR in a narrow sidebar OR it's Banner2
-  const config = (variant === 'banner2' || isMobile || isSidebar) ? mobileConfig : desktopConfig
+  // Use mobile config if on mobile screen OR in a narrow sidebar
+  const config = (isMobile || isSidebar) ? mobileConfig : desktopConfig
 
   // Create the HTML content for the iframe
   const adHtml = `
