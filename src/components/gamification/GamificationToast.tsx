@@ -10,76 +10,56 @@ export default function GamificationToast() {
   const supabase = createClient()
 
   useEffect(() => {
-    // Subscribe to XP History changes
-    const channel = supabase
-      .channel('gamification_updates')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'gamification_xp_history',
-        },
-        (payload) => {
-          // Check if it belongs to current user
-          // Note: RLS might prevent receiving others' data, but we should filter just in case
-          // or better: The client subscription will automatically filter by RLS if properly set up?
-          // Actually, realtime usually bypasses RLS unless configured with "row level security" on publication.
-          // For now let's assume we get the event. 
-          // Wait, `payload.new` will have `user_id`.
-          
-          const newXp = payload.new as any
-          
-          // We need the current user ID to filter
-          // But inside useEffect we might not have it easily without a fetch.
-          // Let's rely on a quick check.
-          
-          supabase.auth.getUser().then(({ data: { user } }) => {
-            if (user && user.id === newXp.user_id) {
-               const isPositive = newXp.amount > 0
-               addToast({
-                 type: 'xp',
-                 message: `${isPositive ? '+' : ''}${newXp.amount} XP`,
-                 amount: newXp.amount,
-                 isNegative: !isPositive
-               })
+    // Check if realtime is enabled/supported. 
+    // Supabase Realtime uses WebSocket which might be blocked by strict CSP if wss:// is not allowed.
+    // However, Supabase JS client handles this.
+    
+    // We need to fetch user first to avoid async issues inside the callback
+    let userId: string | null = null;
+    
+    const setupSubscription = async () => {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return
+        userId = user.id
+
+        const channel = supabase
+          .channel('gamification_updates')
+          .on(
+            'postgres_changes',
+            {
+              event: 'INSERT',
+              schema: 'public',
+              table: 'gamification_xp_history',
+              filter: `user_id=eq.${userId}` // Filter server-side if RLS allows or just listen
+            },
+            (payload) => {
+               const newXp = payload.new as any
+               if (newXp.user_id === userId) {
+                   const isPositive = newXp.amount > 0
+                   addToast({
+                     type: 'xp',
+                     message: `${isPositive ? '+' : ''}${newXp.amount} XP`,
+                     amount: newXp.amount,
+                     isNegative: !isPositive
+                   })
+               }
             }
-          })
+          )
+          .subscribe()
+
+        return () => {
+          supabase.removeChannel(channel)
         }
-      )
-      .on(
-        'postgres_changes',
-        {
-            event: 'UPDATE',
-            schema: 'public',
-            table: 'gamification_profiles',
-            filter: 'current_level=gt.1' // Only if level > 1 (simplistic filter, better done in code)
-        },
-        (payload) => {
-            const oldProfile = payload.old as any
-            const newProfile = payload.new as any
-            
-             supabase.auth.getUser().then(({ data: { user } }) => {
-                if (user && user.id === newProfile.user_id) {
-                    // Check if level increased
-                    if (newProfile.current_level > (oldProfile.current_level || 0)) {
-                        addToast({
-                            type: 'level',
-                            message: `¡Nivel ${newProfile.current_level} Alcanzado!`,
-                        })
-                    }
-                }
-             })
-        }
-      )
-      .subscribe()
+    }
+
+    const cleanupPromise = setupSubscription()
 
     return () => {
-      supabase.removeChannel(channel)
+        cleanupPromise.then(cleanup => cleanup && cleanup())
     }
   }, [supabase])
 
-  const addToast = (toast: Omit<{ type: 'xp' | 'level', message: string, amount?: number, isNegative?: boolean }, 'id'>) => {
+  const addToast = (toast: { type: 'xp' | 'level', message: string, amount?: number, isNegative?: boolean }) => {
     const id = Math.random().toString(36).substring(7)
     const newToast = { ...toast, id }
     

@@ -8,11 +8,49 @@ export async function middleware(request: NextRequest) {
     },
   })
 
-  // Add security headers
+  // --- SECURITY HEADERS ---
+  
+  // 1. CSP (Content Security Policy)
+  // Allows scripts from self, Supabase, Google (for Auth/Maps/Recaptcha), Vercel analytics
+  // Allows images from anywhere (https) + data/blob
+  // Allows styles from self + unsafe-inline (needed for many CSS-in-JS/Tailwind setups in dev)
+  const cspHeader = `
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://www.google.com https://www.gstatic.com https://*.supabase.co https://va.vercel-scripts.com https://challenges.cloudflare.com;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    img-src 'self' data: blob: https: https://i.imgur.com;
+    font-src 'self' data: https://fonts.gstatic.com;
+    connect-src 'self' https://*.supabase.co https://*.googleapis.com https://api.ipify.org;
+    frame-src 'self' https://accounts.google.com https://www.google.com https://challenges.cloudflare.com;
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+    upgrade-insecure-requests;
+  `.replace(/\s{2,}/g, ' ').trim()
+
+  response.headers.set('Content-Security-Policy', cspHeader)
+
+  // 2. HSTS (Strict-Transport-Security)
+  // Force HTTPS for 1 year, include subdomains
+  response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload')
+
+  // 3. X-Frame-Options
+  // Prevent clickjacking
   response.headers.set('X-Frame-Options', 'DENY')
+
+  // 4. X-Content-Type-Options
+  // Prevent MIME sniffing
   response.headers.set('X-Content-Type-Options', 'nosniff')
+
+  // 5. Referrer-Policy
+  // Control referrer information
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
-  response.headers.set('X-XSS-Protection', '1; mode=block')
+
+  // 6. Permissions-Policy
+  // Restrict browser features
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self), payment=()')
+
+  // --- SUPABASE AUTH ---
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -39,10 +77,14 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  // --- ROUTE PROTECTION ---
+
   // Protected routes
   const protectedRoutes = ['/perfil', '/publicar', '/mis-publicaciones', '/ajustes', '/admin', '/notificaciones', '/report']
   
-  if (protectedRoutes.some(route => request.nextUrl.pathname.startsWith(route))) {
+  const isProtectedRoute = protectedRoutes.some(route => request.nextUrl.pathname.startsWith(route))
+
+  if (isProtectedRoute) {
     if (!user) {
       const url = request.nextUrl.clone()
       url.pathname = '/auth/login'
@@ -55,15 +97,12 @@ export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith('/admin')) {
     if (!user) return NextResponse.redirect(new URL('/auth/login', request.url))
     
-    // Ideally we verify role here too, but fetching user role might be expensive in middleware.
-    // For critical security, verify role in layout/page or actions.
-    // But we can check JWT metadata if available.
-    // Let's rely on page/layout level checks for role to keep middleware fast, 
-    // but at least require auth.
+    // Note: Role verification is handled in layout/page for performance,
+    // but strict auth is enforced here.
   }
 
   // Auth routes (redirect to home if already logged in)
-  const authRoutes = ['/auth/login', '/auth/register']
+  const authRoutes = ['/auth/login', '/auth/register', '/auth/forgot-password']
   if (authRoutes.some(route => request.nextUrl.pathname.startsWith(route))) {
     if (user) {
       return NextResponse.redirect(new URL('/', request.url))

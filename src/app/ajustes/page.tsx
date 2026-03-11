@@ -8,6 +8,8 @@ import Image from 'next/image'
 import { processAvatar } from '@/lib/utils'
 import { updateProfile } from './actions'
 
+import MFASettings from '@/components/MFASettings'
+
 export default function SettingsPage() {
   const router = useRouter()
   const supabase = createClient()
@@ -273,6 +275,10 @@ export default function SettingsPage() {
               </div>
               <span className="text-xs font-bold text-[#2BD45A]">Actualizar</span>
             </button>
+
+            <div className="mt-4">
+               <MFASettings />
+            </div>
           </div>
 
           <div className="pt-4 border-t border-[#2d2e33] flex justify-end">

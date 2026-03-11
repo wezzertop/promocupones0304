@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Mail, Lock, User, Loader2, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react'
+import Captcha from '@/components/Captcha'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -13,11 +14,19 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClient()
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Check Captcha if key is present
+    if (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && !captchaToken) {
+        setError('Por favor completa el captcha.')
+        return
+    }
+
     setLoading(true)
     setError(null)
 
@@ -29,6 +38,7 @@ export default function RegisterPage() {
           username,
         },
         emailRedirectTo: typeof window !== 'undefined' ? `${process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}/auth/callback` : undefined,
+        captchaToken: captchaToken || undefined,
       },
     })
 
@@ -189,6 +199,11 @@ export default function RegisterPage() {
                   </label>
                 </div>
               </div>
+
+              <Captcha 
+                onVerify={(token) => setCaptchaToken(token)}
+                onError={() => setError('Error en el captcha. Inténtalo de nuevo.')}
+              />
             </div>
 
             <button

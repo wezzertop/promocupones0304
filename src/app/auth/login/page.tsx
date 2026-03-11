@@ -5,23 +5,35 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Mail, Lock, Loader2, ArrowRight } from 'lucide-react'
+import Captcha from '@/components/Captcha'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClient()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Check Captcha if key is present
+    if (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && !captchaToken) {
+        setError('Por favor completa el captcha.')
+        return
+    }
+
     setLoading(true)
     setError(null)
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
+      options: {
+        captchaToken: captchaToken || undefined,
+      }
     })
 
     if (error) {
@@ -111,6 +123,11 @@ export default function LoginPage() {
                   />
                 </div>
               </div>
+
+              <Captcha 
+                onVerify={(token) => setCaptchaToken(token)}
+                onError={() => setError('Error en el captcha. Inténtalo de nuevo.')}
+              />
             </div>
 
             <button

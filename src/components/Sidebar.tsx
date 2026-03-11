@@ -63,6 +63,7 @@ export default function Sidebar() {
               src="https://i.imgur.com/GHEr2To.png" 
               alt="Cupoferta" 
               fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-contain object-center"
               priority
             />
