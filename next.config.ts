@@ -56,6 +56,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'http2.mlstatic.com', // Mercado Libre Images
       },
+      {
+        protocol: 'https',
+        hostname: 'i.imgur.com', // Imgur Images
+      },
       // Note: Restricting 'hostname: "**"' is recommended for production security.
       // We kept specific providers and Supabase.
     ],

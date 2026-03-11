@@ -57,13 +57,13 @@ export default function Sidebar() {
         }`}>
 
         {/* Logo Area */}
-        <div className="h-16 flex items-center px-6 border-b border-[#2d2e33]">
-          <Link href="/" className="relative h-10 w-40 block" onClick={closeSidebar}>
+        <div className="h-14 flex items-center justify-center border-b border-[#2d2e33]">
+          <Link href="/" className="relative h-10 w-[85%] block" onClick={closeSidebar}>
             <Image 
-              src="/logo.png" 
+              src="https://i.imgur.com/GHEr2To.png" 
               alt="Cupoferta" 
               fill
-              className="object-contain object-left"
+              className="object-contain object-center"
               priority
             />
           </Link>

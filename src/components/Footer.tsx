@@ -9,9 +9,9 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 mb-12">
           {/* Brand */}
           <div className="col-span-1 md:col-span-1">
-            <Link href="/" className="relative h-12 w-48 block mb-6 group">
+            <Link href="/" className="relative h-16 w-64 block mb-6 group">
                <Image 
-                src="/logo.png" 
+                src="https://i.imgur.com/GHEr2To.png" 
                 alt="Cupoferta" 
                 fill
                 className="object-contain object-left"
