@@ -238,7 +238,7 @@ export default function RegisterPage() {
                   fill="#EA4335"
                 />
               </svg>
-              Google
+              Continuar con Google (Login / Registro)
             </button>
           </form>
           )}
