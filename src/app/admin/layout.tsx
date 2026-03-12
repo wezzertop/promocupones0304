@@ -30,8 +30,8 @@ export default async function AdminLayout({
   return (
     <div className="flex min-h-screen bg-[#0f1012]">
       <AdminSidebar />
-      <main className="flex-1 ml-64 p-8">
-        <div className="max-w-7xl mx-auto">
+      <main className="flex-1 lg:ml-64 w-full">
+        <div className="p-4 md:p-8 max-w-7xl mx-auto">
           {children}
         </div>
       </main>

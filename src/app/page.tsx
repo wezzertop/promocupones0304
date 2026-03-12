@@ -5,15 +5,29 @@ import { Deal, DealWithRelations } from '@/types'
 import { Tag } from 'lucide-react'
 import HomeFilters from '@/components/HomeFilters'
 import HeroBanner from '@/components/HeroBanner'
+import Pagination from '@/components/Pagination'
 
-export default async function Home({ searchParams }: { searchParams: Promise<{ filter?: string }> }) {
+export default async function Home({ searchParams }: { searchParams: Promise<{ filter?: string, page?: string }> }) {
   const supabase = await createClient()
   const params = await searchParams
   const filter = params.filter || 'foryou'
+  const currentPage = parseInt(params.page || '1')
+  const pageSize = 20
 
   const { data: { user } } = await supabase.auth.getUser()
 
   const now = new Date().toISOString()
+  
+  // Get Total Count first
+  let countQuery = supabase
+    .from('deals')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'active')
+    .or(`expires_at.is.null,expires_at.gt.${now}`)
+
+  const { count: totalCount } = await countQuery
+  const totalPages = Math.ceil((totalCount || 0) / pageSize)
+
   let query = supabase
     .from('deals')
     .select(`
@@ -32,9 +46,14 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
   } else if (filter === 'recent') {
     query = query.order('created_at', { ascending: false })
   } else {
-    // 'foryou' logic - default to recent with limit for now
-    query = query.order('created_at', { ascending: false }).limit(50)
+    // 'foryou' logic - for pagination, we just use recent for now but we could add more complex logic
+    query = query.order('created_at', { ascending: false })
   }
+
+  // Apply Pagination
+  const from = (currentPage - 1) * pageSize
+  const to = from + pageSize - 1
+  query = query.range(from, to)
 
   const { data: dealsData, error } = await query
 
@@ -90,19 +109,27 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
       {/* Main Grid */}
       <div className="flex flex-col gap-4">
         {deals && deals.length > 0 ? (
-          deals.map((deal, index) => (
-            <div key={deal.id}>
-              <DealCard 
-                deal={deal} 
-                initialUserVote={deal.user_vote || null}
-                initialIsSaved={deal.is_saved || false}
-              />
-              {/* Insert Ad every 5 deals */}
-              {(index + 1) % 5 === 0 && (
-                <FeedAd key={`ad-${deal.id}`} variant="banner2" className="mt-4" />
-              )}
-            </div>
-          ))
+          <>
+            {deals.map((deal, index) => (
+              <div key={deal.id}>
+                <DealCard 
+                  deal={deal} 
+                  initialUserVote={deal.user_vote || null}
+                  initialIsSaved={deal.is_saved || false}
+                />
+                {/* Insert Ad every 5 deals */}
+                {(index + 1) % 5 === 0 && (
+                  <FeedAd key={`ad-${deal.id}`} variant="banner2" className="mt-4" />
+                )}
+              </div>
+            ))}
+            
+            {/* Pagination Component */}
+            <Pagination 
+              totalPages={totalPages} 
+              currentPage={currentPage} 
+            />
+          </>
         ) : (
           <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-[#18191c] rounded-3xl border border-[#2d2e33] border-dashed">
             <div className="w-16 h-16 bg-[#222327] rounded-full flex items-center justify-center mb-4 text-gray-500">

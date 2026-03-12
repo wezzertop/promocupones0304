@@ -11,11 +11,15 @@ import { getUserGamificationProfile, getUserBadges, getAllBadges } from '@/lib/g
 import LevelProgress from '@/components/gamification/LevelProgress'
 import BadgeList from '@/components/gamification/BadgeList'
 import ProfileTabs from '@/components/ProfileTabs'
+import Pagination from '@/components/Pagination'
 
 export const dynamic = 'force-dynamic'
 
-export default async function ProfilePage() {
+export default async function ProfilePage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
   const supabase = await createClient()
+  const params = await searchParams
+  const currentPage = parseInt(params.page || '1')
+  const pageSize = 10
 
   // 1. Get current user session
   const { data: { user } } = await supabase.auth.getUser()
@@ -31,12 +35,23 @@ export default async function ProfilePage() {
     .eq('id', user.id)
     .single() as { data: any, error: any }
 
+  // Use metadata picture as fallback if profile avatar_url is missing
+  const profileAvatar = profile?.avatar_url || user.user_metadata?.avatar_url || user.user_metadata?.picture
+
   // Fetch gamification data
   const gamificationProfile = await getUserGamificationProfile(user.id)
   const userBadges = await getUserBadges(user.id)
   const allBadges = await getAllBadges()
 
-  // 3. Fetch user's deals
+  // 3. Get total count for pagination
+  const { count: totalDealsCount } = await supabase
+    .from('deals')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+
+  const totalPages = Math.ceil((totalDealsCount || 0) / pageSize)
+
+  // 4. Fetch user's deals with pagination
   const { data: userDeals, error: dealsError } = await supabase
     .from('deals')
     .select(`
@@ -48,6 +63,7 @@ export default async function ProfilePage() {
     `)
     .eq('user_id', user.id)
     .order('created_at', { ascending: false })
+    .range((currentPage - 1) * pageSize, currentPage * pageSize - 1)
 
   if (dealsError) {
     console.error('Error fetching user deals:', dealsError)
@@ -58,12 +74,17 @@ export default async function ProfilePage() {
     comments_count: deal.comments?.[0]?.count || 0
   })) as Deal[]
 
-  // Calculate stats
-  const totalDeals = deals?.length || 0
-  const totalVotes = deals?.reduce((acc, deal) => acc + (deal.votes_count || 0), 0) || 0
+  // Calculate stats (we need the total, not just the paginated ones)
+  const totalDeals = totalDealsCount || 0
+  const { data: karmaData } = await supabase.from('deals').select('votes_count').eq('user_id', user.id)
+  const totalVotes = karmaData?.reduce((acc, deal) => acc + (deal.votes_count || 0), 0) || 0
   
   // Identify pending/rejected deals
-  const pendingDealsCount = deals?.filter((d) => ['pending', 'rejected', 'revision'].includes(d.status)).length || 0
+  const { count: pendingDealsCount } = await supabase
+    .from('deals')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+    .in('status', ['pending', 'rejected', 'revision'])
 
   return (
     <div className="space-y-8 animate-fade-in w-full max-w-[100vw] overflow-x-hidden">
@@ -75,16 +96,17 @@ export default async function ProfilePage() {
         <div className="relative z-10 px-6 pb-6 pt-16 md:px-10 md:pt-20 flex flex-col md:flex-row items-center md:items-end gap-6">
           {/* Avatar */}
           <div className="relative shrink-0">
-            <div className="w-32 h-32 rounded-full border-4 border-[#18191c] bg-[#222327] overflow-hidden shadow-xl">
-              {profile?.avatar_url ? (
+            <div className="w-32 h-32 rounded-full border-4 border-[#18191c] bg-[#222327] overflow-hidden shadow-xl relative">
+              {profileAvatar ? (
                 <Image 
-                  src={profile.avatar_url} 
-                  alt={profile.username || 'Usuario'} 
+                  src={profileAvatar} 
+                  alt={profile?.username || 'Usuario'} 
                   fill 
-                  className="object-cover"
+                  className="object-cover rounded-full"
+                  unoptimized
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-[#2BD45A] bg-[#2BD45A]/10 text-4xl font-bold">
+                <div className="w-full h-full flex items-center justify-center text-[#2BD45A] bg-[#2BD45A]/10 text-4xl font-bold rounded-full">
                   {profile?.username?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase()}
                 </div>
               )}
@@ -178,9 +200,16 @@ export default async function ProfilePage() {
       {/* User Deals Grid */}
       <div className="flex flex-col gap-4 p-1">
         {deals && deals.length > 0 ? (
-          deals.map((deal) => (
-            <DealCard key={deal.id} deal={deal} />
-          ))
+          <>
+            {deals.map((deal) => (
+              <DealCard key={deal.id} deal={deal} />
+            ))}
+            
+            <Pagination 
+              totalPages={totalPages} 
+              currentPage={currentPage} 
+            />
+          </>
         ) : (
           <div className="py-20 flex flex-col items-center justify-center text-center bg-[#18191c] rounded-3xl border border-[#2d2e33] border-dashed">
             <div className="w-16 h-16 bg-[#222327] rounded-full flex items-center justify-center mb-4 text-gray-500">

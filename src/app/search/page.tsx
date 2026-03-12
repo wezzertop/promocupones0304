@@ -3,13 +3,16 @@ import DealCard from '@/components/DealCard'
 import { Deal } from '@/types'
 import { Search } from 'lucide-react'
 import HomeFilters from '@/components/HomeFilters'
+import Pagination from '@/components/Pagination'
 
 export const dynamic = 'force-dynamic'
 
-export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string, page?: string }> }) {
   const supabase = await createClient()
   const params = await searchParams
   const query = params.q || ''
+  const currentPage = parseInt(params.page || '1')
+  const pageSize = 20
 
   if (!query) {
     return (
@@ -47,6 +50,17 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   }
 
   const now = new Date().toISOString()
+  
+  // 4. Get Total Count
+  const { count: totalCount } = await (supabase.from('deals') as any)
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'active')
+    .or(orQuery)
+    .or(`expires_at.is.null,expires_at.gt.${now}`)
+
+  const totalPages = Math.ceil((totalCount || 0) / pageSize)
+
+  // 5. Fetch deals with relations and pagination
   const { data: dealsData, error } = await (supabase.from('deals') as any)
     .select(`
       *,
@@ -59,6 +73,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     .or(orQuery)
     .or(`expires_at.is.null,expires_at.gt.${now}`)
     .order('created_at', { ascending: false })
+    .range((currentPage - 1) * pageSize, currentPage * pageSize - 1)
 
   if (error) {
     console.error('Error searching deals:', error)
@@ -81,14 +96,21 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         </p>
       </div>
 
-      <HomeFilters dealsCount={deals?.length || 0} />
+      <HomeFilters dealsCount={totalCount || 0} />
 
       <div className="flex flex-col gap-4">
         {deals && deals.length > 0 ? (
-          deals.map((deal: any) => (
-            // @ts-ignore
-            <DealCard key={deal.id} deal={deal as unknown as Deal} />
-          ))
+          <>
+            {deals.map((deal: any) => (
+              // @ts-ignore
+              <DealCard key={deal.id} deal={deal as unknown as Deal} />
+            ))}
+            
+            <Pagination 
+              totalPages={totalPages} 
+              currentPage={currentPage} 
+            />
+          </>
         ) : (
           <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-[#18191c] rounded-3xl border border-[#2d2e33] border-dashed">
             <div className="w-16 h-16 bg-[#222327] rounded-full flex items-center justify-center mb-4 text-gray-500">

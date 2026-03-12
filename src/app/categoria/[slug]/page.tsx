@@ -5,6 +5,7 @@ import { Deal } from '@/types'
 import { Tag, AlertCircle } from 'lucide-react'
 import HomeFilters from '@/components/HomeFilters'
 import { notFound } from 'next/navigation'
+import Pagination from '@/components/Pagination'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,10 +13,16 @@ interface CategoryPageProps {
   params: Promise<{
     slug: string
   }>
+  searchParams: Promise<{
+    page?: string
+  }>
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
+export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
   const { slug } = await params
+  const { page } = await searchParams
+  const currentPage = parseInt(page || '1')
+  const pageSize = 20
   const supabase = await createClient()
 
   // 1. Get Category ID from slug
@@ -30,8 +37,18 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     notFound()
   }
 
-  // 2. Fetch deals for this category
+  // 2. Fetch total count for pagination
   const now = new Date().toISOString()
+  const { count: totalCount } = await supabase
+    .from('deals')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'active')
+    .eq('category_id', (category as any).id)
+    .or(`expires_at.is.null,expires_at.gt.${now}`)
+
+  const totalPages = Math.ceil((totalCount || 0) / pageSize)
+
+  // 3. Fetch deals for this category
   const { data: dealsData, error } = await supabase
     .from('deals')
     .select(`
@@ -45,6 +62,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     .eq('category_id', (category as any).id)
     .or(`expires_at.is.null,expires_at.gt.${now}`)
     .order('created_at', { ascending: false })
+    .range((currentPage - 1) * pageSize, currentPage * pageSize - 1)
 
   if (error) {
     console.error('Error fetching category deals:', error)
@@ -85,15 +103,22 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       {/* Main Grid */}
       <div className="flex flex-col gap-4">
         {deals && deals.length > 0 ? (
-          deals.map((deal: any, index: number) => (
-            <div key={deal.id}>
-                {/* @ts-ignore */}
-                <DealCard deal={deal as unknown as Deal} />
-                {(index + 1) % 5 === 0 && (
-                  <FeedAd key={`ad-${deal.id}`} variant="banner2" className="mt-4" />
-                )}
-            </div>
-          ))
+          <>
+            {deals.map((deal: any, index: number) => (
+              <div key={deal.id}>
+                  {/* @ts-ignore */}
+                  <DealCard deal={deal as unknown as Deal} />
+                  {(index + 1) % 5 === 0 && (
+                    <FeedAd key={`ad-${deal.id}`} variant="banner2" className="mt-4" />
+                  )}
+              </div>
+            ))}
+            
+            <Pagination 
+              totalPages={totalPages} 
+              currentPage={currentPage} 
+            />
+          </>
         ) : (
           <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-[#18191c] rounded-3xl border border-[#2d2e33] border-dashed">
             <div className="w-16 h-16 bg-[#222327] rounded-full flex items-center justify-center mb-4 text-gray-500">

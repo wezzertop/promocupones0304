@@ -9,6 +9,7 @@ import { User as SupabaseUser } from '@supabase/supabase-js'
 import { useScrollDirection } from '@/hooks/useScrollDirection'
 import { useUIStore } from '@/lib/store'
 import NotificationCenter from '@/components/NotificationCenter'
+import SearchSuggestions from '@/components/SearchSuggestions'
 
 import Image from 'next/image'
 
@@ -19,6 +20,8 @@ interface HeaderProps {
 export default function Header({ user }: HeaderProps) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [userLevel, setUserLevel] = useState<number | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [isSearchSuggestionsOpen, setIsSearchSuggestionsOpen] = useState(false)
   const router = useRouter()
   const supabase = createClient()
   useScrollDirection() // Initialize scroll listener
@@ -38,7 +41,21 @@ export default function Header({ user }: HeaderProps) {
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
-  
+
+  const handleSearchSubmit = (e?: React.FormEvent) => {
+    e?.preventDefault()
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
+      setIsSearchSuggestionsOpen(false)
+    }
+  }
+
+  const handleSelectSuggestion = (query: string) => {
+    setSearchQuery(query)
+    router.push(`/search?q=${encodeURIComponent(query.trim())}`)
+    setIsSearchSuggestionsOpen(false)
+  }
+
   useEffect(() => {
     async function fetchLevel() {
       if (!user) return
@@ -77,29 +94,36 @@ export default function Header({ user }: HeaderProps) {
 
       {/* Search Bar */}
       <div className="flex-1 w-full max-w-2xl relative group mx-1 md:mx-4 lg:mx-8">
-        <form onSubmit={(e) => {
-          e.preventDefault()
-          const form = e.target as HTMLFormElement
-          const input = form.querySelector('input') as HTMLInputElement
-          if (input.value.trim()) {
-            router.push(`/search?q=${encodeURIComponent(input.value.trim())}`)
-          }
-        }} className="w-full">
-          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+        <form onSubmit={handleSearchSubmit} className="w-full relative">
+          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none z-10">
             <Search className="h-4 w-4 text-gray-500 group-focus-within:text-[#2BD45A] transition-colors" />
           </div>
           <input
             ref={searchInputRef}
             type="text"
             name="q"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value)
+              setIsSearchSuggestionsOpen(true)
+            }}
+            onFocus={() => setIsSearchSuggestionsOpen(true)}
             placeholder="Buscar..."
-            className="w-full bg-[#18191c] text-white pl-9 pr-2 py-2.5 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#2BD45A]/50 focus:ring-1 focus:ring-[#2BD45A]/50 transition-[border-color,box-shadow] duration-200 placeholder:text-gray-600 text-sm"
+            autoComplete="off"
+            className="w-full bg-[#18191c] text-white pl-9 pr-2 py-2.5 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#2BD45A]/50 focus:ring-1 focus:ring-[#2BD45A]/50 transition-[border-color,box-shadow] duration-200 placeholder:text-gray-600 text-sm relative z-0"
           />
           <div className="absolute right-3 top-2.5 hidden sm:flex items-center gap-1 pointer-events-none">
             <kbd className="hidden md:inline-flex h-5 items-center gap-1 rounded border border-[#2d2e33] bg-[#222327] px-1.5 font-mono text-[10px] font-medium text-gray-500 opacity-100">
               <span className="text-xs">Ctrl</span> K
             </kbd>
           </div>
+
+          <SearchSuggestions 
+            query={searchQuery}
+            isOpen={isSearchSuggestionsOpen}
+            onClose={() => setIsSearchSuggestionsOpen(false)}
+            onSelect={handleSelectSuggestion}
+          />
         </form>
       </div>
 
@@ -127,9 +151,9 @@ export default function Header({ user }: HeaderProps) {
                 </div>
               </div>
               <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#2BD45A] to-[#25b84e] flex items-center justify-center text-black font-bold shadow-lg shadow-[#2BD45A]/20 overflow-hidden relative border-2 border-[#2BD45A]/30 group">
-                {user.user_metadata?.avatar_url ? (
+                {user.user_metadata?.avatar_url || user.user_metadata?.picture ? (
                   <Image 
-                    src={user.user_metadata.avatar_url} 
+                    src={user.user_metadata.avatar_url || user.user_metadata.picture} 
                     alt="Avatar" 
                     fill
                     sizes="36px"
