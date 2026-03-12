@@ -5,6 +5,8 @@ import { motion, AnimatePresence, PanInfo } from 'framer-motion'
 import { ExternalLink, Share2, Clock, Tag, ChevronLeft, ChevronRight, Calendar, MapPin, AlertCircle, ArrowUp, ArrowDown, Edit2, Flame, Maximize2, X, Store as StoreIcon, Globe, Truck, Upload, Loader2, PauseCircle, PlayCircle } from 'lucide-react'
 import CommentsSection from '@/components/CommentsSection'
 import Map from '@/components/DynamicMap'
+import ProfileAd from '@/components/ProfileAd'
+import FeedAd from '@/components/FeedAd'
 import { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import Countdown from '@/components/ui/Countdown'
@@ -443,6 +445,11 @@ export default function DealDetailView({
                          <Share2 className="w-3.5 h-3.5" /> Compartir oferta
                       </button>
                    </div>
+
+                   {/* Sidebar Ad (Under Info Card) */}
+                   <div className="pt-3 border-t border-white/5">
+                      <ProfileAd variant="sidebar" className="bg-[#18191c]/50 rounded-2xl border border-white/5 p-4 w-full flex justify-center" />
+                   </div>
                 </div>
              </div>
           </div>
@@ -663,6 +670,11 @@ export default function DealDetailView({
                   </div>
                 </div>
              )}
+
+             {/* Ad between content and comments */}
+             <div className="w-full">
+                <FeedAd variant="banner2" className="my-6" />
+             </div>
 
              {/* Comments (Hidden in Preview if desired, or mocked) */}
              {!isPreview && deal.id && (

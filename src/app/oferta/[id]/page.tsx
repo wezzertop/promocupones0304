@@ -5,7 +5,6 @@ import { useEffect, useState, use } from 'react'
 import { useUIStore } from '@/lib/store'
 import { toggleDealStatus } from '../actions'
 import DealDetailView from '@/components/DealDetailView'
-import FeedAd from '@/components/FeedAd'
 
 export default function DealPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)

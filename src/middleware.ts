@@ -11,17 +11,20 @@ export async function middleware(request: NextRequest) {
   // --- SECURITY HEADERS ---
   
   // 1. CSP (Content Security Policy)
-  // Allows scripts from self, Supabase, Google (for Auth/Maps/Recaptcha), Vercel analytics
-  // Allows images from anywhere (https) + data/blob
-  // Allows styles from self + unsafe-inline (needed for many CSS-in-JS/Tailwind setups in dev)
+  // Domains for external services
+  const GOOGLE_DOMAINS = 'https://apis.google.com https://www.google.com https://www.gstatic.com https://fonts.googleapis.com https://fonts.gstatic.com https://accounts.google.com'
+  const SUPABASE_DOMAINS = 'https://*.supabase.co'
+  const ANALYTICS_DOMAINS = 'https://va.vercel-scripts.com'
+  const CLOUDFLARE_DOMAINS = 'https://challenges.cloudflare.com'
+
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://www.google.com https://www.gstatic.com https://*.supabase.co https://va.vercel-scripts.com https://challenges.cloudflare.com;
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' ${GOOGLE_DOMAINS} ${SUPABASE_DOMAINS} ${ANALYTICS_DOMAINS} ${CLOUDFLARE_DOMAINS} https:;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     img-src 'self' data: blob: https: https://i.imgur.com;
     font-src 'self' data: https://fonts.gstatic.com;
-    connect-src 'self' https://*.supabase.co https://*.googleapis.com https://api.ipify.org;
-    frame-src 'self' https://accounts.google.com https://www.google.com https://challenges.cloudflare.com;
+    connect-src 'self' ${SUPABASE_DOMAINS} https://*.googleapis.com https://api.ipify.org https:;
+    frame-src 'self' https://accounts.google.com https://www.google.com ${CLOUDFLARE_DOMAINS} https:;
     object-src 'none';
     base-uri 'self';
     form-action 'self';
