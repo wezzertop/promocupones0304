@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Mail, Lock, User, Loader2, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react'
 import Captcha from '@/components/Captcha'
+import GoogleTermsModal from '@/components/GoogleTermsModal'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -15,6 +16,7 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [captchaToken, setCaptchaToken] = useState<string | null>(null)
+  const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
@@ -61,12 +63,17 @@ export default function RegisterPage() {
     }
   }
 
+  const handleGoogleLoginClick = () => {
+    setIsGoogleModalOpen(true)
+  }
+
   const handleGoogleLogin = async () => {
+    setIsGoogleModalOpen(false)
     setLoading(true)
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${window.location.origin}/auth/callback?terms_accepted=true`,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
@@ -231,7 +238,7 @@ export default function RegisterPage() {
 
             <button
               type="button"
-              onClick={handleGoogleLogin}
+              onClick={handleGoogleLoginClick}
               disabled={loading}
               className="w-full bg-white text-black font-semibold py-3.5 rounded-xl shadow-lg transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
             >
@@ -253,10 +260,16 @@ export default function RegisterPage() {
                   fill="#EA4335"
                 />
               </svg>
-              Continuar con Google (Login / Registro)
+              Google
             </button>
           </form>
           )}
+
+          <GoogleTermsModal 
+            isOpen={isGoogleModalOpen} 
+            onClose={() => setIsGoogleModalOpen(false)} 
+            onAccept={handleGoogleLogin} 
+          />
         </div>
 
         <p className="text-center mt-6 text-zinc-400">

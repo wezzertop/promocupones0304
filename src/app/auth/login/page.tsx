@@ -177,7 +177,7 @@ export default function LoginPage() {
                   fill="#EA4335"
                 />
               </svg>
-              Continuar con Google (Login / Registro)
+              Google
             </button>
 
             <p className="text-xs text-center text-zinc-500 mt-4">

@@ -58,7 +58,10 @@ export default function Header({ user }: HeaderProps) {
 
   useEffect(() => {
     async function fetchLevel() {
-      if (!user) return
+      if (!user) {
+        setUserLevel(null)
+        return
+      }
       
       const { data } = await supabase
         .from('gamification_profiles')
