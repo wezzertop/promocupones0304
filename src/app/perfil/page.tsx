@@ -198,7 +198,7 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
       <ProfileTabs />
 
       {/* User Deals Grid */}
-      <div className="flex flex-col gap-4 p-1">
+      <div className="flex flex-col items-center md:items-stretch gap-4 p-1">
         {deals && deals.length > 0 ? (
           <>
             {deals.map((deal) => (

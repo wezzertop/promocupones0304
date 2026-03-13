@@ -204,7 +204,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
             </h2>
 
             {deals.length > 0 ? (
-              <div className="grid grid-cols-1 gap-4">
+              <div className="grid grid-cols-1 justify-items-center md:justify-items-stretch gap-4">
                 {deals.map((deal: any, index: number) => (
                   <div key={deal.id}>
                     <DealCard deal={deal} />

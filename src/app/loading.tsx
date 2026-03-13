@@ -17,7 +17,7 @@ export default function Loading() {
       </div>
 
       {/* Main Grid Skeleton */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col items-center md:items-stretch gap-4">
         {Array.from({ length: 5 }).map((_, i) => (
           <DealCardSkeleton key={i} />
         ))}

@@ -61,7 +61,7 @@ export default async function DiscusionesPage() {
       <FeedAd className="my-6" />
 
       {/* Main Grid */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col items-center md:items-stretch gap-4">
         {deals && deals.length > 0 ? (
           deals.map((deal: any, index: number) => (
             <div key={deal.id}>

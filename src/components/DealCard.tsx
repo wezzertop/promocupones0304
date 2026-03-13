@@ -267,7 +267,7 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
 
   return (
     <div className={cn(
-      "group relative flex flex-col md:flex-row bg-[#09090b] rounded-xl md:rounded-3xl overflow-hidden border border-white/5 transition-all duration-300 md:hover:scale-[1.01] shadow-xl shadow-black/50 hover:shadow-2xl h-auto md:h-[340px] mx-2 md:mx-0",
+      "group relative flex flex-col md:flex-row bg-[#09090b] rounded-xl md:rounded-3xl overflow-hidden border border-white/5 transition-all duration-300 md:hover:scale-[1.01] shadow-xl shadow-black/50 hover:shadow-2xl h-auto md:h-[340px] w-full max-w-[calc(100%-1rem)] mx-auto md:max-w-none md:mx-0",
       isCoupon ? "hover:border-purple-500/50 hover:shadow-purple-500/10" : "hover:border-[#2BD45A]/50 hover:shadow-[#2BD45A]/10",
       isExpired && "opacity-60 grayscale"
     )}>

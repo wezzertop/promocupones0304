@@ -98,7 +98,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
 
       <HomeFilters dealsCount={totalCount || 0} />
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col items-center md:items-stretch gap-4">
         {deals && deals.length > 0 ? (
           <>
             {deals.map((deal: any) => (
