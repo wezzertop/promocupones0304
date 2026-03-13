@@ -50,11 +50,14 @@ export default function ProfileAd({ className, variant = 'sidebar' }: ProfileAdP
   }
 
   // Determine which config to use
-  let config
-  if (variant === 'sidebar') {
-    config = desktopSidebarConfig
-  } else {
-    config = desktopFeedConfig
+  let config = mobileConfig
+
+  if (!isMobile) {
+    if (variant === 'sidebar') {
+      config = desktopSidebarConfig
+    } else {
+      config = desktopFeedConfig
+    }
   }
 
   // Create the HTML content for the iframe

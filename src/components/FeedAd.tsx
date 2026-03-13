@@ -45,7 +45,7 @@ export default function FeedAd({ className, variant = 'banner1' }: FeedAdProps) 
   }
 
   // Use mobile config if on mobile screen OR in a narrow sidebar
-  const config = isSidebar ? mobileConfig : desktopConfig
+  const config = (isMobile || isSidebar) ? mobileConfig : desktopConfig
 
   // Create the HTML content for the iframe
   const adHtml = `
