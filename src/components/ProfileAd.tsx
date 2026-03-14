@@ -60,6 +60,36 @@ export default function ProfileAd({ className, variant = 'sidebar' }: ProfileAdP
     }
   }
 
+  // Configuration for internal banners (fallback when external ads are blocked)
+  const showInternalAd = true
+
+  if (showInternalAd) {
+    return (
+      <div className={cn(
+        "flex flex-col items-center justify-center w-full",
+        !className?.includes('my-') && "my-4", 
+        className
+      )}>
+        <div 
+          className={cn(
+            "flex flex-col items-center justify-center overflow-hidden transition-all duration-300 rounded-xl bg-gradient-to-r from-[#18191c] to-[#222327] border border-[#2d2e33] relative group cursor-pointer hover:border-[#2BD45A]/50",
+            config.width === 300 ? "w-[300px]" : (config.width === 320 ? "w-full max-w-[320px]" : "w-full max-w-[468px]")
+          )}
+          style={{ height: `${config.height}px` }}
+        >
+           <div className="absolute inset-0 bg-[#2BD45A]/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+           <div className="relative z-10 flex items-center justify-center gap-4 w-full h-full px-4">
+              <span className="text-[10px] font-bold text-[#2BD45A] uppercase tracking-wider bg-[#2BD45A]/10 px-2 py-0.5 rounded-full">Publicidad</span>
+              <p className="text-xs text-gray-400 font-medium truncate max-w-[150px]">Tu marca aquí</p>
+              <button className="text-xs bg-[#2BD45A] text-black font-bold px-3 py-1.5 rounded-lg hover:bg-[#25b84e] transition-colors whitespace-nowrap shadow-lg shadow-[#2BD45A]/20">
+                Ver más
+              </button>
+           </div>
+        </div>
+      </div>
+    )
+  }
+
   // Create the HTML content for the iframe
   const adHtml = `
     <!DOCTYPE html>
