@@ -51,17 +51,21 @@ export default function AdSidebars() {
     }
   }, [])
 
-  // Only show ads when header is hidden (user scrolled down or manually hid it)
-  // We position ads relative to the centered content (max-w-5xl = 1024px)
-  // Content half-width = 512px.
-  // Ad width = 160px.
-  // Margin = 32px (increased to avoid being "pegado").
-  // Total offset from center = 512 + 32 = 544px.
-  // Breakpoint required: (544 + 160) * 2 = 1408px.
-  // We use 1400px as cutoff.
+  // Calculate center offset based on sidebar visibility
+  // If sidebar is visible (width 256px), content is shifted right by 256px.
+  // The visual center of content shifts by 128px to the right.
+  const centerShift = isHeaderVisible ? 128 : 0
+  
+  // Base offset from center for ads (512px half-content + 32px margin = 544px)
+  const baseOffset = 544
 
-  // Don't render on server or if header is visible or if screen is too narrow
-  if (isHeaderVisible || windowWidth < 1400) {
+  // Required width calculation:
+  // Without sidebar: 1024 (content) + 2*192 (ads+margin) ≈ 1408px -> 1400px limit
+  // With sidebar: 256 (sidebar) + 1024 (content) + 2*192 (ads+margin) ≈ 1664px -> 1650px limit
+  const minWidth = isHeaderVisible ? 1650 : 1400
+
+  // Don't render on server (windowWidth 0) or if screen is too narrow
+  if (windowWidth === 0 || windowWidth < minWidth) {
     return null
   }
 
@@ -69,8 +73,11 @@ export default function AdSidebars() {
     <>
       {/* Left Ad */}
       <div 
-        className="fixed right-1/2 mr-[544px] top-1/2 z-50 flex flex-col items-center justify-center transition-opacity duration-300"
-        style={{ transform: `translate(0, calc(-50% - ${offsetY}px))` }}
+        className="fixed right-1/2 top-1/2 z-50 flex flex-col items-center justify-center transition-all duration-300"
+        style={{ 
+          marginRight: `${baseOffset - centerShift}px`,
+          transform: `translate(0, calc(-50% - ${offsetY}px))` 
+        }}
       >
         <AdUnit />
       </div>
@@ -78,8 +85,11 @@ export default function AdSidebars() {
       {/* Right Ad */}
       {/* Moved up slightly (top-[45%]) to avoid covering the floating button at bottom-right */}
       <div 
-        className="fixed left-1/2 ml-[544px] top-[45%] z-50 flex flex-col items-center justify-center transition-opacity duration-300"
-        style={{ transform: `translate(0, calc(-50% - ${offsetY}px))` }}
+        className="fixed left-1/2 top-[45%] z-50 flex flex-col items-center justify-center transition-all duration-300"
+        style={{ 
+          marginLeft: `${baseOffset + centerShift}px`,
+          transform: `translate(0, calc(-50% - ${offsetY}px))` 
+        }}
       >
         <AdUnit />
       </div>

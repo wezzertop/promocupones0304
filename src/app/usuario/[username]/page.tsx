@@ -179,10 +179,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
               </div>
             </div>
 
-            {/* Sidebar Ad (Under Profile Card) */}
-            <div className="flex justify-center">
-               <ProfileAd variant="sidebar" className="bg-[#18191c]/50 rounded-2xl border border-white/5 p-4 w-full flex justify-center" />
-            </div>
+            {/* Sidebar Ad (Under Profile Card) - Removed per user request */}
 
             {/* Badges Placeholder (if we had badges data) */}
             {/* <div className="bg-[#18191c] rounded-2xl border border-white/5 p-6">
@@ -198,6 +195,11 @@ export default async function PublicProfilePage({ params }: PageProps) {
 
           {/* Right Column: Content */}
           <div className="flex-1 min-w-0">
+            {/* Top Ad (Strategic Location) */}
+            <div className="w-full flex justify-center mb-8">
+               <ProfileAd variant="sidebar" className="w-full flex justify-center" />
+            </div>
+
             <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
               <Flame className="text-orange-500" />
               Ofertas Publicadas

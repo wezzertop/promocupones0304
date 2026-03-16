@@ -445,12 +445,12 @@ export default function DealDetailView({
                          <Share2 className="w-3.5 h-3.5" /> Compartir oferta
                       </button>
                    </div>
-
-                   {/* Sidebar Ad (Under Info Card) */}
-                   <div className="pt-3 border-t border-white/5">
-                      <ProfileAd variant="sidebar" className="bg-[#18191c]/50 rounded-2xl border border-white/5 p-4 w-full flex justify-center" />
-                   </div>
                 </div>
+             </div>
+
+             {/* Sidebar Ad (Strategic Zone - Outside Panel) */}
+             <div className="flex justify-center w-full lg:sticky lg:top-[500px]">
+                <ProfileAd variant="sidebar" className="w-full flex justify-center" />
              </div>
           </div>
 

@@ -16,15 +16,16 @@ export async function middleware(request: NextRequest) {
   const SUPABASE_DOMAINS = 'https://*.supabase.co'
   const ANALYTICS_DOMAINS = 'https://va.vercel-scripts.com'
   const CLOUDFLARE_DOMAINS = 'https://challenges.cloudflare.com'
+  const AD_DOMAINS = 'https://crateworkshop.com https://www.highperformanceformat.com'
 
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'unsafe-inline' 'unsafe-eval' ${GOOGLE_DOMAINS} ${SUPABASE_DOMAINS} ${ANALYTICS_DOMAINS} ${CLOUDFLARE_DOMAINS} https:;
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' ${GOOGLE_DOMAINS} ${SUPABASE_DOMAINS} ${ANALYTICS_DOMAINS} ${CLOUDFLARE_DOMAINS} ${AD_DOMAINS} https:;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     img-src 'self' data: blob: https: https://i.imgur.com;
     font-src 'self' data: https://fonts.gstatic.com;
-    connect-src 'self' ${SUPABASE_DOMAINS} https://*.googleapis.com https://api.ipify.org https:;
-    frame-src 'self' https://accounts.google.com https://www.google.com ${CLOUDFLARE_DOMAINS} https:;
+    connect-src 'self' ${SUPABASE_DOMAINS} https://*.googleapis.com https://api.ipify.org ${AD_DOMAINS} https:;
+    frame-src 'self' https://accounts.google.com https://www.google.com ${CLOUDFLARE_DOMAINS} ${AD_DOMAINS} https:;
     object-src 'none';
     base-uri 'self';
     form-action 'self';
