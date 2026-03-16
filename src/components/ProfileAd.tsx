@@ -29,26 +29,26 @@ export default function ProfileAd({ className, variant = 'sidebar' }: ProfileAdP
   // Configuration for Desktop Sidebar (300x250)
   // User did not provide a 300x250 ad, so we use the 320x50 (mobile) ad which fits in the 320px sidebar
   const desktopSidebarConfig = {
-    key: '697423b9f3a8a2c8c8061efb60114534',
+    key: '2615cc9208c4d4e35c3f9a0e97ca3c1f',
     height: 50,
     width: 320,
-    url: '//crateworkshop.com/697423b9f3a8a2c8c8061efb60114534/invoke.js'
+    url: '//crateworkshop.com/2615cc9208c4d4e35c3f9a0e97ca3c1f/invoke.js'
   }
 
   // Configuration for Desktop Feed (468x60)
   const desktopFeedConfig = {
-    key: 'd2d4c8f711abc6418d6c13518f6b8a2b',
+    key: 'f793fd7b10baae1fe357b24bc9a3c577',
     height: 60,
     width: 468,
-    url: '//crateworkshop.com/d2d4c8f711abc6418d6c13518f6b8a2b/invoke.js'
+    url: '//crateworkshop.com/f793fd7b10baae1fe357b24bc9a3c577/invoke.js'
   }
 
   // Configuration for Mobile (320x50) - Used for both
   const mobileConfig = {
-    key: '697423b9f3a8a2c8c8061efb60114534',
+    key: '2615cc9208c4d4e35c3f9a0e97ca3c1f',
     height: 50,
     width: 320,
-    url: '//crateworkshop.com/697423b9f3a8a2c8c8061efb60114534/invoke.js'
+    url: '//crateworkshop.com/2615cc9208c4d4e35c3f9a0e97ca3c1f/invoke.js'
   }
 
   // Determine which config to use

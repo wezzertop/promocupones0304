@@ -4,10 +4,10 @@ import SmartAdUnit from './SmartAdUnit'
 
 export default function AdUnit() {
   const config = {
-    key: 'd2607862d6bb61bda08e80b2c54ba2c6',
+    key: '819d7d426081b34943bae0bc2695fd78',
     height: 600,
     width: 160,
-    url: 'https://www.highperformanceformat.com/d2607862d6bb61bda08e80b2c54ba2c6/invoke.js'
+    url: '//crateworkshop.com/819d7d426081b34943bae0bc2695fd78/invoke.js'
   }
 
   const fallback = (

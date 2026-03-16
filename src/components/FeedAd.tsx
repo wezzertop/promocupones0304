@@ -31,26 +31,26 @@ export default function FeedAd({ className, variant = 'banner1' }: FeedAdProps) 
 
   // Mobile Config (320x50) - Used for Banner1-Mobile and all of Banner2
   const mobileConfig = {
-    key: '697423b9f3a8a2c8c8061efb60114534',
+    key: '2615cc9208c4d4e35c3f9a0e97ca3c1f',
     height: 50,
     width: 320,
-    url: '//crateworkshop.com/697423b9f3a8a2c8c8061efb60114534/invoke.js'
+    url: '//crateworkshop.com/2615cc9208c4d4e35c3f9a0e97ca3c1f/invoke.js'
   }
 
   // Desktop Config (468x60) - Used for Banner1-Desktop
   const desktopConfig = {
-    key: 'd2d4c8f711abc6418d6c13518f6b8a2b',
+    key: 'f793fd7b10baae1fe357b24bc9a3c577',
     height: 60,
     width: 468,
-    url: '//crateworkshop.com/d2d4c8f711abc6418d6c13518f6b8a2b/invoke.js'
+    url: '//crateworkshop.com/f793fd7b10baae1fe357b24bc9a3c577/invoke.js'
   }
 
   // Leaderboard Config (728x90) - Used for Large Desktop
   const leaderboardConfig = {
-    key: '4019062959f736f8d1b350a78242d5ea',
+    key: 'eddbdec3992923ef6b360d0495f574ed',
     height: 90,
     width: 728,
-    url: '//crateworkshop.com/4019062959f736f8d1b350a78242d5ea/invoke.js'
+    url: '//crateworkshop.com/eddbdec3992923ef6b360d0495f574ed/invoke.js'
   }
 
   // Use mobile config if on mobile screen OR in a narrow sidebar
