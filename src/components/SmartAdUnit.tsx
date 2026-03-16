@@ -135,7 +135,7 @@ export default function SmartAdUnit({
   return (
     <div className={cn(
       "flex flex-col items-center justify-center w-full",
-      !className?.includes('my-') && "my-6", 
+      !className?.includes('my-') && !className?.includes('mb-') && !className?.includes('mt-') && "my-2 md:my-6", 
       isSidebar && "my-0",
       className
     )}>

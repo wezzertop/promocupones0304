@@ -2,12 +2,17 @@
 
 import { createClient } from '@/lib/supabase/client'
 import { useEffect, useState, use } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useUIStore } from '@/lib/store'
 import { toggleDealStatus } from '../actions'
 import DealDetailView from '@/components/DealDetailView'
 
 export default function DealPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
+  const searchParams = useSearchParams()
+  const from = searchParams.get('from')
+  const label = searchParams.get('label')
+  
   const [deal, setDeal] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const { setHeaderVisible } = useUIStore()
@@ -195,6 +200,8 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
         onVote={handleVote}
         onToggleStatus={handleToggleStatus}
         isToggling={isToggling}
+        backUrl={from || '/'}
+        backLabel={label || (from ? 'Volver' : 'Volver a ofertas')}
       />
     </>
   )

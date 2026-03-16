@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Search, Bell, User as UserIcon, LogOut, Settings, Menu, BadgeCheck } from 'lucide-react'
+import { Search, Bell, User as UserIcon, LogOut, Settings, Menu, BadgeCheck, Shield } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -20,6 +20,7 @@ interface HeaderProps {
 export default function Header({ user }: HeaderProps) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [userLevel, setUserLevel] = useState<number | null>(null)
+  const [isAdminOrMod, setIsAdminOrMod] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [isSearchSuggestionsOpen, setIsSearchSuggestionsOpen] = useState(false)
   const router = useRouter()
@@ -60,18 +61,32 @@ export default function Header({ user }: HeaderProps) {
     async function fetchLevel() {
       if (!user) {
         setUserLevel(null)
+        setIsAdminOrMod(false)
         return
       }
       
-      const { data } = await supabase
+      // Fetch level
+      const { data: levelData } = await supabase
         .from('gamification_profiles')
         .select('current_level')
         .eq('user_id', user.id)
         .single()
         
-      if (data) {
-        const levelData = data as any
-        setUserLevel(levelData.current_level)
+      if (levelData) {
+        const data = levelData as any
+        setUserLevel(data.current_level)
+      }
+
+      // Fetch role
+      const { data: roleData } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+
+      if (roleData) {
+        const role = (roleData as any).role
+        setIsAdminOrMod(role === 'admin' || role === 'moderator')
       }
     }
     
@@ -132,6 +147,16 @@ export default function Header({ user }: HeaderProps) {
 
       {/* Right Actions */}
       <div className="flex items-center gap-1 sm:gap-4 ml-auto w-[100px] sm:w-auto justify-end">
+        {isAdminOrMod && (
+          <Link 
+            href="/admin/moderation" 
+            className="hidden sm:flex items-center gap-2 px-3 py-2 bg-zinc-800/50 hover:bg-zinc-700/50 text-zinc-400 hover:text-white rounded-lg transition-colors border border-white/5"
+            title="Panel de Moderación"
+          >
+            <Shield size={18} />
+          </Link>
+        )}
+
         {user && <NotificationCenter />}
         
         {user ? (
@@ -181,6 +206,15 @@ export default function Header({ user }: HeaderProps) {
                 </div>
                 
                 <div className="p-1">
+                  {isAdminOrMod && (
+                    <Link 
+                      href="/admin/moderation" 
+                      className="flex items-center gap-3 px-3 py-2 text-sm text-yellow-500 hover:bg-[#222327] hover:text-yellow-400 rounded-lg transition-colors mb-1"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      <Shield size={16} /> Moderación
+                    </Link>
+                  )}
                   <Link 
                     href="/perfil" 
                     className="flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:bg-[#222327] hover:text-white rounded-lg transition-colors"

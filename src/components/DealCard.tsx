@@ -22,7 +22,8 @@ import {
     Globe,
     Copy,
     Check,
-    Ticket
+    Ticket,
+    X
   } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -37,9 +38,19 @@ interface DealCardProps {
   deal: Deal
   initialUserVote?: 'hot' | 'cold' | null
   initialIsSaved?: boolean
+  variant?: 'default' | 'moderation'
+  onApprove?: () => void
+  onReject?: () => void
 }
 
-export default function DealCard({ deal, initialUserVote = null, initialIsSaved = false }: DealCardProps) {
+export default function DealCard({ 
+  deal, 
+  initialUserVote = null, 
+  initialIsSaved = false,
+  variant = 'default',
+  onApprove,
+  onReject
+}: DealCardProps) {
   const [votes, setVotes] = useState(deal.votes_count || 0)
   const [userVote, setUserVote] = useState<'hot' | 'cold' | null>(initialUserVote)
   const [isSaved, setIsSaved] = useState(initialIsSaved)
@@ -265,6 +276,10 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
     return `${days}d`
   }
 
+  const dealLink = variant === 'moderation' 
+    ? `/oferta/${deal.id}?from=/admin/moderation&label=Volver a moderación` 
+    : `/oferta/${deal.id}`
+
   return (
     <div className={cn(
       "group relative flex flex-col md:flex-row bg-[#09090b] rounded-xl md:rounded-3xl overflow-hidden border border-white/5 transition-all duration-300 md:hover:scale-[1.01] shadow-xl shadow-black/50 hover:shadow-2xl h-auto md:h-[340px] w-full max-w-[calc(100%-1rem)] mx-auto md:max-w-none md:mx-0",
@@ -273,6 +288,7 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
     )}>
       
       {/* Vertical Voting Sidebar (Desktop Only) */}
+      {variant === 'default' && (
       <div className="hidden md:flex flex-col items-center justify-center gap-2 w-16 bg-black/40 border-r border-white/5 py-4 shrink-0">
         <button 
           onClick={() => handleVote('hot')}
@@ -312,6 +328,7 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
           <ArrowDown size={24} strokeWidth={3} />
         </button>
       </div>
+      )}
 
       {/* Image Section (Mobile: Top / Desktop: Left) */}
       <div className="flex flex-col w-full md:w-[240px] shrink-0 border-b md:border-b-0 md:border-r border-white/5">
@@ -473,7 +490,7 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
         </div>
 
         {/* Title */}
-        <Link href={`/oferta/${deal.id}`} className="block mb-2 md:mb-3 group-hover:translate-x-1 transition-transform duration-300 relative z-10">
+        <Link href={dealLink} className="block mb-2 md:mb-3 group-hover:translate-x-1 transition-transform duration-300 relative z-10">
           <h3 className="text-lg md:text-xl font-bold text-white leading-tight line-clamp-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-zinc-400">
             {deal.title}
           </h3>
@@ -583,116 +600,146 @@ export default function DealCard({ deal, initialUserVote = null, initialIsSaved 
         )}
       <div className="flex mt-auto items-center justify-between relative z-10 pt-3 border-t border-white/5">
         
-        {/* Mobile Vote Actions (Shown only on mobile) */}
-        <div className="md:hidden flex items-center gap-1 mr-2 bg-white/5 rounded-lg p-1">
-             <button 
-                onClick={(e) => { e.preventDefault(); handleVote('hot'); }} 
-                className={cn("p-2 rounded-md active:scale-90 transition-transform", userVote === 'hot' ? "text-[#2BD45A] bg-white/5" : "text-zinc-500")}
+        {variant === 'default' && (
+          <>
+            {/* Mobile Vote Actions (Shown only on mobile) */}
+            <div className="md:hidden flex items-center gap-1 mr-2 bg-white/5 rounded-lg p-1">
+                <button 
+                    onClick={(e) => { e.preventDefault(); handleVote('hot'); }} 
+                    className={cn("p-2 rounded-md active:scale-90 transition-transform", userVote === 'hot' ? "text-[#2BD45A] bg-white/5" : "text-zinc-500")}
+                  >
+                    <ArrowUp size={18} />
+                  </button>
+                  <span className={cn("text-sm font-bold min-w-[20px] text-center", votes > 0 ? "text-white" : "text-zinc-500")}>{votes}</span>
+                  <button 
+                    onClick={(e) => { e.preventDefault(); handleVote('cold'); }} 
+                    className={cn("p-2 rounded-md active:scale-90 transition-transform", userVote === 'cold' ? "text-blue-500 bg-white/5" : "text-zinc-500")}
+                  >
+                    <ArrowDown size={18} />
+                  </button>
+            </div>
+
+            <div className="flex items-center gap-1">
+              <Link 
+                href={`${dealLink}#comments`}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 transition-all active:scale-95 group/btn"
               >
-                <ArrowUp size={18} />
-              </button>
-              <span className={cn("text-sm font-bold min-w-[20px] text-center", votes > 0 ? "text-white" : "text-zinc-500")}>{votes}</span>
+                <MessageSquare size={18} className="group-hover/btn:scale-110 transition-transform" />
+                <span className="text-sm font-semibold">{deal.comments_count || 0}</span>
+              </Link>
+
               <button 
-                onClick={(e) => { e.preventDefault(); handleVote('cold'); }} 
-                className={cn("p-2 rounded-md active:scale-90 transition-transform", userVote === 'cold' ? "text-blue-500 bg-white/5" : "text-zinc-500")}
+                onClick={handleShare}
+                className="p-3 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 transition-all active:scale-90"
+                title="Compartir"
               >
-                <ArrowDown size={18} />
+                <Share2 size={18} />
               </button>
-        </div>
 
-        <div className="flex items-center gap-1">
-          <Link 
-            href={`/oferta/${deal.id}#comments`}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 transition-all active:scale-95 group/btn"
-          >
-            <MessageSquare size={18} className="group-hover/btn:scale-110 transition-transform" />
-            <span className="text-sm font-semibold">{deal.comments_count || 0}</span>
-          </Link>
+              <button 
+                onClick={handleSave}
+                className={cn(
+                  "p-3 rounded-xl transition-all hover:bg-white/5 active:scale-90",
+                  isSaved ? "text-[#2BD45A]" : "text-zinc-400 hover:text-white"
+                )}
+                title="Guardar"
+              >
+                <Bookmark size={18} className={cn(isSaved ? "fill-current" : "")} />
+              </button>
 
-          <button 
-            onClick={handleShare}
-            className="p-3 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 transition-all active:scale-90"
-            title="Compartir"
-          >
-            <Share2 size={18} />
-          </button>
+              <button 
+                onClick={() => setIsReportModalOpen(true)}
+                className="hidden md:block p-3 rounded-xl text-zinc-400 hover:text-red-400 hover:bg-white/5 transition-all active:scale-90"
+                title="Reportar"
+              >
+                <Flag size={18} />
+              </button>
+            </div>
 
-          <button 
-            onClick={handleSave}
-            className={cn(
-              "p-3 rounded-xl transition-all hover:bg-white/5 active:scale-90",
-              isSaved ? "text-[#2BD45A]" : "text-zinc-400 hover:text-white"
+            {isCoupon ? (
+              <button 
+                onClick={handleCopyCode}
+                className={cn(
+                  "hidden md:flex items-center group/coupon relative h-[42px] ml-2 min-w-[240px] rounded-full border-2 border-dashed border-purple-500/50 hover:border-purple-500 transition-colors bg-white/5 overflow-hidden",
+                  isCopied ? "border-green-500/50 hover:border-green-500" : ""
+                )}
+                onClickCapture={(e) => e.stopPropagation()}
+              >
+                <div className="flex-1 px-4 text-base font-mono font-bold text-zinc-300 truncate text-left">
+                    {deal.coupon_code || 'Ver Cupón'}
+                </div>
+                <div className={cn(
+                  "h-full px-4 flex items-center gap-2 text-sm font-bold text-white transition-colors",
+                  isCopied ? "bg-green-500" : "bg-purple-500 group-hover/coupon:bg-purple-600"
+                )}>
+                    <span>{isCopied ? 'Copiado' : 'Copiar y visitar'}</span>
+                    {isCopied ? <Check size={14} strokeWidth={3} /> : <ExternalLink size={14} strokeWidth={3} />}
+                </div>
+              </button>
+            ) : (
+              <a 
+                href={deal.deal_url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hidden md:flex items-center gap-2 bg-[#2BD45A] text-black font-black px-6 py-3 rounded-xl transition-all hover:scale-105 active:scale-95 hover:shadow-[0_0_20px_rgba(43,212,90,0.3)] text-sm uppercase tracking-wide ml-2"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <span>Ver Oferta</span>
+                <ExternalLink size={16} strokeWidth={3} />
+              </a>
             )}
-            title="Guardar"
-          >
-            <Bookmark size={18} className={cn(isSaved ? "fill-current" : "")} />
-          </button>
 
-          <button 
-            onClick={() => setIsReportModalOpen(true)}
-            className="hidden md:block p-3 rounded-xl text-zinc-400 hover:text-red-400 hover:bg-white/5 transition-all active:scale-90"
-            title="Reportar"
-          >
-            <Flag size={18} />
-          </button>
-        </div>
-
-        {isCoupon ? (
-          <button 
-            onClick={handleCopyCode}
-            className={cn(
-              "hidden md:flex items-center group/coupon relative h-[42px] ml-2 min-w-[240px] rounded-full border-2 border-dashed border-purple-500/50 hover:border-purple-500 transition-colors bg-white/5 overflow-hidden",
-              isCopied ? "border-green-500/50 hover:border-green-500" : ""
+            {/* Mobile External Link (Icon only or compacted) */}
+            {isCoupon ? (
+              <button 
+                onClick={handleCopyCode}
+                className={cn(
+                  "md:hidden flex items-center justify-center bg-purple-500 text-white p-3 rounded-xl transition-all active:scale-95 shadow-[0_0_15px_rgba(168,85,247,0.3)] ml-2",
+                  isCopied ? "bg-green-500 shadow-green-500/30" : ""
+                )}
+                onClickCapture={(e) => e.stopPropagation()}
+                title={deal.coupon_code || 'Copiar cupón'}
+              >
+                {isCopied ? <Check size={20} strokeWidth={3} /> : <ExternalLink size={20} strokeWidth={3} />}
+              </button>
+            ) : (
+              <a 
+                href={deal.deal_url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="md:hidden flex items-center justify-center bg-[#2BD45A] text-black p-3 rounded-xl transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(43,212,90,0.3)] ml-2"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <ExternalLink size={20} strokeWidth={3} />
+              </a>
             )}
-            onClickCapture={(e) => e.stopPropagation()}
-          >
-             <div className="flex-1 px-4 text-base font-mono font-bold text-zinc-300 truncate text-left">
-                {deal.coupon_code || 'Ver Cupón'}
-             </div>
-             <div className={cn(
-               "h-full px-4 flex items-center gap-2 text-sm font-bold text-white transition-colors",
-               isCopied ? "bg-green-500" : "bg-purple-500 group-hover/coupon:bg-purple-600"
-             )}>
-                <span>{isCopied ? 'Copiado' : 'Copiar y visitar'}</span>
-                {isCopied ? <Check size={14} strokeWidth={3} /> : <ExternalLink size={14} strokeWidth={3} />}
-             </div>
-          </button>
-        ) : (
-          <a 
-            href={deal.deal_url} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="hidden md:flex items-center gap-2 bg-[#2BD45A] text-black font-black px-6 py-3 rounded-xl transition-all hover:scale-105 active:scale-95 hover:shadow-[0_0_20px_rgba(43,212,90,0.3)] text-sm uppercase tracking-wide ml-2"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <span>Ver Oferta</span>
-            <ExternalLink size={16} strokeWidth={3} />
-          </a>
+          </>
         )}
 
-        {/* Mobile External Link (Icon only or compacted) */}
-        {isCoupon ? (
-          <button 
-            onClick={handleCopyCode}
-            className={cn(
-              "md:hidden flex items-center justify-center bg-purple-500 text-white p-3 rounded-xl transition-all active:scale-95 shadow-[0_0_15px_rgba(168,85,247,0.3)] ml-2",
-              isCopied ? "bg-green-500 shadow-green-500/30" : ""
-            )}
-            onClickCapture={(e) => e.stopPropagation()}
-            title={deal.coupon_code || 'Copiar cupón'}
-          >
-             {isCopied ? <Check size={20} strokeWidth={3} /> : <ExternalLink size={20} strokeWidth={3} />}
-          </button>
-        ) : (
-          <a 
-            href={deal.deal_url} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="md:hidden flex items-center justify-center bg-[#2BD45A] text-black p-3 rounded-xl transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(43,212,90,0.3)] ml-2"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <ExternalLink size={20} strokeWidth={3} />
-          </a>
+        {variant === 'moderation' && (
+          <div className="flex items-center gap-3 w-full">
+             <button 
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onReject?.();
+                }}
+                className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-500 px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-colors h-[42px]"
+              >
+                <X className="w-4 h-4" /> <span className="hidden sm:inline">Rechazar</span>
+              </button>
+              
+              <button 
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onApprove?.();
+                }}
+                className="flex-1 bg-[#2BD45A]/10 hover:bg-[#2BD45A]/20 text-[#2BD45A] px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-colors h-[42px]"
+              >
+                <Check className="w-4 h-4" /> <span className="hidden sm:inline">Aprobar</span>
+              </button>
+          </div>
         )}
       </div>
     </div>

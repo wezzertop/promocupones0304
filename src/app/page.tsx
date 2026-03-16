@@ -96,22 +96,24 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
   }
 
   return (
-    <div className="space-y-8 animate-fade-in max-w-5xl mx-auto">
+    <div className="space-y-2 md:space-y-8 animate-fade-in max-w-5xl mx-auto">
       {/* Featured Banner (Dismissible) */}
       <HeroBanner />
 
       {/* Filters & Actions */}
       <HomeFilters dealsCount={deals?.length || 0} />
 
-      {/* Top Ad */}
-      <FeedAd className="my-6" />
-
       {/* Main Grid */}
-      <div className="flex flex-col items-center md:items-stretch gap-4">
+      <div className="flex flex-col items-center md:items-stretch gap-2 md:gap-4 mt-2 md:mt-4">
         {deals && deals.length > 0 ? (
           <>
+            {/* Top Ad */}
+            <div className="w-full">
+               <FeedAd className="mb-2 md:mb-4" />
+            </div>
+
             {deals.map((deal, index) => (
-              <div key={deal.id}>
+              <div key={deal.id} className="w-full">
                 <DealCard 
                   deal={deal} 
                   initialUserVote={deal.user_vote || null}
@@ -119,7 +121,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
                 />
                 {/* Insert Ad every 5 deals */}
                 {(index + 1) % 5 === 0 && (
-                  <FeedAd key={`ad-${deal.id}`} variant="banner2" className="mt-4" />
+                  <FeedAd key={`ad-${deal.id}`} variant="banner2" className="mt-2 md:mt-4" />
                 )}
               </div>
             ))}

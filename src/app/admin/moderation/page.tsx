@@ -2,18 +2,23 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Check, X, AlertTriangle, Eye, ExternalLink, History } from 'lucide-react'
+import { Check, X, AlertTriangle, Eye, ExternalLink, History, Trash2, ArrowLeft } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { addKarmaPoints, POINT_SYSTEM } from '@/lib/moderation'
+import DealCard from '@/components/DealCard'
+import { Deal } from '@/types'
+import { cn } from '@/lib/utils'
 
 export default function ModerationPage() {
-  const [deals, setDeals] = useState<any[]>([])
+  const [deals, setDeals] = useState<Deal[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedDeal, setSelectedDeal] = useState<any>(null)
+  const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null)
   const [rejectReason, setRejectReason] = useState('')
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false)
+  const [selectedDeals, setSelectedDeals] = useState<Set<string>>(new Set())
   
   // History Modal State
   const [historyModalOpen, setHistoryModalOpen] = useState(false)
@@ -51,12 +56,12 @@ export default function ModerationPage() {
     setLoading(true)
     const { data, error } = await supabase
       .from('deals')
-      .select('*, user:users!deals_user_id_fkey(username, karma_points)')
+      .select('*, user:users!deals_user_id_fkey(username, karma_points, avatar_url), store:stores(*), category:categories(*)')
       .in('status', ['pending', 'revision'])
       .order('created_at', { ascending: false })
 
     if (data) {
-      setDeals(data)
+      setDeals(data as any)
     }
     setLoading(false)
   }
@@ -66,13 +71,12 @@ export default function ModerationPage() {
   }, [])
 
   const handleApprove = async (id: string) => {
-    if (!confirm('¿Estás seguro de aprobar esta publicación?')) return
+    // if (!confirm('¿Estás seguro de aprobar esta publicación?')) return
 
     const { error } = await (supabase.from('deals') as any)
       .update({ 
         status: 'active',
         moderated_at: new Date().toISOString(),
-        // moderated_by: session.user.id (Supabase can handle this with triggers or we pass it)
       })
       .eq('id', id)
 
@@ -84,7 +88,12 @@ export default function ModerationPage() {
         await addKarmaPoints(deal.user_id, POINT_SYSTEM.POST_APPROVED, 'Publicación aprobada')
         
         // Update UI
-        setDeals(deals.filter(d => d.id !== id))
+        setDeals(prev => prev.filter(d => d.id !== id))
+        setSelectedDeals(prev => {
+          const newSet = new Set(prev)
+          newSet.delete(id)
+          return newSet
+        })
       }
     }
   }
@@ -101,126 +110,198 @@ export default function ModerationPage() {
       .eq('id', selectedDeal.id)
 
     if (!error) {
-      setDeals(deals.filter(d => d.id !== selectedDeal.id))
+      setDeals(prev => prev.filter(d => d.id !== selectedDeal.id))
+      setSelectedDeals(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(selectedDeal.id)
+        return newSet
+      })
       setIsRejectModalOpen(false)
       setRejectReason('')
       setSelectedDeal(null)
     }
   }
 
-  if (loading) return <div className="text-white">Cargando...</div>
+  const toggleSelectDeal = (id: string) => {
+    setSelectedDeals(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(id)) {
+        newSet.delete(id)
+      } else {
+        newSet.add(id)
+      }
+      return newSet
+    })
+  }
+
+  const toggleSelectAll = () => {
+    if (selectedDeals.size === deals.length) {
+      setSelectedDeals(new Set())
+    } else {
+      setSelectedDeals(new Set(deals.map(d => d.id)))
+    }
+  }
+
+  const handleBulkApprove = async () => {
+    if (selectedDeals.size === 0) return
+    if (!confirm(`¿Estás seguro de aprobar ${selectedDeals.size} publicaciones?`)) return
+
+    const ids = Array.from(selectedDeals)
+    
+    // Update status
+    const { error } = await (supabase.from('deals') as any)
+      .update({ 
+        status: 'active',
+        moderated_at: new Date().toISOString(),
+      })
+      .in('id', ids)
+
+    if (!error) {
+      // Add karma points for each user (this might need optimization for large batches, but fine for now)
+      for (const id of ids) {
+        const deal = deals.find(d => d.id === id)
+        if (deal) {
+           await addKarmaPoints(deal.user_id, POINT_SYSTEM.POST_APPROVED, 'Publicación aprobada')
+        }
+      }
+
+      setDeals(prev => prev.filter(d => !selectedDeals.has(d.id)))
+      setSelectedDeals(new Set())
+    }
+  }
+
+  const handleBulkReject = async () => {
+    if (selectedDeals.size === 0) return
+    // For bulk reject, we might want to ask for a common reason or just reject without notes?
+    // Or open a modal for common reason.
+    // For now, let's open the modal and apply to all selected.
+    
+    // If multiple selected, use the modal but apply to all
+    setRejectReason('')
+    // We need a way to tell the modal we are rejecting multiple.
+    // Let's use a special flag or just check selectedDeals in the modal action
+    setIsRejectModalOpen(true)
+  }
+  
+  const confirmBulkReject = async () => {
+    if (selectedDeals.size === 0 || !rejectReason) return
+
+    const ids = Array.from(selectedDeals)
+    
+    const { error } = await (supabase.from('deals') as any)
+      .update({ 
+        status: 'rejected',
+        moderation_notes: rejectReason,
+        moderated_at: new Date().toISOString()
+      })
+      .in('id', ids)
+
+    if (!error) {
+      setDeals(prev => prev.filter(d => !selectedDeals.has(d.id)))
+      setSelectedDeals(new Set())
+      setIsRejectModalOpen(false)
+      setRejectReason('')
+    }
+  }
+
+  if (loading) return <div className="text-white animate-pulse">Cargando publicaciones...</div>
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-white">Cola de Moderación</h1>
-        <div className="bg-[#18191c] px-4 py-2 rounded-lg border border-white/10 text-sm text-zinc-400">
-          {deals.length} pendientes
+    <div className="space-y-6 max-w-5xl mx-auto">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 sticky top-0 z-40 bg-[#09090b]/80 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg">
+        <div className="flex items-center gap-4">
+           <Link 
+             href="/" 
+             className="p-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white rounded-lg transition-colors border border-white/5"
+             title="Volver al Inicio"
+           >
+             <ArrowLeft size={20} />
+           </Link>
+           <div>
+             <h1 className="text-2xl md:text-3xl font-bold text-white">Cola de Moderación</h1>
+             <p className="text-zinc-400 text-sm">{deals.length} publicaciones pendientes</p>
+           </div>
+        </div>
+        
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          {deals.length > 0 && (
+             <div className="flex items-center gap-2 mr-auto md:mr-0">
+               <input 
+                 type="checkbox" 
+                 checked={deals.length > 0 && selectedDeals.size === deals.length}
+                 onChange={toggleSelectAll}
+                 className="w-5 h-5 rounded border-zinc-600 text-[#2BD45A] focus:ring-[#2BD45A] bg-zinc-800"
+               />
+               <span className="text-sm text-zinc-300">Seleccionar todo</span>
+             </div>
+          )}
+
+          {selectedDeals.size > 0 && (
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={handleBulkApprove}
+                className="bg-[#2BD45A] hover:bg-[#25b84e] text-black px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center gap-2"
+              >
+                <Check size={16} /> <span className="hidden sm:inline">Aprobar ({selectedDeals.size})</span>
+              </button>
+              <button 
+                onClick={handleBulkReject}
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center gap-2"
+              >
+                <X size={16} /> <span className="hidden sm:inline">Rechazar ({selectedDeals.size})</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="grid gap-6">
+      <div className="flex flex-col gap-4">
         {deals.length === 0 ? (
-          <div className="text-center py-20 text-zinc-500">
-            No hay publicaciones pendientes de revisión.
+          <div className="text-center py-20 text-zinc-500 bg-[#18191c] rounded-3xl border border-[#2d2e33] border-dashed">
+            <div className="w-16 h-16 bg-[#222327] rounded-full flex items-center justify-center mb-4 mx-auto text-zinc-600">
+               <Check size={32} />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">¡Todo limpio!</h3>
+            <p className="max-w-md mx-auto">No hay publicaciones pendientes de revisión en este momento.</p>
           </div>
         ) : (
           deals.map((deal) => (
-            <div key={deal.id} className="bg-[#18191c] rounded-xl border border-white/5 overflow-hidden flex flex-col md:flex-row">
-              {/* Image */}
-              <div className="w-full md:w-64 h-48 md:h-auto relative bg-black/20 shrink-0">
-                {deal.image_urls?.[0] ? (
-                  <img 
-                    src={deal.image_urls[0]} 
-                    alt={deal.title}
-                    className="w-full h-full object-cover"
+            <div key={deal.id} className="relative group flex gap-3">
+               {/* Selection Checkbox */}
+               <div className="pt-8 md:pt-12 shrink-0">
+                  <input 
+                    type="checkbox" 
+                    checked={selectedDeals.has(deal.id)}
+                    onChange={() => toggleSelectDeal(deal.id)}
+                    className="w-5 h-5 rounded border-zinc-600 text-[#2BD45A] focus:ring-[#2BD45A] bg-zinc-800 cursor-pointer"
                   />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-zinc-600">
-                    Sin imagen
-                  </div>
-                )}
-                <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-xs font-bold text-white">
-                  {deal.discount_percentage ? `-${deal.discount_percentage}%` : 'Oferta'}
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="flex-1 p-6 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="text-xl font-bold text-white line-clamp-2">{deal.title}</h3>
-                    <span className="text-xs font-mono text-zinc-500 bg-zinc-900 px-2 py-1 rounded">
-                      {formatDistanceToNow(new Date(deal.created_at), { addSuffix: true, locale: es })}
-                    </span>
-                  </div>
+               </div>
+               
+               <div className="flex-1 min-w-0">
+                  <DealCard 
+                    deal={deal}
+                    variant="moderation"
+                    onApprove={() => handleApprove(deal.id)}
+                    onReject={() => {
+                      setSelectedDeal(deal)
+                      setIsRejectModalOpen(true)
+                    }}
+                  />
                   
-                  <div className="flex items-center gap-4 text-sm text-zinc-400 mb-4">
-                    <span className="flex items-center gap-1">
-                      <span className={`w-2 h-2 rounded-full ${
-                        deal.user?.karma_points > 500 ? 'bg-yellow-500' :
-                        deal.user?.karma_points > 100 ? 'bg-blue-500' : 'bg-zinc-500'
-                      }`}></span>
-                      {deal.user?.username || 'Usuario desconocido'}
-                      <button 
+                  {/* Additional Moderation Info/Actions Overlay if needed */}
+                  <div className="absolute top-2 right-2 md:right-4 flex gap-2">
+                     <button 
                         onClick={(e) => {
                           e.stopPropagation()
                           fetchUserHistory(deal.user_id)
                         }}
-                        className="ml-1 text-zinc-500 hover:text-blue-400 transition-colors p-1"
+                        className="bg-black/60 hover:bg-black/80 text-zinc-300 hover:text-white p-2 rounded-full backdrop-blur-sm transition-all border border-white/10 z-20"
                         title="Ver historial de usuario"
                       >
-                        <History size={14} />
+                        <History size={16} />
                       </button>
-                      <span className="text-xs bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-500">
-                        {deal.user?.karma_points || 0} pts
-                      </span>
-                    </span>
-                    <span className="text-zinc-600">•</span>
-                    <span className="text-[#2BD45A] font-bold">
-                      ${deal.deal_price}
-                    </span>
-                    {deal.original_price && (
-                      <span className="text-zinc-600 line-through text-xs">
-                        ${deal.original_price}
-                      </span>
-                    )}
                   </div>
-
-                  <p className="text-zinc-400 text-sm line-clamp-3 mb-4">
-                    {deal.description}
-                  </p>
-                  
-                  {deal.deal_url && (
-                    <div className="bg-black/30 p-2 rounded text-xs text-zinc-500 font-mono break-all mb-4 flex items-center gap-2">
-                      <ExternalLink className="w-3 h-3 shrink-0" />
-                      {deal.deal_url}
-                    </div>
-                  )}
-                </div>
-
-                {/* Actions */}
-                <div className="flex items-center gap-3 mt-4 pt-4 border-t border-white/5">
-                  <button 
-                    onClick={() => handleApprove(deal.id)}
-                    className="flex-1 bg-[#2BD45A]/10 hover:bg-[#2BD45A]/20 text-[#2BD45A] px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-colors"
-                  >
-                    <Check className="w-4 h-4" /> Aprobar
-                  </button>
-                  <button 
-                    onClick={() => {
-                      setSelectedDeal(deal)
-                      setIsRejectModalOpen(true)
-                    }}
-                    className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-500 px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-colors"
-                  >
-                    <X className="w-4 h-4" /> Rechazar
-                  </button>
-                  <button className="bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                    <AlertTriangle className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
+               </div>
             </div>
           ))
         )}
@@ -229,8 +310,10 @@ export default function ModerationPage() {
       {/* Reject Modal */}
       {isRejectModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-[#18191c] rounded-2xl border border-white/10 w-full max-w-md p-6">
-            <h3 className="text-xl font-bold text-white mb-4">Rechazar Publicación</h3>
+          <div className="bg-[#18191c] rounded-2xl border border-white/10 w-full max-w-md p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <h3 className="text-xl font-bold text-white mb-4">
+              {selectedDeal ? 'Rechazar Publicación' : `Rechazar ${selectedDeals.size} Publicaciones`}
+            </h3>
             <p className="text-zinc-400 text-sm mb-4">
               Por favor indica la razón del rechazo. El usuario recibirá una notificación.
             </p>
@@ -240,19 +323,24 @@ export default function ModerationPage() {
               onChange={(e) => setRejectReason(e.target.value)}
               placeholder="Razón del rechazo..."
               className="w-full bg-black/20 border border-white/10 text-white rounded-xl p-4 min-h-[100px] mb-4 focus:outline-none focus:ring-2 focus:ring-red-500/50"
+              autoFocus
             />
             
             <div className="flex justify-end gap-3">
               <button 
-                onClick={() => setIsRejectModalOpen(false)}
+                onClick={() => {
+                   setIsRejectModalOpen(false)
+                   setSelectedDeal(null)
+                   setRejectReason('')
+                }}
                 className="px-4 py-2 rounded-lg text-sm font-medium text-zinc-400 hover:text-white transition-colors"
               >
                 Cancelar
               </button>
               <button 
-                onClick={handleReject}
+                onClick={selectedDeal ? handleReject : confirmBulkReject}
                 disabled={!rejectReason}
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-red-500/20"
               >
                 Confirmar Rechazo
               </button>
@@ -264,22 +352,22 @@ export default function ModerationPage() {
       {/* History Modal */}
       {historyModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={() => setHistoryModalOpen(false)}>
-          <div className="bg-[#18191c] rounded-2xl border border-white/10 w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
-            <div className="p-6 border-b border-white/5 flex justify-between items-center">
+          <div className="bg-[#18191c] rounded-2xl border border-white/10 w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col shadow-2xl animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+            <div className="p-6 border-b border-white/5 flex justify-between items-center bg-[#09090b]">
               <h3 className="text-xl font-bold text-white">Historial de Usuario</h3>
-              <button onClick={() => setHistoryModalOpen(false)} className="text-zinc-500 hover:text-white">
+              <button onClick={() => setHistoryModalOpen(false)} className="text-zinc-500 hover:text-white p-1 rounded-lg hover:bg-white/5 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
             
-            <div className="p-6 overflow-y-auto custom-scrollbar">
+            <div className="p-6 overflow-y-auto custom-scrollbar bg-[#09090b]">
               {historyLoading ? (
-                <div className="flex justify-center py-8 text-zinc-500">Cargando información...</div>
+                <div className="flex justify-center py-8 text-zinc-500 animate-pulse">Cargando información...</div>
               ) : (
                 <div className="space-y-6">
                   {/* User Stats */}
                   <div className="flex items-center gap-4 bg-white/5 p-4 rounded-xl border border-white/5">
-                    <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-xl font-bold text-white">
+                    <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-xl font-bold text-white ring-4 ring-black/50">
                       {historyUser?.username?.[0]?.toUpperCase()}
                     </div>
                     <div>
@@ -300,7 +388,7 @@ export default function ModerationPage() {
                     </h4>
                     <div className="space-y-2">
                       {historyDeals.length === 0 ? (
-                         <p className="text-zinc-500 text-sm py-4 text-center bg-white/[0.02] rounded-xl border border-white/5">
+                         <p className="text-zinc-500 text-sm py-8 text-center bg-white/[0.02] rounded-xl border border-white/5">
                            Sin actividad reciente.
                          </p>
                       ) : (
@@ -313,11 +401,12 @@ export default function ModerationPage() {
                               </div>
                             </div>
                             <div className="shrink-0 flex items-center gap-3">
-                              <span className={`text-xs px-2.5 py-0.5 rounded-full border font-medium ${
+                              <span className={cn(
+                                "text-xs px-2.5 py-0.5 rounded-full border font-medium",
                                 item.status === 'active' ? 'bg-green-500/10 text-green-500 border-green-500/20' :
                                 item.status === 'rejected' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
                                 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20'
-                              }`}>
+                              )}>
                                 {item.status === 'active' ? 'Aprobado' : item.status === 'rejected' ? 'Rechazado' : 'Pendiente'}
                               </span>
                               {item.moderation_notes && (

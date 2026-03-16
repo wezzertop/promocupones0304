@@ -22,6 +22,8 @@ interface DealDetailViewProps {
   isPublishing?: boolean
   onToggleStatus?: () => void
   isToggling?: boolean
+  backUrl?: string
+  backLabel?: string
 }
 
 export default function DealDetailView({ 
@@ -34,7 +36,9 @@ export default function DealDetailView({
   onPublish,
   isPublishing = false,
   onToggleStatus,
-  isToggling = false
+  isToggling = false,
+  backUrl = '/',
+  backLabel = 'Volver a ofertas'
 }: DealDetailViewProps) {
   // Image State
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
@@ -120,9 +124,9 @@ export default function DealDetailView({
     <div className="max-w-6xl mx-auto space-y-3 md:space-y-4 pb-12 px-3 sm:px-6">
        {/* Back button */}
        {!isPreview && (
-           <Link href="/" className="inline-flex items-center text-zinc-400 hover:text-white transition-colors group text-sm">
+           <Link href={backUrl} className="inline-flex items-center text-zinc-400 hover:text-white transition-colors group text-sm">
               <ChevronLeft className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" />
-              Volver a ofertas
+              {backLabel}
            </Link>
        )}
 
