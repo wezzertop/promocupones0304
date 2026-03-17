@@ -208,7 +208,7 @@ export default function ModerationPage() {
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 sticky top-0 z-40 bg-[#09090b]/80 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 sticky top-14 lg:top-0 z-40 bg-[#09090b]/80 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg">
         <div className="flex items-center gap-4">
            <Link 
              href="/" 

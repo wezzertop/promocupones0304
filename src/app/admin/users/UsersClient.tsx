@@ -71,13 +71,13 @@ export default function UsersClient({ initialUsers, currentUserRole, searchQuery
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sticky top-14 lg:top-0 z-40 bg-[#09090b]/80 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg">
         <div>
-          <h1 className="text-3xl font-bold text-white">Gestión de Usuarios</h1>
-          <p className="text-zinc-400">Administra roles y permisos de la comunidad</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-white">Gestión de Usuarios</h1>
+          <p className="text-zinc-400 text-sm mt-1">Administra roles y permisos de la comunidad</p>
         </div>
         
-        <form onSubmit={handleSearch} className="relative">
+        <form onSubmit={handleSearch} className="relative w-full md:w-auto">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
           <input
             type="text"

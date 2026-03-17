@@ -12,6 +12,8 @@ import DealPreviewModal from './DealPreviewModal'
 import { createClient } from '@/lib/supabase/client'
 import { compressImage } from '@/lib/utils'
 
+import ScraperDealCard from './ScraperDealCard'
+
 interface ScraperClientProps {
   categories: Category[]
 }
@@ -34,6 +36,102 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
 
   const [htmlInput, setHtmlInput] = useState('')
   const [showHtmlImport, setShowHtmlImport] = useState(false)
+
+  const [selectedDeals, setSelectedDeals] = useState<Set<string>>(new Set())
+
+  const handleToggleSelect = (dealId: string) => {
+      setSelectedDeals(prev => {
+          const newSet = new Set(prev)
+          if (newSet.has(dealId)) {
+              newSet.delete(dealId)
+          } else {
+              newSet.add(dealId)
+          }
+          return newSet
+      })
+  }
+
+  const handleSelectAll = () => {
+      if (selectedDeals.size === sortedResults.length) {
+          setSelectedDeals(new Set())
+      } else {
+          setSelectedDeals(new Set(sortedResults.map(d => d.id)))
+      }
+  }
+
+  const handlePublishSelected = async () => {
+      if (selectedDeals.size === 0) return
+      if (!selectedCategory) {
+          alert('Selecciona una categoría para publicar')
+          return
+      }
+
+      setLoading(true)
+      let successCount = 0
+      
+      const dealsToPublish = sortedResults.filter(d => selectedDeals.has(d.id))
+      
+      // Process in sequence to avoid rate limits
+      for (const deal of dealsToPublish) {
+          if (publishedIds.has(deal.id)) continue
+          
+          setPublishing(deal.id)
+          try {
+              // 1. Image Optimization Logic (duplicated from handlePublish, should be refactored)
+              let optimizedImageUrl = deal.image_url;
+              let optimizedImageUrls: string[] = [];
+              const sourceImages = (deal.image_urls && deal.image_urls.length > 0 ? deal.image_urls : [deal.image_url]).slice(0, 4);
+              
+              const uploadPromises = sourceImages.map(async (imgUrl) => {
+                  try {
+                    const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(imgUrl)}`;
+                    const response = await fetch(proxyUrl);
+                    if (response.ok) {
+                      const blob = await response.blob();
+                      const file = new File([blob], 'image.jpg', { type: blob.type });
+                      const compressedBlob = await compressImage(file, 0.8, 1200, 'image/webp');
+                      const timestamp = Date.now();
+                      const randomString = Math.random().toString(36).substring(7);
+                      const fileName = `scraped/${timestamp}-${randomString}.webp`;
+                      const { error: uploadError } = await supabase.storage.from('deals').upload(fileName, compressedBlob, { contentType: 'image/webp', upsert: false });
+                      if (!uploadError) {
+                         const { data: { publicUrl } } = supabase.storage.from('deals').getPublicUrl(fileName);
+                         return publicUrl;
+                      }
+                    }
+                    return null;
+                  } catch (e) { return null; }
+              });
+
+              const uploadedUrls = await Promise.all(uploadPromises);
+              const validUploadedUrls = uploadedUrls.filter((url): url is string => url !== null);
+              
+              if (validUploadedUrls.length > 0) {
+                  optimizedImageUrls = validUploadedUrls;
+                  optimizedImageUrl = validUploadedUrls[0];
+              } else {
+                  optimizedImageUrl = deal.image_url;
+                  optimizedImageUrls = deal.image_urls || [deal.image_url];
+              }
+
+              const dealToPublish = { ...deal, image_url: optimizedImageUrl, image_urls: optimizedImageUrls };
+              const res = await publishDeal(dealToPublish, selectedCategory)
+              
+              if (!res.error) {
+                  setPublishedIds(prev => new Set(prev).add(deal.id))
+                  successCount++
+              }
+          } catch (e) {
+              console.error(e)
+          }
+      }
+
+      setPublishing(null)
+      setLoading(false)
+      setSelectedDeals(new Set())
+      alert(`Se publicaron ${successCount} ofertas exitosamente.`)
+      if (activeTab === 'logs') loadLogs()
+  }
 
   const sortedResults = [...results].sort((a, b) => {
     if (sortBy === 'price_asc') return a.price - b.price
@@ -70,38 +168,72 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
     setLoading(true)
     setResults([])
     
-    // Auto-detect source based on URL
-    let currentSource = source
-    if (urlInput.includes('mercadolibre.com')) currentSource = 'mercadolibre'
-    else if (urlInput.includes('amazon.com')) currentSource = 'amazon'
-    setSource(currentSource)
+    // Split URLs by newline or comma and clean up
+    const urls = urlInput.split(/[\n,\s]+/).map(u => u.trim()).filter(u => u.length > 0 && (u.includes('http') || u.includes('www')));
+    
+    if (urls.length === 0) {
+        alert('Por favor ingresa URLs válidas');
+        setLoading(false);
+        return;
+    }
 
-    try {
-      const res = await scrapeUrl(urlInput, currentSource)
-      if (res.error || !res.deal) {
-        alert(res.error || 'No se encontró la oferta')
-      } else {
-        const deal = res.deal
-        setResults([deal])
+    const newResults: ScrapedDeal[] = [];
+    let successCount = 0;
+    let failCount = 0;
+
+    // Process URLs in batches to avoid overwhelming the server
+    const BATCH_SIZE = 5;
+    for (let i = 0; i < urls.length; i += BATCH_SIZE) {
+        const batch = urls.slice(i, i + BATCH_SIZE);
+        const promises = batch.map(async (url) => {
+            // Auto-detect source per URL
+            let currentSource: 'mercadolibre' | 'amazon' = 'mercadolibre';
+            if (url.includes('amazon.com')) currentSource = 'amazon';
+            else if (url.includes('mercadolibre.com')) currentSource = 'mercadolibre';
+            
+            try {
+                const res = await scrapeUrl(url, currentSource);
+                if (res.success && res.deal) {
+                    return res.deal;
+                }
+                return null;
+            } catch (error) {
+                console.error(`Error scraping ${url}:`, error);
+                return null;
+            }
+        });
+
+        const results = await Promise.all(promises);
+        const validDeals = results.filter((d): d is ScrapedDeal => d !== null);
+        newResults.push(...validDeals);
+        successCount += validDeals.length;
+        failCount += batch.length - validDeals.length;
         
-        // Auto-select category if suggested
-        if (deal.suggested_category) {
-            // Simple fuzzy matching or direct matching logic
-            const suggested = deal.suggested_category.toLowerCase()
+        // Update results progressively
+        setResults([...newResults]);
+    }
+
+    setLoading(false);
+
+    if (newResults.length > 0) {
+        // Auto-select category from the first result if available
+        const firstDeal = newResults[0];
+        if (firstDeal.suggested_category) {
+            const suggested = firstDeal.suggested_category.toLowerCase();
             const match = categories.find(cat => 
                 suggested.includes(cat.name.toLowerCase()) || 
                 cat.name.toLowerCase().includes(suggested.split('>')[0].trim().toLowerCase())
-            )
+            );
             if (match) {
-                setSelectedCategory(match.id)
+                setSelectedCategory(match.id);
             }
         }
-      }
-    } catch (error) {
-      console.error(error)
-      alert('Error al extraer información de la URL')
-    } finally {
-      setLoading(false)
+        
+        if (failCount > 0) {
+             alert(`Proceso completado. ${successCount} ofertas encontradas, ${failCount} fallaron.`);
+        }
+    } else {
+        alert('No se encontraron ofertas en las URLs proporcionadas.');
     }
   }
 
@@ -265,6 +397,8 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
     }
   }
 
+  // Refactor: Extract image optimization to a helper function if possible, but for now duplicate logic is inside handlePublishSelected due to context
+
   const loadLogs = async () => {
     setLogsLoading(true)
     try {
@@ -285,13 +419,13 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between sticky top-14 lg:top-0 z-40 bg-[#09090b]/80 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-            <ShoppingCart className="text-[#2BD45A]" size={32} />
+          <h1 className="text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
+            <ShoppingCart className="text-[#2BD45A]" size={28} />
             Scraper de Ofertas
           </h1>
-          <p className="text-gray-400">Extrae y publica ofertas desde Mercado Libre y Amazon.</p>
+          <p className="text-gray-400 text-sm mt-1">Extrae y publica ofertas desde Mercado Libre y Amazon.</p>
         </div>
       </div>
 
@@ -540,12 +674,11 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
                 ) : (
                   <>
                     <LinkIcon className="absolute left-3 top-3 text-gray-500" size={20} />
-                    <input
-                      type="text"
+                    <textarea
                       value={urlInput}
                       onChange={(e) => setUrlInput(e.target.value)}
-                      placeholder="Pega la URL del producto de Amazon o Mercado Libre..."
-                      className="w-full bg-[#222327] text-white pl-10 pr-4 py-3 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#2BD45A]"
+                      placeholder="Pega las URLs de Amazon o Mercado Libre (una por línea)..."
+                      className="w-full bg-[#222327] text-white pl-10 pr-4 py-3 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#2BD45A] min-h-[100px]"
                     />
                   </>
                 )}
@@ -576,10 +709,10 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
           )}
 
           {/* Category Selection for Publishing */}
-          <div className="flex flex-col md:flex-row gap-4 bg-[#18191c] p-4 rounded-xl border border-[#2d2e33]">
+          <div className="flex flex-col md:flex-row gap-4 bg-[#18191c] p-4 rounded-xl border border-[#2d2e33] sticky top-[136px] lg:top-[88px] z-30 shadow-lg backdrop-blur-md bg-[#18191c]/90">
             <div className="flex items-center gap-2 flex-1">
                 <Tag className="text-[#2BD45A]" size={20} />
-                <span className="text-gray-300 font-medium whitespace-nowrap">Categoría:</span>
+                <span className="text-gray-300 font-medium whitespace-nowrap hidden sm:inline">Categoría:</span>
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
@@ -592,7 +725,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
             </div>
             
             <div className="flex items-center gap-2 flex-1">
-                <span className="text-gray-300 font-medium whitespace-nowrap">Ordenar:</span>
+                <span className="text-gray-300 font-medium whitespace-nowrap hidden sm:inline">Ordenar:</span>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as any)}
@@ -603,125 +736,44 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
                   <option value="discount">Mayor Descuento</option>
                 </select>
             </div>
+
+            {/* Bulk Actions */}
+            {sortedResults.length > 0 && (
+                <div className="flex items-center gap-2">
+                     <button
+                        onClick={handleSelectAll}
+                        className="px-4 py-2 bg-[#222327] hover:bg-[#2d2e33] text-gray-300 rounded-lg border border-[#2d2e33] transition-colors text-sm font-medium whitespace-nowrap"
+                    >
+                        {selectedDeals.size === sortedResults.length ? 'Deseleccionar' : 'Seleccionar Todo'}
+                    </button>
+                    
+                    {selectedDeals.size > 0 && (
+                        <button
+                            onClick={handlePublishSelected}
+                            disabled={loading}
+                            className="px-4 py-2 bg-[#2BD45A] hover:bg-[#25b84e] text-black rounded-lg font-bold transition-colors text-sm flex items-center gap-2 whitespace-nowrap shadow-lg shadow-[#2BD45A]/20"
+                        >
+                            {loading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
+                            Publicar ({selectedDeals.size})
+                        </button>
+                    )}
+                </div>
+            )}
           </div>
 
           {/* Results Grid */}
           {sortedResults.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
               {sortedResults.map((deal) => (
-                <div key={deal.id} className="bg-[#18191c] border border-[#2d2e33] rounded-2xl overflow-hidden flex flex-col group hover:border-[#2BD45A]/50 transition-colors">
-                  <div 
-                    className="relative aspect-square bg-white p-4 cursor-pointer group/image"
-                    onClick={() => setPreviewDeal(deal)}
-                  >
-                    <Image
-                      src={deal.image_url}
-                      alt={deal.title}
-                      fill
-                      className={`object-contain ${deal.availability === 'out_of_stock' ? 'opacity-50 grayscale' : ''}`}
-                    />
-                    
-                    {/* Hover Overlay for Preview */}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/image:opacity-100 transition-opacity flex items-center justify-center z-10">
-                        <div className="bg-white/10 backdrop-blur-sm p-3 rounded-full text-white">
-                            <Eye size={24} />
-                        </div>
-                    </div>
-
-                    <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-md z-20">
-                      {deal.source === 'mercadolibre' ? 'MELI' : 'AMZN'}
-                    </div>
-                    {deal.availability === 'out_of_stock' && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="bg-red-600 text-white font-bold px-3 py-1 rounded-full text-sm">
-                          AGOTADO
-                        </span>
-                      </div>
-                    )}
-                    {/* Shipping Badges */}
-                    <div className="absolute bottom-2 left-2 flex flex-col gap-1 items-start">
-                        {deal.shipping_info?.has_prime && (
-                            <span className="bg-[#00A8E1] text-white text-[10px] font-bold px-1.5 py-0.5 rounded">PRIME</span>
-                        )}
-                        {deal.shipping_info?.has_meli_plus && (
-                            <span className="bg-[#9c27b0] text-white text-[10px] font-bold px-1.5 py-0.5 rounded">MELI+</span>
-                        )}
-                        {deal.shipping_info?.is_full && (
-                            <span className="bg-[#00a650] text-white text-[10px] font-bold px-1.5 py-0.5 rounded">FULL</span>
-                        )}
-                    </div>
-                  </div>
-                  
-                  <div className="p-4 flex-1 flex flex-col">
-                    <h3 className="font-bold text-white text-sm line-clamp-2 mb-2 min-h-[2.5rem]" title={deal.title}>
-                      {deal.title}
-                    </h3>
-                    
-                    {/* Shipping Info Text */}
-                    <div className="mb-3 text-xs text-gray-400 flex items-start gap-1">
-                        <Truck size={12} className="mt-0.5 shrink-0" />
-                        <span className="line-clamp-2" title={deal.shipping_info?.shipping_text}>
-                            {deal.shipping_info?.free_shipping_label ? (
-                                <span className="text-green-500 font-medium">Envío Gratis</span>
-                            ) : deal.shipping_info?.shipping_cost ? (
-                                <span>Envío: ${deal.shipping_info.shipping_cost}</span>
-                            ) : (
-                                deal.shipping_info?.shipping_text || 'Envío por definir'
-                            )}
-                        </span>
-                    </div>
-
-                    <div className="mt-auto space-y-3">
-                      <div className="flex items-end gap-2">
-                        <span className="text-xl font-bold text-[#2BD45A]">
-                          ${deal.price.toLocaleString()} {deal.currency}
-                        </span>
-                        {deal.original_price && (
-                          <span className="text-sm text-gray-500 line-through mb-1">
-                            ${deal.original_price.toLocaleString()}
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="flex gap-2">
-                        <a 
-                          href={deal.url} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="flex-1 bg-[#222327] hover:bg-[#2d2e33] text-gray-300 py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1 transition-colors"
-                        >
-                          <ExternalLink size={14} />
-                          Ver
-                        </a>
-                        
-                        {publishedIds.has(deal.id) ? (
-                          <button 
-                            disabled 
-                            className="flex-1 bg-green-500/20 text-green-500 py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1 cursor-default border border-green-500/20"
-                          >
-                            <CheckCircle size={14} />
-                            Publicado
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => handlePublish(deal)}
-                            disabled={publishing === deal.id || deal.availability === 'out_of_stock'}
-                            className="flex-1 bg-[#2BD45A] hover:bg-[#25b84e] text-black py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1 transition-colors disabled:opacity-50"
-                          >
-                            {publishing === deal.id ? (
-                              <Loader2 size={14} className="animate-spin" />
-                            ) : (
-                              <>
-                                <Upload size={14} />
-                                Publicar
-                              </>
-                            )}
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <ScraperDealCard
+                  key={deal.id}
+                  deal={deal}
+                  isPublished={publishedIds.has(deal.id)}
+                  isPublishing={publishing === deal.id}
+                  onPublish={handlePublish}
+                  isSelected={selectedDeals.has(deal.id)}
+                  onToggleSelect={handleToggleSelect}
+                />
               ))}
             </div>
           ) : (

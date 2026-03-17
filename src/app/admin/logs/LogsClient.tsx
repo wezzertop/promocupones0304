@@ -36,9 +36,9 @@ export default function LogsClient({ initialLogs }: LogsClientProps) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-white">Logs de Auditoría</h1>
-        <p className="text-zinc-400">Registro de todas las acciones administrativas</p>
+      <div className="bg-[#09090b]/80 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg sticky top-14 lg:top-0 z-40">
+        <h1 className="text-2xl md:text-3xl font-bold text-white">Logs de Auditoría</h1>
+        <p className="text-zinc-400 text-sm mt-1">Registro de todas las acciones administrativas</p>
       </div>
 
       <div className="bg-[#18191c] border border-white/5 rounded-2xl overflow-hidden">
