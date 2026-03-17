@@ -1,7 +1,8 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { searchMercadoLibre, searchAmazon, scrapeAmazonUrl, scrapeMercadoLibreUrl, scrapeAmazonDeals, scrapeMercadoLibreDeals, parseAmazonHtml, parseMercadoLibreHtml, ScrapedDeal } from '@/lib/scraper'
+import { searchAmazon, scrapeAmazonUrl, scrapeMercadoLibreUrl, scrapeAmazonDeals, parseAmazonHtml, parseMercadoLibreHtml, ScrapedDeal } from '@/lib/scraper'
+import { MercadoLibreService } from '@/lib/mercadolibre/service'
 
 // ... existing code ...
 
@@ -76,7 +77,33 @@ export async function getMercadoLibreDeals() {
   if (!authorized) throw new Error('Unauthorized')
 
   try {
-    const results = await scrapeMercadoLibreDeals()
+    const rawOffers = await MercadoLibreService.searchOffers({ limit: 50 });
+    // Map them to ScrapedDeal format so the UI can handle them
+    const results: ScrapedDeal[] = rawOffers.map((item: any) => ({
+      id: item.id,
+      title: item.title,
+      price: item.price,
+      original_price: item.original_price || null,
+      image_url: item.thumbnail ? item.thumbnail.replace('I.jpg', 'O.jpg') : '',
+      image_urls: item.thumbnail ? [item.thumbnail.replace('I.jpg', 'O.jpg')] : [],
+      url: item.permalink,
+      source: 'mercadolibre',
+      description: `Oferta oficial de Mercado Libre. Condición: ${item.condition === 'new' ? 'Nuevo' : 'Usado'}.`,
+      currency: item.currency_id,
+      availability: 'online',
+      shipping_type: item.shipping?.tags?.includes('meli_plus') ? 'meliplus' : (item.shipping?.logistic_type === 'fulfillment' ? 'full' : (item.shipping?.free_shipping ? 'free' : 'none')),
+      raw_data: item,
+      shipping_info: {
+        has_meli_plus: item.shipping?.tags?.includes('meli_plus') || false,
+        is_full: item.shipping?.logistic_type === 'fulfillment',
+        free_shipping_label: item.shipping?.free_shipping || false,
+        shipping_text: `Envío ${item.shipping?.free_shipping ? 'Gratis' : 'con costo'}`
+      },
+      payment_info: {
+        has_msi: item.installments?.quantity > 0 && item.installments?.rate === 0
+      }
+    }));
+
     await logScraperAction('search', 'mercadolibre', 'success', { query: 'bulk_deals', count: results.length })
     return results
   } catch (error) {
@@ -93,7 +120,31 @@ export async function searchDeals(query: string, source: string) {
   try {
     let results: ScrapedDeal[] = []
     if (source === 'mercadolibre') {
-      results = await searchMercadoLibre(query)
+      const rawOffers = await MercadoLibreService.searchOffers({ q: query, limit: 20 });
+      results = rawOffers.map((item: any) => ({
+        id: item.id,
+        title: item.title,
+        price: item.price,
+        original_price: item.original_price || null,
+        image_url: item.thumbnail ? item.thumbnail.replace('I.jpg', 'O.jpg') : '',
+        image_urls: item.thumbnail ? [item.thumbnail.replace('I.jpg', 'O.jpg')] : [],
+        url: item.permalink,
+        source: 'mercadolibre',
+        description: `Búsqueda oficial en Mercado Libre. Condición: ${item.condition === 'new' ? 'Nuevo' : 'Usado'}.`,
+        currency: item.currency_id,
+        availability: 'online',
+        shipping_type: item.shipping?.tags?.includes('meli_plus') ? 'meliplus' : (item.shipping?.logistic_type === 'fulfillment' ? 'full' : (item.shipping?.free_shipping ? 'free' : 'none')),
+        raw_data: item,
+        shipping_info: {
+          has_meli_plus: item.shipping?.tags?.includes('meli_plus') || false,
+          is_full: item.shipping?.logistic_type === 'fulfillment',
+          free_shipping_label: item.shipping?.free_shipping || false,
+          shipping_text: `Envío ${item.shipping?.free_shipping ? 'Gratis' : 'con costo'}`
+        },
+        payment_info: {
+          has_msi: item.installments?.quantity > 0 && item.installments?.rate === 0
+        }
+      }));
     } else if (source === 'amazon') {
       results = await searchAmazon(query)
     }

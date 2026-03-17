@@ -717,6 +717,33 @@ export interface Database {
           }
         ]
       }
+      mercadolibre_auth: {
+        Row: {
+          id: string
+          access_token: string
+          refresh_token: string | null
+          expires_at: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          access_token: string
+          refresh_token?: string | null
+          expires_at: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          access_token?: string
+          refresh_token?: string | null
+          expires_at?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       scraped_deals: {
         Row: {
           id: string
