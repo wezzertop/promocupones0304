@@ -344,7 +344,7 @@ export default function DealCard({
       
       {/* Component A: Vertical Voting Sidebar */}
       {variant === 'default' && (
-      <div className="hidden md:flex flex-col items-center justify-between gap-1 md:gap-2 w-full bg-[#161616] border-r border-white/5 py-2 md:py-4 z-10">
+      <div className="hidden md:flex flex-col items-center justify-between gap-1 md:gap-2 w-full bg-[#111111] border-r border-white/5 py-2 md:py-4 z-10">
         <button 
           onClick={(e) => { e.preventDefault(); handleVote('hot'); }}
           className={cn(
@@ -379,7 +379,7 @@ export default function DealCard({
       <div className="grid grid-cols-[100px_minmax(0,1fr)] sm:grid-cols-[120px_minmax(0,1fr)] w-full md:contents p-2 md:p-0 gap-2 md:gap-0 h-full">
 
       {/* Component B: Image Area */}
-      <div className="w-full flex flex-col items-center justify-start md:justify-center p-0 md:p-3 relative group/image md:border-r border-white/5">
+      <div className="w-full flex flex-col items-center justify-start md:justify-center p-0 md:p-3 relative group/image md:border-r border-white/5 bg-[#1a1a1a]">
         {deal.status !== 'active' && (
             <div className="absolute top-2 left-2 z-30 pointer-events-none">
               <span className={cn(
@@ -399,7 +399,7 @@ export default function DealCard({
             </div>
         )}
 
-        <div className="relative w-full aspect-square bg-zinc-100 rounded-[10px] drop-shadow-sm flex items-center justify-center overflow-hidden shrink-0">
+        <div className="relative w-full aspect-square bg-transparent rounded-[10px] flex items-center justify-center overflow-hidden shrink-0">
           {deal.image_urls && deal.image_urls.length > 0 ? (
             <>
               <AnimatePresence mode="wait">
@@ -420,7 +420,7 @@ export default function DealCard({
                       src={deal.image_urls[currentImageIndex]}
                       alt={deal.title}
                       fill
-                      className="object-contain p-2"
+                      className="object-contain"
                       sizes="(max-width: 768px) 100px, 200px"
                       priority={currentImageIndex === 0}
                       unoptimized
