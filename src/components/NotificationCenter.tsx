@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Bell, X, CheckCircle, AlertCircle, MessageSquare, TrendingUp, Award } from 'lucide-react'
+import { Bell, BellRing, X, CheckCircle, AlertCircle, MessageSquare, TrendingUp, Award } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import Link from 'next/link'
@@ -109,15 +109,27 @@ export default function NotificationCenter({ isMobile = false }: NotificationCen
             onClick={() => setIsOpen(false)}
           />
           <div className={`absolute right-[-60px] sm:right-0 w-[320px] md:w-96 bg-[#222222] border border-white/10 rounded-xl shadow-xl z-50 overflow-hidden ${isMobile ? 'bottom-full mb-3' : 'top-full mt-2'}`}>
-            <div className="p-4 border-b border-white/5 flex items-center justify-between">
-              <h3 className="font-semibold text-white">Notificaciones</h3>
-              {unreadCount > 0 && (
-                <button 
-                  onClick={markAllAsRead}
-                  className="text-xs text-[#07B5A7] hover:underline"
+            <div className="p-4 border-b border-white/5 flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold text-white">Notificaciones</h3>
+                <Link 
+                  href="/perfil/alertas" 
+                  onClick={() => setIsOpen(false)} 
+                  className="text-xs font-medium text-[#07B5A7] hover:underline flex items-center gap-1.5 bg-[#07B5A7]/10 px-2 py-1 rounded-md"
                 >
-                  Marcar todo como leído
-                </button>
+                  <BellRing size={12} />
+                  Mis Alertas
+                </Link>
+              </div>
+              {unreadCount > 0 && (
+                <div className="flex justify-start mt-1">
+                  <button 
+                    onClick={markAllAsRead}
+                    className="text-xs text-zinc-400 hover:text-white transition-colors"
+                  >
+                    Marcar todo como leído
+                  </button>
+                </div>
               )}
             </div>
             
@@ -151,12 +163,14 @@ export default function NotificationCenter({ isMobile = false }: NotificationCen
                       <div className="flex gap-3 relative z-10 pointer-events-none">
                         <div className={`mt-1 shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
                           notification.type === 'post_approved' ? 'bg-[#07B5A7]/10 text-[#07B5A7]' : 
+                          notification.type === 'deal_alert' ? 'bg-[#07B5A7]/20 text-[#07B5A7]' : 
                           notification.type === 'post_rejected' ? 'bg-red-500/10 text-red-500' :
                           notification.type === 'comment_reply' || notification.type === 'new_comment' ? 'bg-blue-500/10 text-blue-500' :
                           notification.type === 'level_up' || notification.type === 'badge_earned' ? 'bg-yellow-500/10 text-yellow-500' :
                           'bg-zinc-500/10 text-zinc-500'
                         }`}>
                           {notification.type === 'post_approved' ? <CheckCircle size={16} /> : 
+                           notification.type === 'deal_alert' ? <BellRing size={16} /> :
                            notification.type === 'post_rejected' ? <X size={16} /> :
                            notification.type === 'comment_reply' || notification.type === 'new_comment' ? <MessageSquare size={16} /> :
                            notification.type === 'level_up' ? <TrendingUp size={16} /> :

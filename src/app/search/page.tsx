@@ -4,6 +4,7 @@ import { Deal } from '@/types'
 import { Search } from 'lucide-react'
 import HomeFilters from '@/components/HomeFilters'
 import Pagination from '@/components/Pagination'
+import SearchAlertButton from '@/components/SearchAlertButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,6 +14,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   const query = params.q || ''
   const currentPage = parseInt(params.page || '1')
   const pageSize = 20
+
+  const { data: { session } } = await supabase.auth.getSession()
+  const userId = session?.user?.id
 
   if (!query) {
     return (
@@ -86,14 +90,17 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
 
   return (
     <div className="space-y-8 animate-fade-in max-w-5xl mx-auto">
-      <div className="bg-[#222222] border border-[#2d2e33] rounded-2xl p-6">
-        <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-          <Search className="text-[#07B5A7]" />
-          Resultados para "{query}"
-        </h1>
-        <p className="text-zinc-400 mt-1">
-          Se encontraron {deals?.length || 0} resultados
-        </p>
+      <div className="bg-[#222222] border border-[#2d2e33] rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative">
+        <div>
+          <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+            <Search className="text-[#07B5A7]" />
+            Resultados para "{query}"
+          </h1>
+          <p className="text-zinc-400 mt-1">
+            Se encontraron {deals?.length || 0} resultados
+          </p>
+        </div>
+        {userId && <SearchAlertButton initialKeyword={query} userId={userId} />}
       </div>
 
       <HomeFilters dealsCount={totalCount || 0} />

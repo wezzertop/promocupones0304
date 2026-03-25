@@ -20,6 +20,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
+import Logo from '@/components/Logo'
 
 const MENU_ITEMS = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/admin', roles: ['admin', 'moderator'] },
@@ -66,14 +67,8 @@ export default function AdminSidebar() {
     <>
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-[#161616] border-b border-[#2d2e33] flex items-center justify-between px-4 z-[60]">
-        <Link href="/" className="relative h-10 w-32">
-          <Image 
-            src="https://i.imgur.com/GHEr2To.png" 
-            alt="Cupoferta" 
-            fill
-            className="object-contain object-left"
-            priority
-          />
+        <Link href="/" className="relative h-10 w-32 flex items-center">
+          <Logo className="w-full h-full justify-start" iconClassName="h-8 w-auto drop-shadow-md" textClassName="text-xl" />
         </Link>
         <button 
           onClick={() => setIsOpen(!isOpen)}
@@ -97,14 +92,8 @@ export default function AdminSidebar() {
       )}>
         {/* Logo Area (Desktop) */}
         <div className="h-16 hidden lg:flex items-center px-6 border-b border-[#2d2e33]">
-          <Link href="/" className="relative h-10 w-full block group">
-            <Image 
-              src="https://i.imgur.com/GHEr2To.png" 
-              alt="Cupoferta" 
-              fill
-              className="object-contain object-left transition-transform group-hover:scale-105"
-              priority
-            />
+          <Link href="/" className="relative h-10 w-full flex items-center group">
+            <Logo className="w-full h-full justify-start transition-transform group-hover:scale-105 origin-left" />
           </Link>
         </div>
 

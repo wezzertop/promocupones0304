@@ -10,6 +10,7 @@ import { useScrollDirection } from '@/hooks/useScrollDirection'
 import { useUIStore } from '@/lib/store'
 import NotificationCenter from '@/components/NotificationCenter'
 import SearchSuggestions from '@/components/SearchSuggestions'
+import SearchAlertButton from '@/components/SearchAlertButton'
 
 import Image from 'next/image'
 
@@ -182,6 +183,8 @@ export default function Header({ user }: HeaderProps) {
           </Link>
         )}
 
+        {user && <SearchAlertButton initialKeyword={searchQuery} userId={user.id} />}
+
         {user && <NotificationCenter />}
         
         {user ? (
@@ -248,6 +251,13 @@ export default function Header({ user }: HeaderProps) {
                     <UserIcon size={16} /> Mi Perfil
                   </Link>
                   <Link 
+                    href="/perfil/alertas" 
+                    className="flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:bg-[#222327] hover:text-white rounded-lg transition-colors"
+                    onClick={() => setIsUserMenuOpen(false)}
+                  >
+                    <Bell size={16} /> Mis Alertas
+                  </Link>
+                  <Link 
                     href="/ajustes" 
                     className="flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:bg-[#222327] hover:text-white rounded-lg transition-colors"
                     onClick={() => setIsUserMenuOpen(false)}
@@ -270,12 +280,17 @@ export default function Header({ user }: HeaderProps) {
         ) : (
           <Link 
             href="/auth/login" 
-            className="flex items-center gap-2 px-5 py-2.5 bg-[#07B5A7] hover:bg-[#25b84e] text-black font-bold rounded-xl text-sm transition-all shadow-[0_0_15px_rgba(43,212,90,0.3)] hover:shadow-[0_0_20px_rgba(43,212,90,0.5)]"
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#07B5A7] hover:bg-[#25b84e] text-black font-bold rounded-xl text-sm transition-all shadow-[0_0_15px_rgba(7,181,167,0.3)] hover:shadow-[0_0_20px_rgba(7,181,167,0.5)]"
           >
             <UserIcon size={18} />
             <span className="hidden sm:inline">Acceder</span>
           </Link>
         )}
+      </div>
+
+      {/* Global Alert Button for Mobile */}
+      <div className="sm:hidden">
+        {user && <SearchAlertButton initialKeyword={searchQuery} userId={user.id} />}
       </div>
     </header>
   )

@@ -554,18 +554,23 @@ export default function DealCard({
                             </span>
                         )}
                         {deal.discount_percentage && (
-                            <span className="bg-[#a3e635] text-black text-[10px] sm:text-[11px] md:text-xs font-black px-1.5 py-0.5 rounded-[6px] leading-none flex items-center shrink-0">
+                            <span className="bg-[#f5cb17] text-black text-[10px] sm:text-[11px] md:text-xs font-black px-1.5 py-0.5 rounded-[10px] leading-none flex items-center shrink-0">
                                 -{deal.discount_percentage}%
                             </span>
                         )}
                     </div>
                     
-                    <div className="flex items-center gap-1 text-[9px] md:text-xs font-bold uppercase tracking-wide">
-                        <Truck size={12} className={cn("md:w-3.5 md:h-3.5", isFreeShipping ? "text-[#07B5A7]" : "text-rose-500")} strokeWidth={2.5}/>
-                        <span className={cn(isFreeShipping ? "text-[#07B5A7]" : "text-rose-500")}>
-                            {isFreeShipping ? 'Envío Gratis' : 'Ver Envío'}
-                        </span>
-                    </div>
+                    {isFreeShipping ? (
+                        <div className="flex w-fit items-center gap-1 bg-lime-500/10 px-1.5 md:px-2 py-0.5 md:py-1 rounded-[4px] text-[9px] md:text-xs font-bold uppercase tracking-wide border border-lime-500/20">
+                            <Truck size={12} className="md:w-3.5 md:h-3.5 text-lime-400" strokeWidth={2.5}/>
+                            <span className="text-lime-400">Gratis</span>
+                        </div>
+                    ) : (
+                        <div className="flex w-fit items-center gap-1 bg-rose-500/10 px-1.5 md:px-2 py-0.5 md:py-1 rounded-[4px] text-[9px] md:text-xs font-bold uppercase tracking-wide border border-rose-500/20">
+                            <Truck size={12} className="md:w-3.5 md:h-3.5 text-rose-500" strokeWidth={2.5}/>
+                            <span className="text-rose-500">Ver</span>
+                        </div>
+                    )}
                   </>
                 )}
             </div>
@@ -575,7 +580,7 @@ export default function DealCard({
                   onClick={handleCopyCode}
                   className={cn(
                       "flex items-center gap-1 md:gap-1.5 px-2 md:px-4 h-[28px] md:h-[36px] shrink-0 rounded-[10px] font-black text-[8px] md:text-xs uppercase tracking-wider transition-all ml-1 md:ml-2",
-                      isCopied ? "bg-white text-black" : "bg-[#07B5A7] text-black hover:opacity-90"
+                      isCopied ? "bg-white text-black" : "bg-[#07B5A7] text-white hover:opacity-90"
                   )}
                   onClickCapture={(e) => e.stopPropagation()}
                 >
@@ -589,7 +594,7 @@ export default function DealCard({
                   href={deal.deal_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-1 md:gap-1.5 px-2 md:px-4 h-[28px] md:h-[36px] bg-[#07B5A7] hover:opacity-90 text-black font-black text-[8px] md:text-xs shrink-0 rounded-[10px] uppercase tracking-wider transition-colors ml-1 md:ml-2"
+                  className="flex items-center justify-center gap-1 md:gap-1.5 px-2 md:px-4 h-[28px] md:h-[36px] bg-[#07B5A7] hover:opacity-90 text-white font-black text-[8px] md:text-xs shrink-0 rounded-[10px] uppercase tracking-wider transition-colors ml-1 md:ml-2"
                   onClick={(e) => e.stopPropagation()}
                 >
                     <span className="hidden sm:inline">IR AL CHOLLO</span>

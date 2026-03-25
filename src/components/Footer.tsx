@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import Logo from '@/components/Logo'
 import { Facebook, Twitter, Instagram, Youtube, Mail, Heart } from 'lucide-react'
 
 export default function Footer() {
@@ -9,13 +10,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 mb-12">
           {/* Brand */}
           <div className="col-span-1 md:col-span-1">
-            <Link href="/" className="relative h-16 w-64 block mb-6 group">
-               <Image 
-                src="https://i.imgur.com/GHEr2To.png" 
-                alt="Cupoferta" 
-                fill
-                className="object-contain object-left"
-              />
+            <Link href="/" className="relative h-10 w-48 block mb-6 group">
+              <Logo className="w-full h-full justify-start transition-transform group-hover:scale-105 origin-left" />
             </Link>
             <p className="text-sm text-gray-500 mb-6 leading-relaxed">
               La plataforma definitiva para encontrar y compartir las mejores ofertas.

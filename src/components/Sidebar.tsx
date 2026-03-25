@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import { useUIStore } from '@/lib/store'
 import Image from 'next/image'
+import Logo from '@/components/Logo'
 
 const MENU_ITEMS = [
   { icon: Home, label: 'Inicio', href: '/' },
@@ -58,15 +59,8 @@ export default function Sidebar() {
 
         {/* Logo Area */}
         <div className="h-14 flex items-center justify-center border-b border-[#2d2e33]">
-          <Link href="/" className="relative h-10 w-[85%] block" onClick={closeSidebar}>
-            <Image 
-              src="https://i.imgur.com/GHEr2To.png" 
-              alt="Cupoferta" 
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-contain object-center"
-              priority
-            />
+          <Link href="/" className="relative h-10 w-[85%] block group" onClick={closeSidebar}>
+            <Logo className="w-full h-full justify-center transition-transform group-hover:scale-105" iconClassName="h-7 w-auto drop-shadow-md" textClassName="text-xl" />
           </Link>
         </div>
 

@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import Image from 'next/image'
 import DealCard from '@/components/DealCard'
 import { Deal } from '@/types'
-import { Settings, User, MapPin, Calendar, Flame, MessageSquare, Tag, AlertCircle, ArrowRight, ExternalLink } from 'lucide-react'
+import { Settings, User, MapPin, Calendar, Flame, MessageSquare, Tag, AlertCircle, ArrowRight, ExternalLink, BellRing } from 'lucide-react'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -77,7 +77,7 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
   // Calculate stats (we need the total, not just the paginated ones)
   const totalDeals = totalDealsCount || 0
   const { data: karmaData } = await supabase.from('deals').select('votes_count').eq('user_id', user.id)
-  const totalVotes = karmaData?.reduce((acc, deal) => acc + (deal.votes_count || 0), 0) || 0
+  const totalVotes = karmaData?.reduce((acc, deal: any) => acc + (deal.votes_count || 0), 0) || 0
   
   // Identify pending/rejected deals
   const { count: pendingDealsCount } = await supabase
@@ -154,12 +154,19 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
                 <Tag size={18} />
                 Nueva Publicación
              </Link>
+             <Link 
+                href="/perfil/alertas" 
+                className="w-full md:w-auto px-6 py-3 bg-[#222327] hover:bg-[#2d2e33] text-white font-bold rounded-xl border border-[#2d2e33] transition-all text-center flex items-center justify-center gap-2"
+             >
+                <BellRing size={18} />
+                Mis Alertas
+             </Link>
           </div>
         </div>
       </div>
 
       {/* Pending Deals Notification Section */}
-      {pendingDealsCount > 0 && (
+      {(pendingDealsCount || 0) > 0 && (
         <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-start gap-4">
             <div className="w-12 h-12 bg-yellow-500/20 rounded-full flex items-center justify-center shrink-0">
