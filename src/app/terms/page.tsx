@@ -21,7 +21,7 @@ export default function TermsPage() {
         </div>
 
         <div className="space-y-6 text-zinc-300 leading-relaxed">
-          <section className="bg-[#18191c] p-6 rounded-2xl border border-[#2d2e33]">
+          <section className="bg-[#222222] p-6 rounded-2xl border border-[#2d2e33]">
             <h2 className="text-xl font-bold text-white mb-4">1. Exención de Responsabilidad de Precios</h2>
             <p className="mb-4">
               Cupoferta es una plataforma informativa que recopila ofertas y cupones de diversas tiendas en línea. No somos una tienda ni vendemos productos directamente.
@@ -34,7 +34,7 @@ export default function TermsPage() {
             </p>
           </section>
 
-          <section className="bg-[#18191c] p-6 rounded-2xl border border-[#2d2e33]">
+          <section className="bg-[#222222] p-6 rounded-2xl border border-[#2d2e33]">
             <h2 className="text-xl font-bold text-white mb-4">2. Uso del Servicio</h2>
             <p className="mb-4">
               Al acceder y utilizar Cupoferta, aceptas que el uso del sitio es bajo tu propio riesgo. La plataforma se proporciona "tal cual" y "según disponibilidad".
@@ -44,14 +44,14 @@ export default function TermsPage() {
             </p>
           </section>
 
-          <section className="bg-[#18191c] p-6 rounded-2xl border border-[#2d2e33]">
+          <section className="bg-[#222222] p-6 rounded-2xl border border-[#2d2e33]">
             <h2 className="text-xl font-bold text-white mb-4">3. Enlaces a Terceros</h2>
             <p>
               Este sitio web contiene enlaces a sitios web de terceros que no son propiedad ni están controlados por Cupoferta. No tenemos control sobre, y no asumimos responsabilidad por, el contenido, las políticas de privacidad o las prácticas de sitios web de terceros.
             </p>
           </section>
 
-          <section className="bg-[#18191c] p-6 rounded-2xl border border-[#2d2e33]">
+          <section className="bg-[#222222] p-6 rounded-2xl border border-[#2d2e33]">
             <h2 className="text-xl font-bold text-white mb-4">4. Propiedad Intelectual</h2>
             <p className="mb-4">
               Todo el contenido generado por los usuarios (comentarios, ofertas, imágenes) sigue siendo propiedad de sus respectivos autores, pero al publicarlo en Cupoferta, nos otorgas una licencia mundial, no exclusiva y libre de regalías para usar, reproducir y mostrar dicho contenido.
@@ -61,7 +61,7 @@ export default function TermsPage() {
             </p>
           </section>
 
-          <section className="bg-[#18191c] p-6 rounded-2xl border border-[#2d2e33]">
+          <section className="bg-[#222222] p-6 rounded-2xl border border-[#2d2e33]">
             <h2 className="text-xl font-bold text-white mb-4">5. Conducta del Usuario</h2>
             <p className="mb-4">
               Te comprometes a utilizar la plataforma de manera legal y respetuosa. Queda prohibido:
@@ -74,14 +74,14 @@ export default function TermsPage() {
             </ul>
           </section>
 
-          <section className="bg-[#18191c] p-6 rounded-2xl border border-[#2d2e33]">
+          <section className="bg-[#222222] p-6 rounded-2xl border border-[#2d2e33]">
             <h2 className="text-xl font-bold text-white mb-4">6. Terminación</h2>
             <p>
               Nos reservamos el derecho de suspender o terminar tu cuenta en cualquier momento, sin previo aviso, si violas estos Términos y Condiciones o si consideramos que tu conducta es perjudicial para la comunidad o la plataforma.
             </p>
           </section>
 
-          <section className="bg-[#18191c] p-6 rounded-2xl border border-[#2d2e33]">
+          <section className="bg-[#222222] p-6 rounded-2xl border border-[#2d2e33]">
             <h2 className="text-xl font-bold text-white mb-4">7. Limitación de Responsabilidad</h2>
             <p>
               En la máxima medida permitida por la ley, Cupoferta no será responsable de ningún daño indirecto, incidental, especial, consecuente o punitivo, incluyendo pero no limitado a pérdida de beneficios, datos o uso, que surja de tu acceso o uso de la plataforma.

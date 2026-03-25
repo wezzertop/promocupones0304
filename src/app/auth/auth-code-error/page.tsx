@@ -11,7 +11,7 @@ function ErrorContent() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] p-4">
-      <div className="bg-[#09090b] border border-red-500/20 rounded-2xl p-8 max-w-md w-full text-center relative overflow-hidden">
+      <div className="bg-[#161616] border border-red-500/20 rounded-2xl p-8 max-w-md w-full text-center relative overflow-hidden">
         {/* Background glow */}
         <div className="absolute -top-20 -right-20 w-40 h-40 bg-red-500/10 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-red-500/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -29,7 +29,7 @@ function ErrorContent() {
           <div className="flex flex-col sm:flex-row gap-3 w-full">
             <Link 
               href="/auth/login" 
-              className="flex-1 bg-[#2BD45A] hover:bg-[#25b84e] text-black font-bold py-3 rounded-xl transition-colors flex items-center justify-center"
+              className="flex-1 bg-[#07B5A7] hover:bg-[#25b84e] text-black font-bold py-3 rounded-xl transition-colors flex items-center justify-center"
             >
               Iniciar Sesión
             </Link>

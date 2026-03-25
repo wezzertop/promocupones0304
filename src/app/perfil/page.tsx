@@ -89,14 +89,14 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
   return (
     <div className="space-y-8 animate-fade-in w-full max-w-[100vw] overflow-x-hidden">
       {/* Profile Header Card */}
-      <div className="bg-[#18191c] border border-[#2d2e33] rounded-3xl overflow-hidden relative mx-auto max-w-5xl">
+      <div className="bg-[#222222] border border-[#2d2e33] rounded-3xl overflow-hidden relative mx-auto max-w-5xl">
         {/* Banner Background */}
-        <div className="h-32 bg-gradient-to-r from-[#2BD45A]/20 to-emerald-900/20 w-full absolute top-0 left-0 z-0"></div>
+        <div className="h-32 bg-gradient-to-r from-[#07B5A7]/20 to-emerald-900/20 w-full absolute top-0 left-0 z-0"></div>
         
         <div className="relative z-10 px-6 pb-6 pt-16 md:px-10 md:pt-20 flex flex-col md:flex-row items-center md:items-end gap-6">
           {/* Avatar */}
           <div className="relative shrink-0">
-            <div className="w-32 h-32 rounded-full border-4 border-[#18191c] bg-[#222327] overflow-hidden shadow-xl relative">
+            <div className="w-32 h-32 rounded-full border-4 border-[#222222] bg-[#222327] overflow-hidden shadow-xl relative">
               {profileAvatar ? (
                 <Image 
                   src={profileAvatar} 
@@ -106,14 +106,14 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
                   unoptimized
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-[#2BD45A] bg-[#2BD45A]/10 text-4xl font-bold rounded-full">
+                <div className="w-full h-full flex items-center justify-center text-[#07B5A7] bg-[#07B5A7]/10 text-4xl font-bold rounded-full">
                   {profile?.username?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase()}
                 </div>
               )}
             </div>
             <Link 
               href="/ajustes"
-              className="absolute bottom-1 right-1 p-2 bg-[#222327] border border-[#2d2e33] rounded-full text-gray-400 hover:text-white hover:border-[#2BD45A] transition-all shadow-lg"
+              className="absolute bottom-1 right-1 p-2 bg-[#222327] border border-[#2d2e33] rounded-full text-gray-400 hover:text-white hover:border-[#07B5A7] transition-all shadow-lg"
               title="Editar perfil"
             >
               <Settings size={16} />
@@ -149,7 +149,7 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
           <div className="flex flex-col gap-2 shrink-0 w-full md:w-auto">
              <Link 
                 href="/publicar" 
-                className="w-full md:w-auto px-6 py-3 bg-[#2BD45A] hover:bg-[#25b84e] text-black font-bold rounded-xl transition-all shadow-lg shadow-[#2BD45A]/20 text-center flex items-center justify-center gap-2"
+                className="w-full md:w-auto px-6 py-3 bg-[#07B5A7] hover:bg-[#25b84e] text-black font-bold rounded-xl transition-all shadow-lg shadow-[#07B5A7]/20 text-center flex items-center justify-center gap-2"
              >
                 <Tag size={18} />
                 Nueva Publicación
@@ -211,7 +211,7 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
             />
           </>
         ) : (
-          <div className="py-20 flex flex-col items-center justify-center text-center bg-[#18191c] rounded-3xl border border-[#2d2e33] border-dashed">
+          <div className="py-20 flex flex-col items-center justify-center text-center bg-[#222222] rounded-3xl border border-[#2d2e33] border-dashed">
             <div className="w-16 h-16 bg-[#222327] rounded-full flex items-center justify-center mb-4 text-gray-500">
               <Tag size={32} />
             </div>

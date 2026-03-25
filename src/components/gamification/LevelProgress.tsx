@@ -83,14 +83,14 @@ export default function LevelProgress({ profile }: LevelProgressProps) {
           <div>
             <div className="text-sm text-zinc-400 uppercase tracking-wider font-semibold">Nivel Actual</div>
             <div className="text-3xl font-bold text-white flex items-center gap-2">
-              <span className="text-[#2BD45A]">{current_level}</span>
+              <span className="text-[#07B5A7]">{current_level}</span>
               <span className="text-lg font-normal text-zinc-500">/ {level?.title || 'Usuario'}</span>
             </div>
           </div>
           
           <div className="flex items-center gap-4">
              {/* Streak Badge with Tooltip */}
-             <div className="group relative bg-black/40 px-4 py-2 rounded-xl border border-white/5 flex flex-col items-center min-w-[100px] cursor-help transition-colors hover:border-[#2BD45A]/30">
+             <div className="group relative bg-black/40 px-4 py-2 rounded-xl border border-white/5 flex flex-col items-center min-w-[100px] cursor-help transition-colors hover:border-[#07B5A7]/30">
                 <div className="text-xs text-zinc-400 mb-1 flex items-center gap-1">
                     <Zap size={12} className="text-yellow-500" fill="currentColor" />
                     Racha
@@ -101,11 +101,11 @@ export default function LevelProgress({ profile }: LevelProgressProps) {
                 <div className="absolute bottom-full mb-2 w-48 bg-zinc-900 border border-white/10 rounded-lg p-3 text-xs text-zinc-300 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
                     <div className="font-bold text-white mb-1">Bonus Diario</div>
                     Conéctate cada día para ganar más XP. <br/>
-                    <span className="text-[#2BD45A]">Máx: 50 XP/día (10 días)</span>
+                    <span className="text-[#07B5A7]">Máx: 50 XP/día (10 días)</span>
                 </div>
              </div>
 
-             <Link href="/logros" className="flex items-center justify-center w-10 h-10 rounded-xl bg-black/40 border border-white/5 hover:bg-black/60 hover:text-[#2BD45A] transition-colors" title="Reglas y Logros">
+             <Link href="/logros" className="flex items-center justify-center w-10 h-10 rounded-xl bg-black/40 border border-white/5 hover:bg-black/60 hover:text-[#07B5A7] transition-colors" title="Reglas y Logros">
                 <HelpCircle size={20} />
              </Link>
           </div>
@@ -118,7 +118,7 @@ export default function LevelProgress({ profile }: LevelProgressProps) {
         
         <div className="h-4 bg-black/50 rounded-full overflow-hidden border border-white/5 mb-8 relative">
           <motion.div 
-            className="h-full bg-gradient-to-r from-[#2BD45A] to-[#32E865]"
+            className="h-full bg-gradient-to-r from-[#07B5A7] to-[#32E865]"
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 1, ease: "easeOut" }}
@@ -148,8 +148,8 @@ export default function LevelProgress({ profile }: LevelProgressProps) {
                             <AreaChart data={chartData}>
                                 <defs>
                                     <linearGradient id="colorXp" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#2BD45A" stopOpacity={0.3}/>
-                                        <stop offset="95%" stopColor="#2BD45A" stopOpacity={0}/>
+                                        <stop offset="5%" stopColor="#07B5A7" stopOpacity={0.3}/>
+                                        <stop offset="95%" stopColor="#07B5A7" stopOpacity={0}/>
                                     </linearGradient>
                                 </defs>
                                 <XAxis 
@@ -167,7 +167,7 @@ export default function LevelProgress({ profile }: LevelProgressProps) {
                                 <Area 
                                     type="monotone" 
                                     dataKey="xp" 
-                                    stroke="#2BD45A" 
+                                    stroke="#07B5A7" 
                                     strokeWidth={2}
                                     fillOpacity={1} 
                                     fill="url(#colorXp)" 
@@ -187,7 +187,7 @@ export default function LevelProgress({ profile }: LevelProgressProps) {
                 <div className="bg-black/30 p-4 rounded-xl border border-white/5 h-[92px] flex flex-col justify-center relative overflow-hidden group">
                     <div className="relative z-10">
                         <div className="text-xs text-zinc-400 mb-1">Próximo Nivel</div>
-                        <div className="text-[#2BD45A] font-bold text-lg">
+                        <div className="text-[#07B5A7] font-bold text-lg">
                             {xpNeeded.toLocaleString()} XP
                         </div>
                         <div className="text-[10px] text-zinc-500">necesarios para subir</div>
@@ -202,7 +202,7 @@ export default function LevelProgress({ profile }: LevelProgressProps) {
                     <div className="text-white font-bold flex items-center justify-between">
                         <span>
                         {referralLimit > 0 ? (
-                            <span className="text-[#2BD45A] text-lg">{referralLimit} <span className="text-sm text-zinc-500 font-normal">/semana</span></span>
+                            <span className="text-[#07B5A7] text-lg">{referralLimit} <span className="text-sm text-zinc-500 font-normal">/semana</span></span>
                         ) : (
                             <span className="text-zinc-500">Bloqueado</span>
                         )}

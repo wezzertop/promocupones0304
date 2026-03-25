@@ -70,18 +70,18 @@ export default function FeedAd({ className, variant = 'banner1' }: FeedAdProps) 
     )}>
       <div 
         className={cn(
-          "flex flex-col items-center justify-center overflow-hidden transition-all duration-300 rounded-xl bg-gradient-to-r from-[#18191c] to-[#222327] border border-[#2d2e33] relative group cursor-pointer hover:border-[#2BD45A]/50",
+          "flex flex-col items-center justify-center overflow-hidden transition-all duration-300 rounded-xl bg-gradient-to-r from-[#222222] to-[#222327] border border-[#2d2e33] relative group cursor-pointer hover:border-[#07B5A7]/50",
           config.width === 320 ? "w-full max-w-[320px]" : (config.width === 728 ? "w-full max-w-[728px]" : "w-full max-w-[468px]")
         )}
         style={{ height: `${config.height}px` }}
       >
-         <div className="absolute inset-0 bg-[#2BD45A]/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+         <div className="absolute inset-0 bg-[#07B5A7]/5 opacity-0 group-hover:opacity-100 transition-opacity" />
          <div className="relative z-10 flex items-center justify-between px-4 w-full h-full">
             <div className="flex flex-col items-start justify-center h-full">
-              <span className="text-[10px] font-bold text-[#2BD45A] uppercase tracking-wider bg-[#2BD45A]/10 px-2 py-0.5 rounded-full mb-1">Publicidad</span>
+              <span className="text-[10px] font-bold text-[#07B5A7] uppercase tracking-wider bg-[#07B5A7]/10 px-2 py-0.5 rounded-full mb-1">Publicidad</span>
               <p className="text-xs text-gray-400 font-medium truncate max-w-[200px]">Tu marca aquí</p>
             </div>
-            <button className="text-xs bg-[#2BD45A] text-black font-bold px-3 py-1.5 rounded-lg hover:bg-[#25b84e] transition-colors whitespace-nowrap shadow-lg shadow-[#2BD45A]/20">
+            <button className="text-xs bg-[#07B5A7] text-black font-bold px-3 py-1.5 rounded-lg hover:bg-[#25b84e] transition-colors whitespace-nowrap shadow-lg shadow-[#07B5A7]/20">
               Contáctanos
             </button>
          </div>

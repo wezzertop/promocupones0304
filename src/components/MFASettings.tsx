@@ -111,10 +111,10 @@ export default function MFASettings() {
   }
 
   return (
-    <div className="bg-[#18191c] border border-[#2d2e33] rounded-3xl overflow-hidden mt-8">
+    <div className="bg-[#222222] border border-[#2d2e33] rounded-3xl overflow-hidden mt-8">
         <div className="p-6 border-b border-[#2d2e33]">
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <ShieldCheck className="text-[#2BD45A]" size={20} />
+                <ShieldCheck className="text-[#07B5A7]" size={20} />
                 Autenticación en dos pasos (MFA)
             </h2>
         </div>
@@ -122,12 +122,12 @@ export default function MFASettings() {
         <div className="p-6">
             {loading && step === 'initial' ? (
                 <div className="flex justify-center p-4">
-                    <Loader2 className="animate-spin text-[#2BD45A]" />
+                    <Loader2 className="animate-spin text-[#07B5A7]" />
                 </div>
             ) : isEnabled ? (
-                <div className="flex items-center justify-between p-4 bg-[#2BD45A]/10 border border-[#2BD45A]/20 rounded-xl">
+                <div className="flex items-center justify-between p-4 bg-[#07B5A7]/10 border border-[#07B5A7]/20 rounded-xl">
                     <div className="flex items-center gap-3">
-                        <CheckCircle className="text-[#2BD45A]" size={24} />
+                        <CheckCircle className="text-[#07B5A7]" size={24} />
                         <div>
                             <h3 className="font-bold text-white">MFA Activado</h3>
                             <p className="text-sm text-gray-400">Tu cuenta está protegida con verificación en dos pasos.</p>
@@ -147,7 +147,7 @@ export default function MFASettings() {
                     </p>
                     <button 
                         onClick={handleEnroll}
-                        className="px-6 py-3 bg-[#2BD45A] hover:bg-[#25b84e] text-black font-bold rounded-xl transition-all shadow-lg shadow-[#2BD45A]/20 flex items-center gap-2"
+                        className="px-6 py-3 bg-[#07B5A7] hover:bg-[#25b84e] text-black font-bold rounded-xl transition-all shadow-lg shadow-[#07B5A7]/20 flex items-center gap-2"
                     >
                         <ShieldCheck size={18} />
                         Activar MFA
@@ -174,13 +174,13 @@ export default function MFASettings() {
                                 value={verifyCode}
                                 onChange={(e) => setVerifyCode(e.target.value)}
                                 placeholder="123456"
-                                className="flex-1 bg-[#222327] border border-[#2d2e33] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#2BD45A] tracking-widest text-center text-lg"
+                                className="flex-1 bg-[#222327] border border-[#2d2e33] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#07B5A7] tracking-widest text-center text-lg"
                                 maxLength={6}
                             />
                             <button 
                                 onClick={handleVerify}
                                 disabled={verifyCode.length !== 6 || loading}
-                                className="px-6 bg-[#2BD45A] hover:bg-[#25b84e] text-black font-bold rounded-xl disabled:opacity-50 transition-colors"
+                                className="px-6 bg-[#07B5A7] hover:bg-[#25b84e] text-black font-bold rounded-xl disabled:opacity-50 transition-colors"
                             >
                                 {loading ? <Loader2 className="animate-spin" /> : 'Verificar'}
                             </button>

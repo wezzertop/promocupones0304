@@ -18,7 +18,7 @@ export default function ReportPage() {
         <form className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-zinc-300 mb-2">Tipo de reporte</label>
-            <select className="w-full bg-black/20 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-[#2BD45A]/50">
+            <select className="w-full bg-black/20 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-[#07B5A7]/50">
               <option>Contenido inapropiado / Spam</option>
               <option>Error técnico / Bug</option>
               <option>Problema con mi cuenta</option>
@@ -30,7 +30,7 @@ export default function ReportPage() {
             <label className="block text-sm font-medium text-zinc-300 mb-2">URL afectada (opcional)</label>
             <input 
               type="text" 
-              className="w-full bg-black/20 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-[#2BD45A]/50"
+              className="w-full bg-black/20 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-[#07B5A7]/50"
               placeholder="https://cupoferta.com/..."
             />
           </div>
@@ -39,7 +39,7 @@ export default function ReportPage() {
             <label className="block text-sm font-medium text-zinc-300 mb-2">Descripción del problema</label>
             <textarea 
               rows={5}
-              className="w-full bg-black/20 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-[#2BD45A]/50 resize-none"
+              className="w-full bg-black/20 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-[#07B5A7]/50 resize-none"
               placeholder="Describe detalladamente el problema que encontraste..."
             />
           </div>

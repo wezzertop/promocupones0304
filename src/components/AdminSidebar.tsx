@@ -65,7 +65,7 @@ export default function AdminSidebar() {
   return (
     <>
       {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-[#0f1012] border-b border-[#2d2e33] flex items-center justify-between px-4 z-[60]">
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-[#161616] border-b border-[#2d2e33] flex items-center justify-between px-4 z-[60]">
         <Link href="/" className="relative h-10 w-32">
           <Image 
             src="https://i.imgur.com/GHEr2To.png" 
@@ -92,7 +92,7 @@ export default function AdminSidebar() {
       )}
 
       <aside className={cn(
-        "fixed left-0 top-0 h-screen w-64 bg-[#0f1012] border-r border-[#2d2e33] flex flex-col z-[58] transition-transform duration-300 lg:translate-x-0",
+        "fixed left-0 top-0 h-screen w-64 bg-[#161616] border-r border-[#2d2e33] flex flex-col z-[58] transition-transform duration-300 lg:translate-x-0",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         {/* Logo Area (Desktop) */}
@@ -125,7 +125,7 @@ export default function AdminSidebar() {
                     className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
                       isActive 
                         ? 'bg-blue-500/10 text-blue-500' 
-                        : 'text-gray-400 hover:bg-[#18191c] hover:text-white'
+                        : 'text-gray-400 hover:bg-[#222222] hover:text-white'
                     }`}
                   >
                     <Icon size={20} className={isActive ? 'text-blue-500' : 'text-gray-500 group-hover:text-white transition-colors'} />

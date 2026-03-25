@@ -92,7 +92,7 @@ export default function ReputationButton({
           Dar Puntos de Reputación
         </button>
       ) : (
-        <div className="flex flex-col gap-3 bg-[#18191c] p-4 rounded-xl border border-zinc-800 shadow-xl animate-in fade-in zoom-in-95 duration-200 absolute top-0 left-0 z-50 min-w-[280px]">
+        <div className="flex flex-col gap-3 bg-[#222222] p-4 rounded-xl border border-zinc-800 shadow-xl animate-in fade-in zoom-in-95 duration-200 absolute top-0 left-0 z-50 min-w-[280px]">
           <div className="flex justify-between items-start">
             <div>
               <h3 className="font-medium text-white text-sm">Elige una cantidad</h3>

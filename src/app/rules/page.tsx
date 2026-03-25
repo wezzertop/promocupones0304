@@ -22,7 +22,7 @@ export default function RulesPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-[#18191c] p-6 rounded-2xl border border-[#2d2e33] hover:border-[#2BD45A]/30 transition-colors group">
+        <div className="bg-[#222222] p-6 rounded-2xl border border-[#2d2e33] hover:border-[#07B5A7]/30 transition-colors group">
           <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-500 mb-4 group-hover:scale-110 transition-transform">
             <Shield size={24} />
           </div>
@@ -32,7 +32,7 @@ export default function RulesPage() {
           </p>
         </div>
 
-        <div className="bg-[#18191c] p-6 rounded-2xl border border-[#2d2e33] hover:border-[#2BD45A]/30 transition-colors group">
+        <div className="bg-[#222222] p-6 rounded-2xl border border-[#2d2e33] hover:border-[#07B5A7]/30 transition-colors group">
           <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center text-green-500 mb-4 group-hover:scale-110 transition-transform">
             <MessageSquare size={24} />
           </div>
@@ -42,7 +42,7 @@ export default function RulesPage() {
           </p>
         </div>
 
-        <div className="bg-[#18191c] p-6 rounded-2xl border border-[#2d2e33] hover:border-[#2BD45A]/30 transition-colors group">
+        <div className="bg-[#222222] p-6 rounded-2xl border border-[#2d2e33] hover:border-[#07B5A7]/30 transition-colors group">
           <div className="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center text-red-500 mb-4 group-hover:scale-110 transition-transform">
             <AlertTriangle size={24} />
           </div>
@@ -52,7 +52,7 @@ export default function RulesPage() {
           </p>
         </div>
 
-        <div className="bg-[#18191c] p-6 rounded-2xl border border-[#2d2e33] hover:border-[#2BD45A]/30 transition-colors group">
+        <div className="bg-[#222222] p-6 rounded-2xl border border-[#2d2e33] hover:border-[#07B5A7]/30 transition-colors group">
           <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center text-purple-500 mb-4 group-hover:scale-110 transition-transform">
             <UserCheck size={24} />
           </div>
@@ -63,15 +63,15 @@ export default function RulesPage() {
         </div>
       </div>
 
-      <div className="mt-12 bg-[#2BD45A]/10 border border-[#2BD45A]/20 rounded-2xl p-8 text-center">
-        <Heart className="w-12 h-12 text-[#2BD45A] mx-auto mb-4" />
+      <div className="mt-12 bg-[#07B5A7]/10 border border-[#07B5A7]/20 rounded-2xl p-8 text-center">
+        <Heart className="w-12 h-12 text-[#07B5A7] mx-auto mb-4" />
         <h3 className="text-2xl font-bold text-white mb-2">Ayúdanos a mejorar</h3>
         <p className="text-zinc-300 max-w-xl mx-auto mb-6">
           Si ves contenido que viola estas reglas, por favor repórtalo usando el botón de "Reportar" en la publicación o comentario correspondiente.
         </p>
         <Link 
           href="/contact" 
-          className="inline-flex items-center justify-center px-6 py-3 bg-[#2BD45A] hover:bg-[#25b84e] text-black font-bold rounded-xl transition-colors"
+          className="inline-flex items-center justify-center px-6 py-3 bg-[#07B5A7] hover:bg-[#25b84e] text-black font-bold rounded-xl transition-colors"
         >
           Contactar Soporte
         </Link>

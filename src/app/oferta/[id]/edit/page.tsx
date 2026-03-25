@@ -267,7 +267,7 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[#2BD45A]" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#07B5A7]" />
       </div>
     )
   }
@@ -293,7 +293,7 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
                   onChange={e => setTitle(e.target.value)}
                   required
                   maxLength={MAX_TITLE}
-                  className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-16 py-3 focus:ring-2 focus:ring-[#2BD45A]/50 outline-none"
+                  className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-16 py-3 focus:ring-2 focus:ring-[#07B5A7]/50 outline-none"
                 />
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-zinc-500 font-medium">
                   {title.length}/{MAX_TITLE}
@@ -309,14 +309,14 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
               <div>
                 <label className="text-sm font-medium text-zinc-300 mb-1.5 block">Precio Oferta</label>
                 <div className="relative">
-                  <DollarSign className="absolute left-3 top-3 h-4 w-4 text-[#2BD45A]" />
+                  <DollarSign className="absolute left-3 top-3 h-4 w-4 text-[#07B5A7]" />
                   <input
                     type="number"
                     value={price}
                     onChange={e => setPrice(e.target.value)}
                     required
                     step="0.01"
-                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-9 pr-4 py-3 focus:ring-2 focus:ring-[#2BD45A]/50 outline-none"
+                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-9 pr-4 py-3 focus:ring-2 focus:ring-[#07B5A7]/50 outline-none"
                   />
                 </div>
               </div>
@@ -329,7 +329,7 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
                     value={originalPrice}
                     onChange={e => setOriginalPrice(e.target.value)}
                     step="0.01"
-                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-9 pr-4 py-3 focus:ring-2 focus:ring-[#2BD45A]/50 outline-none"
+                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-9 pr-4 py-3 focus:ring-2 focus:ring-[#07B5A7]/50 outline-none"
                   />
                 </div>
               </div>
@@ -346,7 +346,7 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
                     value={url}
                     onChange={e => setUrl(e.target.value)}
                     required
-                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#2BD45A]/50 outline-none"
+                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#07B5A7]/50 outline-none"
                   />
                 </div>
                </div>
@@ -358,7 +358,7 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
                     value={categoryId}
                     onChange={e => setCategoryId(e.target.value)}
                     required
-                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#2BD45A]/50 outline-none appearance-none"
+                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#07B5A7]/50 outline-none appearance-none"
                   >
                     <option value="" className="bg-zinc-900">Seleccionar...</option>
                     {categories.map(c => (
@@ -379,7 +379,7 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
                       value={couponCode}
                       onChange={e => setCouponCode(e.target.value)}
                       placeholder="Código de descuento"
-                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#2BD45A]/50 outline-none uppercase"
+                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#07B5A7]/50 outline-none uppercase"
                     />
                   </div>
                </div>
@@ -390,7 +390,7 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
                     <select
                       value={availability}
                       onChange={e => setAvailability(e.target.value)}
-                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#2BD45A]/50 outline-none appearance-none"
+                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#07B5A7]/50 outline-none appearance-none"
                     >
                       <option value="online" className="bg-zinc-900">Online</option>
                       <option value="in_store" className="bg-zinc-900">Tienda Física</option>
@@ -411,7 +411,7 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
                     onChange={e => setShippingCost(e.target.value)}
                     placeholder="0 para gratis"
                     step="0.01"
-                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#2BD45A]/50 outline-none"
+                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#07B5A7]/50 outline-none"
                   />
                 </div>
               </div>
@@ -422,7 +422,7 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
                   <select
                     value={shippingCountry}
                     onChange={e => setShippingCountry(e.target.value)}
-                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#2BD45A]/50 outline-none appearance-none"
+                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#07B5A7]/50 outline-none appearance-none"
                   >
                     {COUNTRIES.map(c => (
                       <option key={c} value={c} className="bg-zinc-900">{c}</option>
@@ -442,7 +442,7 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
                     type="datetime-local"
                     value={startDate}
                     onChange={e => setStartDate(e.target.value)}
-                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#2BD45A]/50 outline-none [color-scheme:dark]"
+                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#07B5A7]/50 outline-none [color-scheme:dark]"
                   />
                 </div>
               </div>
@@ -454,7 +454,7 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
                     type="datetime-local"
                     value={expiresAt}
                     onChange={e => setExpiresAt(e.target.value)}
-                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#2BD45A]/50 outline-none [color-scheme:dark]"
+                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#07B5A7]/50 outline-none [color-scheme:dark]"
                   />
                 </div>
               </div>
@@ -484,7 +484,7 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
                       />
                     ))}
                     
-                    <label className="aspect-square bg-black/20 border border-white/10 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-[#2BD45A]/50 transition-colors">
+                    <label className="aspect-square bg-black/20 border border-white/10 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-[#07B5A7]/50 transition-colors">
                       <ImageIcon className="h-6 w-6 text-zinc-500" />
                       <span className="text-xs text-zinc-500 mt-2">Agregar</span>
                       <input type="file" multiple accept="image/*" onChange={handleImageChange} className="hidden" />
@@ -504,7 +504,7 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
                   required
                   rows={5}
                   maxLength={MAX_DESC}
-                  className="w-full bg-black/20 border border-white/10 text-white rounded-xl px-4 py-3 pb-8 focus:ring-2 focus:ring-[#2BD45A]/50 outline-none resize-none"
+                  className="w-full bg-black/20 border border-white/10 text-white rounded-xl px-4 py-3 pb-8 focus:ring-2 focus:ring-[#07B5A7]/50 outline-none resize-none"
                 />
                 <div className="absolute bottom-2 right-3 text-xs text-zinc-500 font-medium bg-black/40 px-2 py-0.5 rounded">
                   {description.length}/{MAX_DESC}
@@ -515,7 +515,7 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
             <button
               type="submit"
               disabled={saving}
-              className="w-full bg-[#2BD45A] hover:bg-[#25b84e] text-black font-bold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full bg-[#07B5A7] hover:bg-[#25b84e] text-black font-bold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {saving ? <Loader2 className="animate-spin" /> : <Save className="w-5 h-5" />}
               {saving ? 'Guardando...' : 'Guardar Cambios'}

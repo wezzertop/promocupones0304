@@ -70,21 +70,21 @@ export default function ReportsClient({ initialReports }: ReportsClientProps) {
 
   return (
     <div className="space-y-6">
-      <div className="bg-[#09090b]/80 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg sticky top-14 lg:top-0 z-40">
+      <div className="bg-[#161616]/80 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg sticky top-14 lg:top-0 z-40">
         <h1 className="text-2xl md:text-3xl font-bold text-white">Reportes de Usuarios</h1>
         <p className="text-zinc-400 text-sm mt-1">Gestiona las denuncias enviadas por la comunidad</p>
       </div>
 
       <div className="space-y-4">
         {reports.length === 0 ? (
-          <div className="text-center py-12 bg-[#18191c] rounded-2xl border border-white/5">
+          <div className="text-center py-12 bg-[#222222] rounded-2xl border border-white/5">
             <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
             <h3 className="text-xl font-bold text-white mb-2">¡Todo limpio!</h3>
             <p className="text-zinc-500">No hay reportes pendientes de revisión.</p>
           </div>
         ) : (
           reports.map((report) => (
-            <div key={report.id} className="bg-[#18191c] border border-white/5 rounded-xl p-6 flex flex-col md:flex-row gap-6">
+            <div key={report.id} className="bg-[#222222] border border-white/5 rounded-xl p-6 flex flex-col md:flex-row gap-6">
               <div className="flex-1">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-2">

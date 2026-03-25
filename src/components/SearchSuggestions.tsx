@@ -141,12 +141,12 @@ export default function SearchSuggestions({ query, isOpen, onClose, onSelect }: 
   return (
     <div 
       ref={containerRef}
-      className="absolute top-full left-0 right-0 mt-2 bg-[#18191c] border border-[#2d2e33] rounded-2xl shadow-2xl z-[100] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
+      className="absolute top-full left-0 right-0 mt-2 bg-[#222222] border border-[#2d2e33] rounded-2xl shadow-2xl z-[100] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
     >
       <div className="max-h-[min(80vh,480px)] overflow-y-auto scrollbar-hide">
         {loading && suggestions.length === 0 ? (
           <div className="p-8 flex flex-col items-center justify-center text-gray-500 gap-3">
-            <Loader2 className="animate-spin text-[#2BD45A]" size={24} />
+            <Loader2 className="animate-spin text-[#07B5A7]" size={24} />
             <p className="text-sm">Buscando...</p>
           </div>
         ) : suggestions.length > 0 ? (
@@ -160,12 +160,12 @@ export default function SearchSuggestions({ query, isOpen, onClose, onSelect }: 
                   onClick={() => onClose()}
                   className={cn(
                     "flex items-center gap-3 px-4 py-3 transition-colors group",
-                    isActive ? "bg-[#2BD45A]/10" : "hover:bg-white/5"
+                    isActive ? "bg-[#07B5A7]/10" : "hover:bg-white/5"
                   )}
                 >
                   <div className={cn(
                     "w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-colors relative overflow-hidden",
-                    isActive ? "bg-[#2BD45A] text-black" : "bg-[#222327] text-gray-500 group-hover:text-white"
+                    isActive ? "bg-[#07B5A7] text-black" : "bg-[#222327] text-gray-500 group-hover:text-white"
                   )}>
                     {suggestion.image_url ? (
                       <Image 
@@ -188,7 +188,7 @@ export default function SearchSuggestions({ query, isOpen, onClose, onSelect }: 
                   <div className="flex-1 min-w-0">
                     <p className={cn(
                       "text-sm font-medium truncate",
-                      isActive ? "text-[#2BD45A]" : "text-gray-200"
+                      isActive ? "text-[#07B5A7]" : "text-gray-200"
                     )}>
                       {suggestion.title}
                     </p>
@@ -201,7 +201,7 @@ export default function SearchSuggestions({ query, isOpen, onClose, onSelect }: 
                     size={14} 
                     className={cn(
                       "text-gray-600 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5",
-                      isActive && "text-[#2BD45A]"
+                      isActive && "text-[#07B5A7]"
                     )} 
                   />
                 </Link>
@@ -230,7 +230,7 @@ export default function SearchSuggestions({ query, isOpen, onClose, onSelect }: 
                 <button
                   key={term}
                   onClick={() => onSelect(term)}
-                  className="px-3 py-1.5 rounded-lg bg-[#222327] border border-[#2d2e33] text-sm text-gray-300 hover:text-[#2BD45A] hover:border-[#2BD45A]/50 transition-all"
+                  className="px-3 py-1.5 rounded-lg bg-[#222327] border border-[#2d2e33] text-sm text-gray-300 hover:text-[#07B5A7] hover:border-[#07B5A7]/50 transition-all"
                 >
                   {term}
                 </button>

@@ -92,7 +92,7 @@ export default function NotificationCenter() {
       >
         <Bell className="w-5 h-5" />
         {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-[#0f1012]"></span>
+          <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-[#161616]"></span>
         )}
       </button>
 
@@ -102,13 +102,13 @@ export default function NotificationCenter() {
             className="fixed inset-0 z-40" 
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute right-0 mt-2 w-80 md:w-96 bg-[#18191c] border border-white/10 rounded-xl shadow-xl z-50 overflow-hidden">
+          <div className="absolute right-0 mt-2 w-80 md:w-96 bg-[#222222] border border-white/10 rounded-xl shadow-xl z-50 overflow-hidden">
             <div className="p-4 border-b border-white/5 flex items-center justify-between">
               <h3 className="font-semibold text-white">Notificaciones</h3>
               {unreadCount > 0 && (
                 <button 
                   onClick={markAllAsRead}
-                  className="text-xs text-[#2BD45A] hover:underline"
+                  className="text-xs text-[#07B5A7] hover:underline"
                 >
                   Marcar todo como leído
                 </button>
@@ -144,7 +144,7 @@ export default function NotificationCenter() {
 
                       <div className="flex gap-3 relative z-10 pointer-events-none">
                         <div className={`mt-1 shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                          notification.type === 'post_approved' ? 'bg-[#2BD45A]/10 text-[#2BD45A]' : 
+                          notification.type === 'post_approved' ? 'bg-[#07B5A7]/10 text-[#07B5A7]' : 
                           notification.type === 'post_rejected' ? 'bg-red-500/10 text-red-500' :
                           notification.type === 'comment_reply' || notification.type === 'new_comment' ? 'bg-blue-500/10 text-blue-500' :
                           notification.type === 'level_up' || notification.type === 'badge_earned' ? 'bg-yellow-500/10 text-yellow-500' :

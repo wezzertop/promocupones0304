@@ -71,7 +71,7 @@ export default function UsersClient({ initialUsers, currentUserRole, searchQuery
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sticky top-14 lg:top-0 z-40 bg-[#09090b]/80 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sticky top-14 lg:top-0 z-40 bg-[#161616]/80 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-white">Gestión de Usuarios</h1>
           <p className="text-zinc-400 text-sm mt-1">Administra roles y permisos de la comunidad</p>
@@ -84,12 +84,12 @@ export default function UsersClient({ initialUsers, currentUserRole, searchQuery
             placeholder="Buscar usuario..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="bg-[#18191c] border border-white/10 text-white rounded-xl pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/50 w-full md:w-64"
+            className="bg-[#222222] border border-white/10 text-white rounded-xl pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/50 w-full md:w-64"
           />
         </form>
       </div>
 
-      <div className="bg-[#18191c] border border-white/5 rounded-2xl overflow-hidden">
+      <div className="bg-[#222222] border border-white/5 rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
@@ -185,7 +185,7 @@ export default function UsersClient({ initialUsers, currentUserRole, searchQuery
       {/* Ban Modal */}
       {banModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-[#18191c] rounded-2xl border border-white/10 w-full max-w-md p-6">
+          <div className="bg-[#222222] rounded-2xl border border-white/10 w-full max-w-md p-6">
             <h3 className="text-xl font-bold text-white mb-4">Banear Usuario</h3>
             <p className="text-zinc-400 text-sm mb-4">
               ¿Estás seguro de que quieres suspender a <span className="text-white font-bold">{selectedUser?.username}</span>?

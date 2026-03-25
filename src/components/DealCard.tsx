@@ -23,7 +23,8 @@ import {
     Copy,
     Check,
     Ticket,
-    X
+    X,
+    ArrowUpRight
   } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -271,8 +272,8 @@ export default function DealCard({
     const hours = Math.floor(diff / 3600000)
     const days = Math.floor(diff / 86400000)
 
-    if (minutes < 60) return `${minutes}m`
-    if (hours < 24) return `${hours}h`
+    if (minutes < 60) return `${minutes}min`
+    if (hours < 24) return `${hours}hrs`
     return `${days}d`
   }
 
@@ -280,66 +281,109 @@ export default function DealCard({
     ? `/oferta/${deal.id}?from=/admin/moderation&label=Volver a moderación` 
     : `/oferta/${deal.id}`
 
+  const renderHeaderLeft = () => (
+     <div className="flex flex-1 items-center gap-1.5 text-[10px] md:text-xs min-w-0 pr-2">
+       {deal.user?.username ? (
+          <Link href={`/usuario/${encodeURIComponent(deal.user.username)}`} className="flex items-center gap-1.5 hover:underline shrink-0 min-w-0" onClick={(e) => e.stopPropagation()}>
+             {deal.user.avatar_url ? (
+               <div className="w-[16px] h-[16px] md:w-[20px] md:h-[20px] shrink-0 rounded-[10px] overflow-hidden">
+                 <Image src={deal.user.avatar_url} alt="" width={20} height={20} className="object-cover" unoptimized/>
+               </div>
+             ) : (
+               <div className="w-[16px] h-[16px] md:w-[20px] md:h-[20px] shrink-0 rounded-[10px] bg-zinc-800 flex items-center justify-center text-[10px] text-zinc-300 font-bold">
+                 {deal.user.username[0]?.toUpperCase() || 'U'}
+               </div>
+             )}
+             <span className="text-zinc-500 font-medium truncate">{deal.user.username}</span>
+          </Link>
+       ) : (
+          <div className="flex items-center gap-1.5 shrink-0">
+              <div className="w-[16px] h-[16px] md:w-[20px] md:h-[20px] shrink-0 rounded-[10px] bg-zinc-800 flex items-center justify-center text-[10px] text-zinc-300 font-bold">U</div>
+              <span className="text-zinc-500 font-medium truncate">Anónimo</span>
+          </div>
+       )}
+       <span className="text-zinc-600 font-bold shrink-0">•</span>
+       {deal.store && (
+          <span className="text-[#07B5A7] font-bold truncate shrink-0 max-w-[80px] sm:max-w-none">{deal.store.name}</span>
+       )}
+     </div>
+  )
+
+  const renderHeaderRight = () => (
+     <div className="flex items-center gap-0.5 md:gap-1 shrink-0 text-zinc-500">
+        <div className="flex items-center gap-1.5 text-[10px] md:text-xs px-1.5 py-1" title={new Date(deal.created_at).toLocaleString('es-MX')}>
+           <Clock size={14} className="md:w-4 md:h-4 stroke-[2px]" />
+           <span className="font-medium align-middle tracking-wide">{formatTimeAgo(deal.created_at)}</span>
+        </div>
+        <Link href={`${dealLink}#comments`} className="flex items-center gap-1.5 text-[10px] md:text-xs px-1.5 py-1 rounded-[6px] hover:bg-white/5 hover:text-zinc-300 transition-colors" title="Comentarios" onClick={(e) => e.stopPropagation()}>
+           <MessageSquare size={14} className="md:w-4 md:h-4 stroke-[2px]" />
+           <span className="font-medium align-middle">{deal.comments_count || 0}</span>
+        </Link>
+        <span className="text-white/10 mx-0.5 hidden sm:inline">|</span>
+        <button onClick={(e) => { e.preventDefault(); handleShare(); }} className="p-1.5 rounded-[6px] hover:bg-white/5 hover:text-zinc-300 transition-colors" title="Compartir">
+           <Share2 size={14} className="md:w-4 md:h-4 stroke-[2px]" />
+        </button>
+        <button onClick={(e) => { e.preventDefault(); handleSave(); }} className={cn("p-1.5 rounded-[6px] hover:bg-white/5 transition-colors", isSaved ? "text-[#07B5A7]" : "hover:text-zinc-300")} title="Guardar">
+           <Bookmark size={14} className={cn("md:w-4 md:h-4 stroke-[2px]", isSaved ? "fill-current" : "")} />
+        </button>
+     </div>
+  )
+
   return (
     <div className={cn(
-      "group relative flex flex-col md:flex-row bg-[#09090b] rounded-xl md:rounded-3xl overflow-hidden border border-white/5 transition-all duration-300 md:hover:scale-[1.01] shadow-xl shadow-black/50 hover:shadow-2xl h-auto md:h-[340px] w-full max-w-[calc(100%-1rem)] mx-auto md:max-w-none md:mx-0",
-      isCoupon ? "hover:border-purple-500/50 hover:shadow-purple-500/10" : "hover:border-[#2BD45A]/50 hover:shadow-[#2BD45A]/10",
+      "group relative flex flex-col md:grid md:grid-cols-[50px_180px_1fr] bg-[#161616] rounded-[10px] overflow-hidden border border-white/5 transition-all duration-300 md:hover:scale-[1.01] hover:border-white/10 shadow-xl shadow-black/50 hover:shadow-2xl w-full mx-auto md:mx-0",
+      isCoupon ? "hover:border-purple-500/50 hover:shadow-purple-500/10" : "hover:border-[#07B5A7]/50 hover:shadow-[#07B5A7]/10",
       isExpired && "opacity-60 grayscale"
     )}>
+
+      {/* --- MOBILE HEADER --- */}
+      <div className="flex md:hidden items-center justify-between w-full p-2.5 pb-2 border-b border-white/5 relative z-10 bg-[#161616] overflow-hidden">
+         {renderHeaderLeft()}
+         {renderHeaderRight()}
+      </div>
       
-      {/* Vertical Voting Sidebar (Desktop Only) */}
+      {/* Component A: Vertical Voting Sidebar */}
       {variant === 'default' && (
-      <div className="hidden md:flex flex-col items-center justify-center gap-2 w-16 bg-black/40 border-r border-white/5 py-4 shrink-0">
+      <div className="hidden md:flex flex-col items-center justify-between gap-1 md:gap-2 w-full bg-[#161616] border-r border-white/5 py-2 md:py-4 z-10">
         <button 
-          onClick={() => handleVote('hot')}
+          onClick={(e) => { e.preventDefault(); handleVote('hot'); }}
           className={cn(
-            "p-2 rounded-xl transition-all hover:scale-110 active:scale-95 hover:bg-white/10",
-            userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#2BD45A]") : "text-zinc-500"
+            "p-1.5 rounded-[10px] transition-all hover:bg-white/10 active:scale-95",
+            userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") : "text-zinc-500 hover:text-white"
           )}
         >
-          <ArrowUp size={24} strokeWidth={3} />
+          <ArrowUp size={20} strokeWidth={3} />
         </button>
         
-        <div className="flex flex-col items-center gap-0.5">
-            <Flame 
-                size={20} 
-                className={cn(
-                    "transition-colors",
-                    userVote === 'hot' ? (isCoupon ? "text-purple-500 fill-purple-500" : "text-[#2BD45A] fill-[#2BD45A]") :
-                    userVote === 'cold' ? "text-blue-500 fill-blue-500" : "text-zinc-600"
-                )} 
-            />
-            <span className={cn(
-                "font-black text-sm",
-                userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#2BD45A]") :
-                userVote === 'cold' ? "text-blue-500" : "text-white"
-            )}>
-                {votes}°
-            </span>
-        </div>
+        <span className={cn(
+            "font-black text-xs md:text-sm",
+            userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") :
+            userVote === 'cold' ? "text-blue-500" : "text-white"
+        )}>
+            {votes}°
+        </span>
         
         <button 
-          onClick={() => handleVote('cold')}
+          onClick={(e) => { e.preventDefault(); handleVote('cold'); }}
           className={cn(
-            "p-2 rounded-xl transition-all hover:scale-110 active:scale-95 hover:bg-white/10",
-            userVote === 'cold' ? "text-blue-500" : "text-zinc-500"
+            "p-1.5 rounded-[10px] transition-all hover:bg-white/10 active:scale-95",
+            userVote === 'cold' ? "text-blue-500" : "text-zinc-500 hover:text-white"
           )}
         >
-          <ArrowDown size={24} strokeWidth={3} />
+          <ArrowDown size={20} strokeWidth={3} />
         </button>
       </div>
       )}
 
-      {/* Image Section (Mobile: Top / Desktop: Left) */}
-      <div className="flex flex-col w-full md:w-[240px] shrink-0 border-b md:border-b-0 md:border-r border-white/5">
-        
-        {/* Image Container */}
-        <div className="relative w-full h-[200px] md:h-full bg-white group/image overflow-hidden">
-          {/* Status Badge */}
-          {deal.status !== 'active' && (
+      {/* --- MD CONTENTS WRAPPER --- */}
+      <div className="grid grid-cols-[100px_minmax(0,1fr)] sm:grid-cols-[120px_minmax(0,1fr)] w-full md:contents p-2 md:p-0 gap-2 md:gap-0 h-full">
+
+      {/* Component B: Image Area */}
+      <div className="w-full flex flex-col items-center justify-start md:justify-center p-0 md:p-3 relative group/image md:border-r border-white/5">
+        {deal.status !== 'active' && (
             <div className="absolute top-2 left-2 z-30 pointer-events-none">
               <span className={cn(
-                "px-2 py-1 rounded-md text-xs font-bold uppercase tracking-wider text-white shadow-sm",
+                "px-2 py-0.5 rounded-[10px] text-[8px] md:text-[10px] font-black uppercase tracking-wider text-white shadow-sm",
                 deal.status === 'pending' ? "bg-yellow-500" :
                 deal.status === 'rejected' ? "bg-red-500" :
                 deal.status === 'expired' ? "bg-zinc-500" :
@@ -353,18 +397,17 @@ export default function DealCard({
                  deal.status}
               </span>
             </div>
-          )}
+        )}
 
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-100/50 via-white to-white opacity-50" />
-          
+        <div className="relative w-full aspect-square bg-zinc-100 rounded-[10px] drop-shadow-sm flex items-center justify-center overflow-hidden shrink-0">
           {deal.image_urls && deal.image_urls.length > 0 ? (
-            <div className="relative w-full h-full flex items-center justify-center z-10 overflow-hidden">
+            <>
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentImageIndex}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
                   whileHover={{ scale: 1.05 }}
                   drag={hasMultipleImages ? "x" : false}
@@ -377,379 +420,212 @@ export default function DealCard({
                       src={deal.image_urls[currentImageIndex]}
                       alt={deal.title}
                       fill
-                      className="object-contain p-2 md:p-4"
-                      sizes="(max-width: 768px) 100vw, 240px"
+                      className="object-contain p-2"
+                      sizes="(max-width: 768px) 100px, 200px"
                       priority={currentImageIndex === 0}
                       unoptimized
                    />
                 </motion.div>
               </AnimatePresence>
               
-              {/* Carousel Controls */}
               {hasMultipleImages && (
                 <>
                   <button 
                     onClick={prevImage}
-                    className="absolute left-1 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-black/20 hover:bg-black/40 text-black/50 hover:text-black transition-all opacity-0 group-hover/image:opacity-100"
+                    className="hidden md:flex absolute left-1 top-1/2 -translate-y-1/2 z-20 p-1.5 rounded-[10px] bg-black/40 hover:bg-black/80 text-white transition-all opacity-0 group-hover/image:opacity-100"
                   >
-                    <ChevronLeft size={20} />
+                    <ChevronLeft size={16} />
                   </button>
                   <button 
                     onClick={nextImage}
-                    className="absolute right-1 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-black/20 hover:bg-black/40 text-black/50 hover:text-black transition-all opacity-0 group-hover/image:opacity-100"
+                    className="hidden md:flex absolute right-1 top-1/2 -translate-y-1/2 z-20 p-1.5 rounded-[10px] bg-black/40 hover:bg-black/80 text-white transition-all opacity-0 group-hover/image:opacity-100"
                   >
-                    <ChevronRight size={20} />
+                    <ChevronRight size={16} />
                   </button>
                   
-                  {/* Dots Indicator */}
-                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-20 flex gap-1 pointer-events-none">
+                  <div className="md:hidden absolute bottom-1 left-1/2 -translate-x-1/2 z-20 flex gap-0.5 pointer-events-none bg-black/20 px-1.5 py-0.5 rounded-[10px]">
                     {deal.image_urls.map((_, idx) => (
                       <div 
                         key={idx} 
                         className={cn(
-                          "w-1.5 h-1.5 rounded-full transition-all", 
-                          idx === currentImageIndex ? "bg-[#2BD45A]" : "bg-zinc-300"
+                          "w-1 h-1 rounded-[10px] transition-all", 
+                          idx === currentImageIndex ? "bg-white" : "bg-white/40"
                         )}
                       />
                     ))}
                   </div>
                 </>
               )}
-            </div>
+            </>
           ) : (
-            <div className="text-zinc-300 flex flex-col items-center gap-2 justify-center h-full">
-              <Tag size={24} className="md:w-8 md:h-8" />
-              <span className="text-xs font-medium uppercase tracking-wider text-center">Sin imagen</span>
-            </div>
-          )}
-
-          {deal.expires_at && !isExpired && (
-            <div className="absolute top-2 right-2 z-30 pointer-events-none md:hidden">
+            <div className="text-zinc-600 flex flex-col items-center justify-center h-full">
+              <Tag size={24} className="mb-2 text-zinc-400" />
+              <span className="text-[8px] md:text-[10px] font-black uppercase tracking-wider text-center text-zinc-500">Sin imagen</span>
             </div>
           )}
         </div>
+
+        {/* Mobile Voting */}
+        {variant === 'default' && (
+          <div className="flex md:hidden items-center justify-between w-full mt-2 bg-black/20 rounded-[6px] p-1 border border-white/5 shrink-0 shadow-lg">
+            <button 
+              onClick={(e) => { e.preventDefault(); handleVote('cold'); }}
+              className={cn(
+                "p-1.5 rounded-[4px] transition-all hover:bg-white/10 active:scale-95",
+                userVote === 'cold' ? "text-blue-500" : "text-zinc-500 hover:text-white"
+              )}
+            >
+              <ArrowDown size={14} strokeWidth={3} />
+            </button>
+            <span className={cn(
+                "font-black text-[10px] sm:text-xs",
+                userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") :
+                userVote === 'cold' ? "text-blue-500" : "text-white"
+            )}>
+                {votes}°
+            </span>
+            <button 
+              onClick={(e) => { e.preventDefault(); handleVote('hot'); }}
+              className={cn(
+                "p-1.5 rounded-[4px] transition-all hover:bg-white/10 active:scale-95",
+                userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") : "text-zinc-500 hover:text-white"
+              )}
+            >
+              <ArrowUp size={14} strokeWidth={3} />
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* Content Section */}
-      <div className="flex-1 flex flex-col p-4 md:p-6 justify-between relative overflow-hidden">
-        {/* Background Glow */}
-        <div className={cn(
-          "absolute -top-20 -right-20 w-64 h-64 opacity-5 blur-[80px] rounded-full pointer-events-none group-hover:opacity-10 transition-opacity duration-500",
-          isCoupon ? "bg-purple-500" : "bg-[#2BD45A]"
-        )} />
-
-        {/* Header Meta */}
-        <div className="flex items-center justify-between mb-3 relative z-10">
-          <div className="flex items-center gap-2">
-            {isCoupon && (
-              <span className="bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
-                <Ticket size={10} /> Cupón
-              </span>
-            )}
-            {!isCoupon && (
-              <span className="bg-[#2BD45A]/10 text-[#2BD45A] border border-[#2BD45A]/20 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
-                <Tag size={10} /> Oferta
-              </span>
-            )}
-            {deal.user?.username ? (
-              <Link href={`/usuario/${encodeURIComponent(deal.user.username)}`} className="hover:underline z-20 relative flex items-center gap-2">
-                {deal.user?.avatar_url ? (
-                   <div className="relative w-6 h-6 rounded-full overflow-hidden ring-2 ring-white/5">
-                     <Image src={deal.user.avatar_url} alt={deal.user.username} fill className="object-cover rounded-full" sizes="24px" unoptimized />
-                   </div>
-                ) : (
-                   <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center text-[10px] text-white ring-2 ring-white/5">
-                     {deal.user?.username?.[0]?.toUpperCase() || 'U'}
-                   </div>
-                )}
-                <span className="text-zinc-400 max-w-[120px] truncate text-xs">
-                  <span className="text-zinc-200 font-semibold">{deal.user.username}</span>
-                </span>
-              </Link>
-            ) : (
-              <div className="flex items-center gap-2 z-20 relative">
-                <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center text-[10px] text-white ring-2 ring-white/5">
-                  U
-                </div>
-                <span className="text-zinc-400 max-w-[120px] truncate text-xs">
-                  <span className="text-zinc-200 font-semibold">Anónimo</span>
-                </span>
-              </div>
-            )}
-          </div>
-          
-          <span className="flex items-center gap-1.5 bg-zinc-800/80 px-2 py-1 rounded text-[10px] md:text-xs text-zinc-400">
-            <Clock size={12} />
-            <span className="md:hidden">
-              {formatTimeAgo(deal.created_at)}
-            </span>
-            <span className="hidden md:inline">
-              {formatDistanceToNow(new Date(deal.created_at), { addSuffix: true, locale: es })}
-            </span>
-          </span>
-        </div>
-
-        {/* Title */}
-        <Link href={dealLink} className="block mb-2 md:mb-3 group-hover:translate-x-1 transition-transform duration-300 relative z-10">
-          <h3 className="text-lg md:text-xl font-bold text-white leading-tight line-clamp-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-zinc-400">
-            {deal.title}
-          </h3>
-        </Link>
-
-        {/* Price & Store (Unified Layout) */}
-        <div className="flex flex-col gap-2 mb-3 relative z-10">
-          <div className="flex flex-col">
-            <span className="hidden text-xs text-zinc-500 font-medium mb-0.5 uppercase tracking-wider">Precio</span>
-            <div className="flex items-baseline gap-2 flex-wrap">
-              {isCoupon ? (
-                <>
-                  <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
-                    {deal.discount_percentage ? `${deal.discount_percentage}% OFF` : (deal.discount_amount ? `${formatPrice(deal.discount_amount)} OFF` : 'Cupón')}
-                  </span>
-                  {deal.coupon_code && (
-                    <span className="md:hidden ml-1 bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider font-mono self-center">
-                      {deal.coupon_code}
-                    </span>
-                  )}
-                </>
-              ) : (
-                <>
-                  <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#2BD45A] to-emerald-400">
-                    {deal.deal_price ? formatPrice(deal.deal_price) : 'Gratis'}
-                  </span>
-                  {deal.original_price && deal.original_price > (deal.deal_price || 0) && (
-                    <span className="text-sm text-zinc-600 line-through font-medium decoration-2 decoration-zinc-700">
-                      {formatPrice(deal.original_price)}
-                    </span>
-                  )}
-                  {deal.discount_percentage && (
-                    <span className="bg-[#2BD45A] text-black text-xs font-black px-2 py-0.5 rounded ml-1">
-                      -{deal.discount_percentage}%
-                    </span>
-                  )}
-                </>
-              )}
-            </div>
-          </div>
-            
-          {/* Store & Location Info */}
-          <div className="flex flex-wrap items-center gap-2 text-[10px] md:text-xs font-bold tracking-wider mb-2 uppercase">
-            {deal.store && (
-               <>
-                 <div className="flex items-center gap-1.5 text-zinc-300">
-                    <StoreIcon size={14} className="text-zinc-500" />
-                    <span className="text-white">{deal.store.name}</span>
-                 </div>
-                 <span className="text-zinc-700">|</span>
-               </>
-            )}
-            
-            <div className="flex items-center gap-1.5 text-blue-400">
-              {(deal as any).availability === 'in_store' ? (
-                <>
-                  <StoreIcon size={14} className="text-zinc-500" />
-                  <span className="text-zinc-400">Local</span>
-                </>
-              ) : (
-                <>
-                  <Globe size={14} className="text-blue-400" />
-                  <span>Online</span>
-                </>
-              )}
-            </div>
-
-            {deal.category && (
-              <>
-                <span className="text-zinc-700">|</span>
-                <div className={cn("flex items-center gap-1.5", isCoupon ? "text-purple-500" : "text-[#2BD45A]")}>
-                   <Tag size={14} />
-                   <span>{deal.category.name}</span>
-                </div>
-              </>
-            )}
-
-            <span className="text-zinc-700">|</span>
-
-            {/* Shipping info */}
-            <div className="flex items-center gap-1.5 text-zinc-500">
-              <Truck size={14} />
-              <span className="whitespace-nowrap">{(deal as any).shipping_cost === 0 || isFreeShipping ? 'Envío Gratis' : (deal as any).shipping_cost ? `+${formatPrice((deal as any).shipping_cost)}` : 'Envío no incl.'}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Description (Desktop only) */}
-        <div className="hidden md:block mb-4 relative z-10 flex-1 min-h-0 overflow-hidden">
-          <p className="text-zinc-400 text-sm leading-relaxed line-clamp-2">
-            {deal.description}
-          </p>
-        </div>
-
-        {/* Desktop Countdown */}
-        {deal.expires_at && !isExpired && (
-            <div className="hidden md:block mb-2">
-                 <Countdown targetDate={deal.expires_at} className={cn("relative w-full rounded-lg border", isCoupon ? "border-purple-500/10" : "border-white/10")} size="sm" isCoupon={isCoupon} />
-            </div>
-        )}
-
-
-
-        {/* Mobile Countdown */}
-        {deal.expires_at && !isExpired && (
-           <Countdown targetDate={deal.expires_at} className={cn("md:hidden relative w-full mb-3 rounded-lg border", isCoupon ? "border-purple-500/10" : "border-white/10")} size="sm" isCoupon={isCoupon} />
-        )}
-      <div className="flex mt-auto items-center justify-between relative z-10 pt-3 border-t border-white/5">
+      {/* Component C: Info Body */}
+      <div className="flex flex-col p-[8px] md:p-[20px] relative min-w-0 justify-between overflow-hidden h-full">
         
-        {variant === 'default' && (
-          <>
-            {/* Mobile Vote Actions (Shown only on mobile) */}
-            <div className="md:hidden flex items-center gap-1 mr-2 bg-white/5 rounded-lg p-1">
+        <div className="flex flex-col gap-1 md:gap-2 min-w-0 w-full overflow-hidden">
+            {/* Desktop Header Fragment */}
+            <div className="hidden md:flex items-center justify-between w-full gap-2">
+               {renderHeaderLeft()}
+               {renderHeaderRight()}
+            </div>
+
+            {/* Body */}
+            {deal.expires_at && !isExpired && (
+                <div className="flex items-center gap-1.5 text-rose-500 mb-0.5 mt-0.5">
+                    <Clock size={12} className="stroke-[2.5px] shrink-0 md:w-3.5 md:h-3.5" />
+                    <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider flex items-center gap-1">Termina en <Countdown targetDate={deal.expires_at} className="bg-transparent border-none text-current p-0 m-0 font-bold inline" /></span>
+                </div>
+            )}
+            
+            <Link href={dealLink} className="block group/link" onClick={(e) => e.stopPropagation()}>
+                <h3 className="text-white font-bold text-sm md:text-xl leading-tight line-clamp-2 md:line-clamp-1 group-hover/link:text-[#07B5A7] transition-colors">
+                  {deal.title}
+                </h3>
+            </Link>
+
+            <p className="text-zinc-400 text-[10px] md:text-sm line-clamp-2 mt-0.5 md:mt-1 leading-relaxed">
+                {deal.description}
+            </p>
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-between mt-2 md:mt-4 w-full gap-1 pt-2 border-t border-white/5">
+            <div className="flex-1 flex flex-col justify-center min-w-0 pr-1 gap-1 md:gap-1.5">
+                {isCoupon ? (
+                  <>
+                    <div className="flex items-center flex-nowrap gap-1.5 md:gap-2">
+                        <span className="text-lg md:text-3xl font-black text-white leading-none shrink-0 tracking-tight">
+                            {deal.discount_percentage ? `${deal.discount_percentage}% OFF` : (deal.discount_amount ? `${formatPrice(deal.discount_amount)} OFF` : 'Cupón')}
+                        </span>
+                        {deal.coupon_code && (
+                            <span className="bg-purple-500/20 text-purple-400 px-1.5 py-0.5 md:px-2 md:py-0.5 rounded-[10px] text-[10px] md:text-xs font-black uppercase font-mono border border-purple-500/30 shrink-0">
+                                {deal.coupon_code}
+                            </span>
+                        )}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-center flex-nowrap gap-1.5 md:gap-2">
+                        <span className="text-lg md:text-2xl font-black text-[#07B5A7] leading-none shrink-0 tracking-tight">
+                            {deal.deal_price ? formatPrice(deal.deal_price) : 'Gratis'}
+                        </span>
+                        {deal.original_price && deal.original_price > (deal.deal_price || 0) && (
+                            <span className="text-xs md:text-sm font-medium text-zinc-500 line-through decoration-red-500 decoration-1 shrink-0">
+                                {formatPrice(deal.original_price)}
+                            </span>
+                        )}
+                        {deal.discount_percentage && (
+                            <span className="bg-[#a3e635] text-black text-[10px] sm:text-[11px] md:text-xs font-black px-1.5 py-0.5 rounded-[6px] leading-none flex items-center shrink-0">
+                                -{deal.discount_percentage}%
+                            </span>
+                        )}
+                    </div>
+                    
+                    <div className="flex items-center gap-1 text-[9px] md:text-xs font-bold uppercase tracking-wide">
+                        <Truck size={12} className={cn("md:w-3.5 md:h-3.5", isFreeShipping ? "text-[#07B5A7]" : "text-rose-500")} strokeWidth={2.5}/>
+                        <span className={cn(isFreeShipping ? "text-[#07B5A7]" : "text-rose-500")}>
+                            {isFreeShipping ? 'Envío Gratis' : 'Ver Envío'}
+                        </span>
+                    </div>
+                  </>
+                )}
+            </div>
+            
+            {isCoupon ? (
                 <button 
-                    onClick={(e) => { e.preventDefault(); handleVote('hot'); }} 
-                    className={cn("p-2 rounded-md active:scale-90 transition-transform", userVote === 'hot' ? "text-[#2BD45A] bg-white/5" : "text-zinc-500")}
-                  >
-                    <ArrowUp size={18} />
-                  </button>
-                  <span className={cn("text-sm font-bold min-w-[20px] text-center", votes > 0 ? "text-white" : "text-zinc-500")}>{votes}</span>
-                  <button 
-                    onClick={(e) => { e.preventDefault(); handleVote('cold'); }} 
-                    className={cn("p-2 rounded-md active:scale-90 transition-transform", userVote === 'cold' ? "text-blue-500 bg-white/5" : "text-zinc-500")}
-                  >
-                    <ArrowDown size={18} />
-                  </button>
-            </div>
-
-            <div className="flex items-center gap-1">
-              <Link 
-                href={`${dealLink}#comments`}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 transition-all active:scale-95 group/btn"
-              >
-                <MessageSquare size={18} className="group-hover/btn:scale-110 transition-transform" />
-                <span className="text-sm font-semibold">{deal.comments_count || 0}</span>
-              </Link>
-
-              <button 
-                onClick={handleShare}
-                className="p-3 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 transition-all active:scale-90"
-                title="Compartir"
-              >
-                <Share2 size={18} />
-              </button>
-
-              <button 
-                onClick={handleSave}
-                className={cn(
-                  "p-3 rounded-xl transition-all hover:bg-white/5 active:scale-90",
-                  isSaved ? "text-[#2BD45A]" : "text-zinc-400 hover:text-white"
-                )}
-                title="Guardar"
-              >
-                <Bookmark size={18} className={cn(isSaved ? "fill-current" : "")} />
-              </button>
-
-              <button 
-                onClick={() => setIsReportModalOpen(true)}
-                className="hidden md:block p-3 rounded-xl text-zinc-400 hover:text-red-400 hover:bg-white/5 transition-all active:scale-90"
-                title="Reportar"
-              >
-                <Flag size={18} />
-              </button>
-            </div>
-
-            {isCoupon ? (
-              <button 
-                onClick={handleCopyCode}
-                className={cn(
-                  "hidden md:flex items-center group/coupon relative h-[42px] ml-2 min-w-[240px] rounded-full border-2 border-dashed border-purple-500/50 hover:border-purple-500 transition-colors bg-white/5 overflow-hidden",
-                  isCopied ? "border-green-500/50 hover:border-green-500" : ""
-                )}
-                onClickCapture={(e) => e.stopPropagation()}
-              >
-                <div className="flex-1 px-4 text-base font-mono font-bold text-zinc-300 truncate text-left">
-                    {deal.coupon_code || 'Ver Cupón'}
-                </div>
-                <div className={cn(
-                  "h-full px-4 flex items-center gap-2 text-sm font-bold text-white transition-colors",
-                  isCopied ? "bg-green-500" : "bg-purple-500 group-hover/coupon:bg-purple-600"
-                )}>
-                    <span>{isCopied ? 'Copiado' : 'Copiar y visitar'}</span>
-                    {isCopied ? <Check size={14} strokeWidth={3} /> : <ExternalLink size={14} strokeWidth={3} />}
-                </div>
-              </button>
+                  onClick={handleCopyCode}
+                  className={cn(
+                      "flex items-center gap-1 md:gap-1.5 px-2 md:px-4 h-[28px] md:h-[36px] shrink-0 rounded-[10px] font-black text-[8px] md:text-xs uppercase tracking-wider transition-all ml-1 md:ml-2",
+                      isCopied ? "bg-white text-black" : "bg-[#07B5A7] text-black hover:opacity-90"
+                  )}
+                  onClickCapture={(e) => e.stopPropagation()}
+                >
+                    <span className="hidden sm:inline">{isCopied ? 'COPIADO' : 'VER CUPÓN'}</span>
+                    <span className="sm:hidden">{isCopied ? 'OK' : 'CUPÓN'}</span>
+                    <ExternalLink size={12} strokeWidth={3} className={cn("md:w-4 md:h-4", isCopied ? "hidden" : "block")} />
+                    <Check size={12} strokeWidth={3} className={cn("md:w-4 md:h-4", isCopied ? "block" : "hidden")} />
+                </button>
             ) : (
-              <a 
-                href={deal.deal_url} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="hidden md:flex items-center gap-2 bg-[#2BD45A] text-black font-black px-6 py-3 rounded-xl transition-all hover:scale-105 active:scale-95 hover:shadow-[0_0_20px_rgba(43,212,90,0.3)] text-sm uppercase tracking-wide ml-2"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <span>Ver Oferta</span>
-                <ExternalLink size={16} strokeWidth={3} />
-              </a>
+                <a 
+                  href={deal.deal_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-1 md:gap-1.5 px-2 md:px-4 h-[28px] md:h-[36px] bg-[#07B5A7] hover:opacity-90 text-black font-black text-[8px] md:text-xs shrink-0 rounded-[10px] uppercase tracking-wider transition-colors ml-1 md:ml-2"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                    <span className="hidden sm:inline">IR AL CHOLLO</span>
+                    <span className="sm:hidden">VER</span>
+                    <ArrowUpRight size={12} strokeWidth={3} className="md:w-4 md:h-4" />
+                </a>
             )}
-
-            {/* Mobile External Link (Icon only or compacted) */}
-            {isCoupon ? (
-              <button 
-                onClick={handleCopyCode}
-                className={cn(
-                  "md:hidden flex items-center justify-center bg-purple-500 text-white p-3 rounded-xl transition-all active:scale-95 shadow-[0_0_15px_rgba(168,85,247,0.3)] ml-2",
-                  isCopied ? "bg-green-500 shadow-green-500/30" : ""
-                )}
-                onClickCapture={(e) => e.stopPropagation()}
-                title={deal.coupon_code || 'Copiar cupón'}
-              >
-                {isCopied ? <Check size={20} strokeWidth={3} /> : <ExternalLink size={20} strokeWidth={3} />}
-              </button>
-            ) : (
-              <a 
-                href={deal.deal_url} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="md:hidden flex items-center justify-center bg-[#2BD45A] text-black p-3 rounded-xl transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(43,212,90,0.3)] ml-2"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <ExternalLink size={20} strokeWidth={3} />
-              </a>
-            )}
-          </>
-        )}
+        </div>
 
         {variant === 'moderation' && (
-          <div className="flex items-center gap-3 w-full">
+          <div className="flex items-center gap-2 md:gap-3 w-full mt-3 md:mt-4 pt-3 md:pt-4 border-t border-white/5">
              <button 
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onReject?.();
-                }}
-                className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-500 px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-colors h-[42px]"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onReject?.(); }}
+                className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-500 h-[32px] md:h-[36px] rounded-[10px] text-[10px] md:text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
               >
-                <X className="w-4 h-4" /> <span className="hidden sm:inline">Rechazar</span>
+                <X size={14} className="md:w-4 md:h-4" /> Rechazar
               </button>
-              
               <button 
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onApprove?.();
-                }}
-                className="flex-1 bg-[#2BD45A]/10 hover:bg-[#2BD45A]/20 text-[#2BD45A] px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-colors h-[42px]"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onApprove?.(); }}
+                className="flex-1 bg-[#07B5A7]/10 hover:bg-[#07B5A7]/20 text-[#07B5A7] h-[32px] md:h-[36px] rounded-[10px] text-[10px] md:text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
               >
-                <Check className="w-4 h-4" /> <span className="hidden sm:inline">Aprobar</span>
+                <Check size={14} className="md:w-4 md:h-4" /> Aprobar
               </button>
           </div>
         )}
+
       </div>
+      
+      </div>
+
+      <ReportModal 
+        isOpen={isReportModalOpen} 
+        onClose={() => setIsReportModalOpen(false)} 
+        targetId={deal.id} 
+        targetType="deal" 
+      />
     </div>
-    
-    <ReportModal 
-      isOpen={isReportModalOpen} 
-      onClose={() => setIsReportModalOpen(false)} 
-      targetId={deal.id} 
-      targetType="deal" 
-    />
-  </div>
-)
+  )
 }

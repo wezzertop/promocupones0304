@@ -113,14 +113,14 @@ export default function HelpCenterPage() {
         {/* Search Bar */}
         <div className="max-w-2xl mx-auto relative group">
           <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-zinc-500 group-focus-within:text-[#2BD45A] transition-colors" />
+            <Search className="h-5 w-5 text-zinc-500 group-focus-within:text-[#07B5A7] transition-colors" />
           </div>
           <input
             type="text"
             placeholder="Buscar ayuda (ej. karma, publicar, cuenta)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#18191c] border border-[#2d2e33] text-white text-lg rounded-2xl pl-12 pr-6 py-4 focus:outline-none focus:border-[#2BD45A]/50 focus:ring-2 focus:ring-[#2BD45A]/20 transition-all placeholder:text-zinc-600 shadow-xl"
+            className="w-full bg-[#222222] border border-[#2d2e33] text-white text-lg rounded-2xl pl-12 pr-6 py-4 focus:outline-none focus:border-[#07B5A7]/50 focus:ring-2 focus:ring-[#07B5A7]/20 transition-all placeholder:text-zinc-600 shadow-xl"
           />
         </div>
       </div>
@@ -137,11 +137,11 @@ export default function HelpCenterPage() {
                 onClick={() => setSelectedCategory(isSelected ? null : cat.id)}
                 className={`p-6 rounded-2xl border transition-all text-left group ${
                   isSelected 
-                    ? 'bg-[#2BD45A]/10 border-[#2BD45A] ring-1 ring-[#2BD45A]' 
-                    : 'bg-[#18191c] border-[#2d2e33] hover:border-[#2BD45A]/30 hover:bg-[#222327]'
+                    ? 'bg-[#07B5A7]/10 border-[#07B5A7] ring-1 ring-[#07B5A7]' 
+                    : 'bg-[#222222] border-[#2d2e33] hover:border-[#07B5A7]/30 hover:bg-[#222327]'
                 }`}
               >
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 transition-colors ${isSelected ? 'bg-[#2BD45A] text-black' : `${cat.bg} ${cat.color}`}`}>
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 transition-colors ${isSelected ? 'bg-[#07B5A7] text-black' : `${cat.bg} ${cat.color}`}`}>
                   <Icon size={20} />
                 </div>
                 <h3 className={`font-bold mb-1 transition-colors ${isSelected ? 'text-white' : 'text-zinc-300 group-hover:text-white'}`}>
@@ -162,11 +162,11 @@ export default function HelpCenterPage() {
           filteredFAQs.map((faq) => (
             <div 
               key={faq.id} 
-              className="bg-[#18191c] border border-[#2d2e33] rounded-2xl overflow-hidden hover:border-[#2BD45A]/30 transition-all group"
+              className="bg-[#222222] border border-[#2d2e33] rounded-2xl overflow-hidden hover:border-[#07B5A7]/30 transition-all group"
             >
               <details className="group/details">
                 <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
-                  <h3 className="text-lg font-bold text-white group-hover:text-[#2BD45A] transition-colors pr-8">
+                  <h3 className="text-lg font-bold text-white group-hover:text-[#07B5A7] transition-colors pr-8">
                     {faq.question}
                   </h3>
                   <div className="w-8 h-8 rounded-full bg-[#222327] flex items-center justify-center text-zinc-400 group-open/details:rotate-90 transition-transform">
@@ -180,7 +180,7 @@ export default function HelpCenterPage() {
             </div>
           ))
         ) : (
-          <div className="text-center py-20 bg-[#18191c] rounded-3xl border border-[#2d2e33] border-dashed">
+          <div className="text-center py-20 bg-[#222222] rounded-3xl border border-[#2d2e33] border-dashed">
             <div className="w-16 h-16 bg-[#222327] rounded-full flex items-center justify-center mx-auto mb-4 text-zinc-500">
               <Search size={32} />
             </div>
@@ -190,7 +190,7 @@ export default function HelpCenterPage() {
             </p>
             <button 
               onClick={() => { setSearchQuery(''); setSelectedCategory(null) }}
-              className="mt-6 text-[#2BD45A] font-medium hover:underline"
+              className="mt-6 text-[#07B5A7] font-medium hover:underline"
             >
               Limpiar filtros
             </button>
@@ -206,7 +206,7 @@ export default function HelpCenterPage() {
         </p>
         <Link 
           href="/contact" 
-          className="inline-flex items-center justify-center px-8 py-4 bg-[#222327] hover:bg-[#2d2e33] text-white font-bold rounded-xl border border-[#2d2e33] hover:border-[#2BD45A]/50 transition-all gap-2"
+          className="inline-flex items-center justify-center px-8 py-4 bg-[#222327] hover:bg-[#2d2e33] text-white font-bold rounded-xl border border-[#2d2e33] hover:border-[#07B5A7]/50 transition-all gap-2"
         >
           <MessageSquare size={18} />
           Contactar Soporte

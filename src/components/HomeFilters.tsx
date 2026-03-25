@@ -17,10 +17,10 @@ export default function HomeFilters({ dealsCount }: { dealsCount: number }) {
   }
 
   return (
-    <div className={`flex flex-col sm:flex-row items-center justify-between gap-2 md:gap-4 sticky top-14 z-20 bg-[#0f1012]/95 backdrop-blur-xl py-1 md:py-4 -mx-2 px-2 md:-mx-4 md:px-4 lg:-mx-8 lg:px-8 border-b border-[#2d2e33]/50 transition-transform duration-300 ${
+    <div className={`flex flex-col sm:flex-row items-center justify-between gap-2 md:gap-4 sticky top-14 z-20 bg-[#161616]/95 backdrop-blur-xl py-1 md:py-4 -mx-2 px-2 md:-mx-4 md:px-4 lg:-mx-8 lg:px-8 border-b border-[#2d2e33]/50 transition-transform duration-300 ${
       isHeaderVisible ? 'translate-y-0' : '-translate-y-full'
     }`}>
-      <div className="flex items-center gap-2 p-1 bg-[#18191c] rounded-xl border border-[#2d2e33] overflow-x-auto max-w-full scrollbar-hide w-full sm:w-auto justify-center">
+      <div className="flex items-center gap-2 p-1 bg-[#222222] rounded-xl border border-[#2d2e33] overflow-x-auto max-w-full scrollbar-hide w-full sm:w-auto justify-center">
         <button 
           onClick={() => handleFilterChange('foryou')}
           className={`flex-1 sm:flex-none justify-center flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-all whitespace-nowrap ${
@@ -29,7 +29,7 @@ export default function HomeFilters({ dealsCount }: { dealsCount: number }) {
               : 'text-gray-400 hover:text-white hover:bg-[#222327]'
           }`}
         >
-          <Sparkles size={14} className={`md:w-4 md:h-4 ${currentFilter === 'foryou' ? "text-[#2BD45A]" : ""}`} />
+          <Sparkles size={14} className={`md:w-4 md:h-4 ${currentFilter === 'foryou' ? "text-[#07B5A7]" : ""}`} />
           Para ti
         </button>
         <button 

@@ -1,40 +1,59 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #0f1012; /* Darker, deeper background */
-  --color-surface: #18191c; /* Slightly lighter for cards */
-  --color-surface-hover: #222327;
-  --color-foreground: #ffffff;
-  --color-primary: #2BD45A; /* Keep the green */
-  --color-primary-glow: rgba(43, 212, 90, 0.3);
-  --color-secondary: #9CA3AF;
-  --color-muted: #2d2e33;
-  --color-border: #2d2e33;
-  
+  --color-background: #0E0E0E;
+  /* Negro Tinta */
+  --color-surface: #222222;
+  /* Negro Carbón */
+  --color-surface-hover: #2a2a2a;
+  --color-foreground: #FDFDFD;
+  /* Blanco Zinc */
+  --color-primary: #07B5A7;
+  /* Verde Mar Claro */
+  --color-primary-glow: rgba(7, 181, 167, 0.3);
+  --color-secondary: #CECECE;
+  /* Gris Lobo */
+  --color-muted: #333333;
+  --color-border: #333333;
+
   --font-sans: 'Inter', system-ui, sans-serif;
-  
+
   --animate-fade-in: fade-in 0.5s ease-out;
   --animate-slide-up: slide-up 0.5s ease-out;
-  
+
   @keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
   }
-  
+
   @keyframes slide-up {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
 }
 
 :root {
-  --background: #0f1012;
-  --foreground: #ffffff;
+  --background: #161616;
+  --foreground: #FDFDFD;
 }
 
 html {
-  overflow-y: scroll; /* Force vertical scrollbar to prevent layout shift */
-  scrollbar-gutter: stable; /* Reserve space for scrollbar */
+  overflow-y: scroll;
+  /* Force vertical scrollbar to prevent layout shift */
+  scrollbar-gutter: stable;
+  /* Reserve space for scrollbar */
   min-height: 100vh;
   width: 100%;
 }
@@ -43,7 +62,8 @@ body {
   background-color: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans);
-  overflow-x: hidden; /* Prevent horizontal scroll */
+  overflow-x: hidden;
+  /* Prevent horizontal scroll */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   touch-action: manipulation;
@@ -52,7 +72,10 @@ body {
 
 /* Prevent zoom on inputs in iOS */
 @media screen and (max-width: 768px) {
-  input, select, textarea {
+
+  input,
+  select,
+  textarea {
     font-size: 16px !important;
   }
 }
@@ -65,6 +88,7 @@ body {
 
 @utility card-hover {
   transition: all 0.3s ease;
+
   &:hover {
     transform: translateY(-4px);
     box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
@@ -80,24 +104,29 @@ body {
 ::-webkit-scrollbar {
   width: 8px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #0f1012; 
+  background: #161616;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #2d2e33; 
+  background: #2d2e33;
   border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f4148; 
+  background: #3f4148;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
 .scrollbar-hide::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .scrollbar-hide {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }

@@ -133,7 +133,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
             />
           </>
         ) : (
-          <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-[#18191c] rounded-3xl border border-[#2d2e33] border-dashed">
+          <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-[#222222] rounded-3xl border border-[#2d2e33] border-dashed">
             <div className="w-16 h-16 bg-[#222327] rounded-full flex items-center justify-center mb-4 text-gray-500">
               <Tag size={32} />
             </div>
@@ -141,7 +141,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
             <p className="text-gray-400 max-w-md mb-6">
               Parece que todo está tranquilo hoy. ¡Sé el héroe que necesitamos y publica la primera oferta del día!
             </p>
-            <button className="px-6 py-3 bg-[#2BD45A] hover:bg-[#25b84e] text-black font-bold rounded-xl transition-colors shadow-lg shadow-[#2BD45A]/20">
+            <button className="px-6 py-3 bg-[#07B5A7] hover:bg-[#25b84e] text-black font-bold rounded-xl transition-colors shadow-lg shadow-[#07B5A7]/20">
               Publicar Oferta
             </button>
           </div>

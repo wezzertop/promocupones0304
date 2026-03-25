@@ -16,8 +16,8 @@ export default function Countdown({ targetDate, className, size = 'sm', minimal 
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
   const [isExpired, setIsExpired] = useState(false)
 
-  const colorClass = isCoupon ? "text-purple-500" : "text-[#2BD45A]"
-  const borderColorClass = isCoupon ? "border-purple-500/30" : "border-[#2BD45A]/30"
+  const colorClass = isCoupon ? "text-purple-500" : "text-[#07B5A7]"
+  const borderColorClass = isCoupon ? "border-purple-500/30" : "border-[#07B5A7]/30"
 
   useEffect(() => {
     const calculateTimeLeft = () => {

@@ -46,13 +46,13 @@ export default function UpdatePasswordPage() {
 
         <div className="glass-panel p-8 rounded-2xl border border-white/10 relative overflow-hidden">
             {/* Background decorative gradient */}
-            <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#2BD45A]/20 rounded-full blur-3xl pointer-events-none"></div>
-            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-[#2BD45A]/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#07B5A7]/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-[#07B5A7]/20 rounded-full blur-3xl pointer-events-none"></div>
 
           {success ? (
             <div className="text-center py-4 relative z-10">
               <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8 text-[#2BD45A]" />
+                <CheckCircle className="w-8 h-8 text-[#07B5A7]" />
               </div>
               <h3 className="text-xl font-bold text-white mb-2">¡Contraseña actualizada!</h3>
               <p className="text-zinc-400 mb-6 text-sm">
@@ -61,7 +61,7 @@ export default function UpdatePasswordPage() {
               </p>
               <Link 
                 href="/auth/login"
-                className="inline-flex items-center text-[#2BD45A] hover:underline"
+                className="inline-flex items-center text-[#07B5A7] hover:underline"
               >
                 Ir al inicio de sesión ahora <ArrowRight className="w-4 h-4 ml-1" />
               </Link>
@@ -86,7 +86,7 @@ export default function UpdatePasswordPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600"
+                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#07B5A7]/50 focus:border-[#07B5A7]/50 transition-all placeholder:text-zinc-600"
                       placeholder="••••••••"
                       minLength={6}
                     />
@@ -97,7 +97,7 @@ export default function UpdatePasswordPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#2BD45A] hover:bg-[#25b84e] text-black font-bold py-3.5 rounded-xl shadow-lg shadow-[#2BD45A]/20 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full bg-[#07B5A7] hover:bg-[#25b84e] text-black font-bold py-3.5 rounded-xl shadow-lg shadow-[#07B5A7]/20 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <Loader2 className="w-5 h-5 animate-spin" />

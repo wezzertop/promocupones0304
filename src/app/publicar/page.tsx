@@ -269,7 +269,7 @@ export default function CreateDealPage() {
               className={cn(
                 "py-4 font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all",
                 publicationType === 'deal' 
-                  ? "bg-[#2BD45A]/10 text-[#2BD45A] border-b-2 border-[#2BD45A]" 
+                  ? "bg-[#07B5A7]/10 text-[#07B5A7] border-b-2 border-[#07B5A7]" 
                   : "text-zinc-500 hover:text-white hover:bg-white/5"
               )}
             >
@@ -302,7 +302,7 @@ export default function CreateDealPage() {
                     Título
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                        <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#07B5A7] cursor-help" />
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>Escribe un título claro y descriptivo.</p>
@@ -320,7 +320,7 @@ export default function CreateDealPage() {
                       maxLength={MAX_TITLE}
                       onChange={(e) => setTitleLength(e.target.value.length)}
                       placeholder={publicationType === 'deal' ? "Ej: MacBook Air M2 15 pulgadas" : "Ej: 20% de descuento en toda la tienda"}
-                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-16 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600"
+                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-16 py-3 focus:outline-none focus:ring-2 focus:ring-[#07B5A7]/50 focus:border-[#07B5A7]/50 transition-all placeholder:text-zinc-600"
                     />
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-zinc-500 font-medium">
                       {titleLength}/{MAX_TITLE}
@@ -364,7 +364,7 @@ export default function CreateDealPage() {
                       {publicationType === 'deal' ? 'Precio Oferta' : 'Precio con Descuento (Opcional)'}
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                          <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#07B5A7] cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>El precio final con el descuento aplicado.</p>
@@ -373,7 +373,7 @@ export default function CreateDealPage() {
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <DollarSign className={cn("h-4 w-4", publicationType === 'deal' ? "text-[#2BD45A]" : "text-zinc-500")} />
+                      <DollarSign className={cn("h-4 w-4", publicationType === 'deal' ? "text-[#07B5A7]" : "text-zinc-500")} />
                     </div>
                     <input
                       name="price"
@@ -381,7 +381,7 @@ export default function CreateDealPage() {
                       type="number"
                       step="0.01"
                       placeholder="0.00"
-                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-9 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600"
+                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-9 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#07B5A7]/50 focus:border-[#07B5A7]/50 transition-all placeholder:text-zinc-600"
                     />
                     </div>
                   </div>
@@ -390,7 +390,7 @@ export default function CreateDealPage() {
                       {publicationType === 'deal' ? 'Precio Original' : 'Precio Normal (Opcional)'}
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                          <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#07B5A7] cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>El precio regular sin descuento. Calcularemos el % de ahorro automáticamente.</p>
@@ -406,7 +406,7 @@ export default function CreateDealPage() {
                       type="number"
                       step="0.01"
                       placeholder="0.00"
-                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-9 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600"
+                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-9 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#07B5A7]/50 focus:border-[#07B5A7]/50 transition-all placeholder:text-zinc-600"
                     />
                     </div>
                   </div>
@@ -474,7 +474,7 @@ export default function CreateDealPage() {
                         Cupón (Opcional)
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                            <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#07B5A7] cursor-help" />
                           </TooltipTrigger>
                           <TooltipContent>
                             <p>Código necesario para obtener el descuento.</p>
@@ -489,7 +489,7 @@ export default function CreateDealPage() {
                           name="coupon_code"
                           type="text"
                           placeholder="Ej: AHORRO20"
-                          className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600 uppercase"
+                          className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#07B5A7]/50 focus:border-[#07B5A7]/50 transition-all placeholder:text-zinc-600 uppercase"
                         />
                       </div>
                     </div>
@@ -500,7 +500,7 @@ export default function CreateDealPage() {
                       URL de la oferta
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                          <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#07B5A7] cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>Enlace directo al producto o servicio.</p>
@@ -516,7 +516,7 @@ export default function CreateDealPage() {
                         required
                         type="url"
                         placeholder="https://tienda.com/producto"
-                        className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600"
+                        className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#07B5A7]/50 focus:border-[#07B5A7]/50 transition-all placeholder:text-zinc-600"
                       />
                     </div>
                   </div>
@@ -529,7 +529,7 @@ export default function CreateDealPage() {
                       Disponibilidad
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                          <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#07B5A7] cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>¿Dónde se puede comprar esta oferta?</p>
@@ -542,7 +542,7 @@ export default function CreateDealPage() {
                       </div>
                       <select
                         name="availability"
-                        className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all appearance-none cursor-pointer"
+                        className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#07B5A7]/50 focus:border-[#07B5A7]/50 transition-all appearance-none cursor-pointer"
                       >
                         <option value="online" className="bg-zinc-900">Online</option>
                         <option value="in_store" className="bg-zinc-900">Tienda Física</option>
@@ -554,7 +554,7 @@ export default function CreateDealPage() {
                       Tipo de Envío
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                          <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#07B5A7] cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>Selecciona si el envío requiere membresía.</p>
@@ -567,7 +567,7 @@ export default function CreateDealPage() {
                       </div>
                       <select
                         name="shipping_type"
-                        className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all appearance-none cursor-pointer"
+                        className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#07B5A7]/50 focus:border-[#07B5A7]/50 transition-all appearance-none cursor-pointer"
                       >
                         <option value="none" className="bg-zinc-900">No especificado / Con costo</option>
                         <option value="free" className="bg-zinc-900">Envío Gratis (Para todos)</option>
@@ -586,7 +586,7 @@ export default function CreateDealPage() {
                       Costo de Envío (Opcional)
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                          <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#07B5A7] cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>Deja en 0 si el envío es gratis.</p>
@@ -602,7 +602,7 @@ export default function CreateDealPage() {
                         type="number"
                         step="0.01"
                         placeholder="0.00"
-                        className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600"
+                        className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#07B5A7]/50 focus:border-[#07B5A7]/50 transition-all placeholder:text-zinc-600"
                       />
                     </div>
                   </div>
@@ -615,7 +615,7 @@ export default function CreateDealPage() {
                       Empieza
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                          <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#07B5A7] cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>Fecha de inicio de la oferta.</p>
@@ -625,7 +625,7 @@ export default function CreateDealPage() {
                     <input
                       name="start_date"
                       type="datetime-local"
-                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600 [color-scheme:dark]"
+                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#07B5A7]/50 focus:border-[#07B5A7]/50 transition-all placeholder:text-zinc-600 [color-scheme:dark]"
                     />
                   </div>
                   <div>
@@ -633,7 +633,7 @@ export default function CreateDealPage() {
                       Termina
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                          <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#07B5A7] cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>Fecha de expiración de la oferta.</p>
@@ -643,7 +643,7 @@ export default function CreateDealPage() {
                     <input
                       name="expires_at"
                       type="datetime-local"
-                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600 [color-scheme:dark]"
+                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#07B5A7]/50 focus:border-[#07B5A7]/50 transition-all placeholder:text-zinc-600 [color-scheme:dark]"
                     />
                     <p className="text-xs text-zinc-500 mt-1.5 ml-1">
                       Si no seleccionas fecha, expirará en 2 días automáticamente.
@@ -657,7 +657,7 @@ export default function CreateDealPage() {
                     Imágenes
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                        <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#07B5A7] cursor-help" />
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>Puedes subir hasta 4 imágenes. La primera será la principal.</p>
@@ -697,10 +697,10 @@ export default function CreateDealPage() {
                           
                           <label 
                             htmlFor="image-upload"
-                            className="w-full aspect-square bg-black/20 border border-white/10 text-zinc-400 hover:text-white hover:border-[#2BD45A]/50 rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all group gap-2"
+                            className="w-full aspect-square bg-black/20 border border-white/10 text-zinc-400 hover:text-white hover:border-[#07B5A7]/50 rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all group gap-2"
                           >
-                            <div className="p-3 rounded-full bg-zinc-800/50 group-hover:bg-[#2BD45A]/20 transition-colors">
-                              <ImageIcon className="h-6 w-6 text-zinc-500 group-hover:text-[#2BD45A]" />
+                            <div className="p-3 rounded-full bg-zinc-800/50 group-hover:bg-[#07B5A7]/20 transition-colors">
+                              <ImageIcon className="h-6 w-6 text-zinc-500 group-hover:text-[#07B5A7]" />
                             </div>
                             <span className="text-xs text-zinc-500 group-hover:text-zinc-300 text-center px-2">Agregar imágenes</span>
                           </label>
@@ -716,7 +716,7 @@ export default function CreateDealPage() {
                     Categoría
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                        <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#07B5A7] cursor-help" />
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>Selecciona la categoría que mejor describa tu oferta.</p>
@@ -730,7 +730,7 @@ export default function CreateDealPage() {
                     <select
                       name="category_id"
                       required
-                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all appearance-none cursor-pointer"
+                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#07B5A7]/50 focus:border-[#07B5A7]/50 transition-all appearance-none cursor-pointer"
                     >
                       <option value="" className="bg-zinc-900">Selecciona una categoría</option>
                       {categories.map((cat) => (
@@ -748,7 +748,7 @@ export default function CreateDealPage() {
                     Tienda
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                        <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#07B5A7] cursor-help" />
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>Selecciona la tienda o escribe el nombre si no aparece.</p>
@@ -776,7 +776,7 @@ export default function CreateDealPage() {
                           setTimeout(() => setIsStoreOpen(false), 200)
                         }}
                         placeholder="Buscar o agregar tienda..."
-                        className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-10 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600"
+                        className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-10 py-3 focus:outline-none focus:ring-2 focus:ring-[#07B5A7]/50 focus:border-[#07B5A7]/50 transition-all placeholder:text-zinc-600"
                       />
                       
                       {selectedStore && (
@@ -817,7 +817,7 @@ export default function CreateDealPage() {
                                 className="w-full text-left px-4 py-2 hover:bg-white/5 text-zinc-300 hover:text-white flex items-center justify-between transition-colors"
                               >
                                 <span>{store.name}</span>
-                                {selectedStore?.id === store.id && <Check className="h-4 w-4 text-[#2BD45A]" />}
+                                {selectedStore?.id === store.id && <Check className="h-4 w-4 text-[#07B5A7]" />}
                               </button>
                             ))}
                           
@@ -830,7 +830,7 @@ export default function CreateDealPage() {
                                 setSelectedStore(null)
                                 setIsStoreOpen(false)
                               }}
-                              className="w-full text-left px-4 py-2 hover:bg-white/5 text-[#2BD45A] font-medium transition-colors"
+                              className="w-full text-left px-4 py-2 hover:bg-white/5 text-[#07B5A7] font-medium transition-colors"
                             >
                               Usar "{storeSearch}" como nueva tienda
                             </button>
@@ -849,7 +849,7 @@ export default function CreateDealPage() {
                     Ubicación (Opcional)
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                        <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#07B5A7] cursor-help" />
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>Si es una oferta física, marca la ubicación en el mapa.</p>
@@ -880,7 +880,7 @@ export default function CreateDealPage() {
                     Descripción
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#2BD45A] cursor-help" />
+                        <HelpCircle className="h-4 w-4 text-zinc-500 hover:text-[#07B5A7] cursor-help" />
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>Detalla características, condiciones y por qué es una buena oferta.</p>
@@ -898,7 +898,7 @@ export default function CreateDealPage() {
                       maxLength={MAX_DESC}
                       onChange={(e) => setDescLength(e.target.value.length)}
                       placeholder={publicationType === 'deal' ? "Describe los detalles de la oferta..." : "Describe las condiciones del cupón, restricciones, etc..."}
-                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 pb-8 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600 resize-none"
+                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 pb-8 focus:outline-none focus:ring-2 focus:ring-[#07B5A7]/50 focus:border-[#07B5A7]/50 transition-all placeholder:text-zinc-600 resize-none"
                     />
                     <div className="absolute bottom-2 right-3 text-xs text-zinc-500 font-medium bg-black/40 px-2 py-0.5 rounded">
                       {descLength}/{MAX_DESC}
@@ -913,7 +913,7 @@ export default function CreateDealPage() {
                 className={cn(
                   "w-full text-black font-bold py-4 rounded-xl shadow-lg transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2",
                   publicationType === 'deal' 
-                    ? "bg-[#2BD45A] hover:bg-[#25b84e] shadow-[#2BD45A]/20" 
+                    ? "bg-[#07B5A7] hover:bg-[#25b84e] shadow-[#07B5A7]/20" 
                     : "bg-purple-500 hover:bg-purple-600 shadow-purple-500/20 text-white"
                 )}
               >

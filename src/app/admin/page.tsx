@@ -27,13 +27,13 @@ export default async function AdminDashboard() {
   
   return (
     <div className="space-y-8">
-      <div className="bg-[#09090b]/80 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg sticky top-14 lg:top-0 z-40">
+      <div className="bg-[#161616]/80 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg sticky top-14 lg:top-0 z-40">
         <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">Panel de Control</h1>
         <p className="text-zinc-400 text-sm">Visión general del estado del sistema</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-[#18191c] p-6 rounded-2xl border border-white/5">
+        <div className="bg-[#222222] p-6 rounded-2xl border border-white/5">
           <div className="flex items-center justify-between mb-4">
             <div className="p-3 bg-yellow-500/10 rounded-xl">
               <AlertTriangle className="w-6 h-6 text-yellow-500" />
@@ -44,7 +44,7 @@ export default async function AdminDashboard() {
           <p className="text-sm text-zinc-500">Publicaciones por revisar</p>
         </div>
 
-        <div className="bg-[#18191c] p-6 rounded-2xl border border-white/5">
+        <div className="bg-[#222222] p-6 rounded-2xl border border-white/5">
           <div className="flex items-center justify-between mb-4">
             <div className="p-3 bg-green-500/10 rounded-xl">
               <CheckCircle className="w-6 h-6 text-green-500" />
@@ -55,7 +55,7 @@ export default async function AdminDashboard() {
           <p className="text-sm text-zinc-500">Ofertas publicadas</p>
         </div>
 
-        <div className="bg-[#18191c] p-6 rounded-2xl border border-white/5">
+        <div className="bg-[#222222] p-6 rounded-2xl border border-white/5">
           <div className="flex items-center justify-between mb-4">
             <div className="p-3 bg-blue-500/10 rounded-xl">
               <Users className="w-6 h-6 text-blue-500" />
@@ -66,7 +66,7 @@ export default async function AdminDashboard() {
           <p className="text-sm text-zinc-500">Total registrados</p>
         </div>
 
-        <div className="bg-[#18191c] p-6 rounded-2xl border border-white/5">
+        <div className="bg-[#222222] p-6 rounded-2xl border border-white/5">
           <div className="flex items-center justify-between mb-4">
             <div className="p-3 bg-blue-500/10 rounded-xl">
               <FileText className="w-6 h-6 text-blue-500" />
@@ -79,7 +79,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-[#18191c] p-6 rounded-2xl border border-white/5">
+      <div className="bg-[#222222] p-6 rounded-2xl border border-white/5">
         <h2 className="text-xl font-bold text-white mb-4">Actividad Reciente</h2>
         <p className="text-zinc-500 text-sm">
           Consulta el módulo de Logs de Auditoría para ver el detalle completo.

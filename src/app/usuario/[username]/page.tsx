@@ -117,16 +117,16 @@ export default async function PublicProfilePage({ params }: PageProps) {
           
           {/* Left Column: Profile Card */}
           <div className="w-full md:w-80 flex-shrink-0 space-y-6">
-            <div className="bg-[#18191c] rounded-2xl border border-white/5 p-6 shadow-xl backdrop-blur-sm relative overflow-hidden">
+            <div className="bg-[#222222] rounded-2xl border border-white/5 p-6 shadow-xl backdrop-blur-sm relative overflow-hidden">
               {/* Avatar */}
-              <div className="relative w-32 h-32 rounded-full border-4 border-[#18191c] shadow-2xl mx-auto md:mx-0 mb-4">
+              <div className="relative w-32 h-32 rounded-full border-4 border-[#222222] shadow-2xl mx-auto md:mx-0 mb-4">
                 <Image
                   src={profile.avatar_url || `https://ui-avatars.com/api/?name=${profile.username}&background=random`}
                   alt={profile.username}
                   fill
                   className="object-cover rounded-full"
                 />
-                <div className="absolute bottom-0 right-0 bg-[#18191c] rounded-full p-1">
+                <div className="absolute bottom-0 right-0 bg-[#222222] rounded-full p-1">
                   <div className="bg-yellow-500 text-black text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
                     <Trophy size={10} />
                     Lvl {level}
@@ -182,7 +182,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
             {/* Sidebar Ad (Under Profile Card) - Removed per user request */}
 
             {/* Badges Placeholder (if we had badges data) */}
-            {/* <div className="bg-[#18191c] rounded-2xl border border-white/5 p-6">
+            {/* <div className="bg-[#222222] rounded-2xl border border-white/5 p-6">
               <h3 className="font-bold text-white mb-4 flex items-center gap-2">
                 <Medal size={18} className="text-yellow-500" />
                 Insignias
@@ -218,7 +218,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
                 ))}
               </div>
             ) : (
-              <div className="bg-[#18191c] rounded-2xl border border-white/5 p-12 text-center">
+              <div className="bg-[#222222] rounded-2xl border border-white/5 p-12 text-center">
                 <div className="w-16 h-16 bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Tag className="w-8 h-8 text-zinc-600" />
                 </div>

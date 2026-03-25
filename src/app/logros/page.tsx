@@ -28,12 +28,12 @@ export default function LogrosPage() {
         <div className="space-y-6">
           <div className="bg-zinc-900/50 border border-white/10 rounded-2xl p-6">
             <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-              <Star className="w-5 h-5 text-[#2BD45A]" />
+              <Star className="w-5 h-5 text-[#07B5A7]" />
               ¿Cómo ganar XP?
             </h3>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
-                <div className="bg-zinc-800 p-2 rounded-lg text-[#2BD45A]">
+                <div className="bg-zinc-800 p-2 rounded-lg text-[#07B5A7]">
                   <Users className="w-4 h-4" />
                 </div>
                 <div>
@@ -110,13 +110,13 @@ export default function LogrosPage() {
             </ul>
           </div>
 
-          <div className="bg-gradient-to-br from-[#2BD45A]/20 to-emerald-900/20 border border-[#2BD45A]/30 rounded-2xl p-6">
+          <div className="bg-gradient-to-br from-[#07B5A7]/20 to-emerald-900/20 border border-[#07B5A7]/30 rounded-2xl p-6">
             <h3 className="text-lg font-bold text-white mb-2">¡Sube de Nivel!</h3>
             <p className="text-sm text-zinc-300 mb-4">
               Desbloquea más enlaces de referido y destaca en la comunidad subiendo de nivel.
             </p>
             <div className="text-center">
-              <a href="/publicar" className="inline-block bg-[#2BD45A] hover:bg-[#25b84e] text-black font-bold py-2 px-6 rounded-xl transition-colors">
+              <a href="/publicar" className="inline-block bg-[#07B5A7] hover:bg-[#25b84e] text-black font-bold py-2 px-6 rounded-xl transition-colors">
                 Empezar a ganar XP
               </a>
             </div>

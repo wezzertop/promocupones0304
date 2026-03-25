@@ -136,7 +136,7 @@ export default function DealDetailView({
              <div className="glass-panel rounded-2xl lg:sticky lg:top-24 border border-white/5 flex flex-col md:flex-row overflow-hidden relative">
                 <div className={cn(
                   "absolute -top-20 -right-20 w-64 h-64 opacity-5 blur-[80px] rounded-full pointer-events-none",
-                  isCoupon ? "bg-purple-500" : "bg-[#2BD45A]"
+                  isCoupon ? "bg-purple-500" : "bg-[#07B5A7]"
                 )} />
 
                 {/* Main Content Info */}
@@ -169,7 +169,7 @@ export default function DealDetailView({
                          {categoryName && (
                            <>
                              <span className="text-zinc-700">|</span>
-                             <div className={cn("flex items-center gap-1.5", isCoupon ? "text-purple-500" : "text-[#2BD45A]")}>
+                             <div className={cn("flex items-center gap-1.5", isCoupon ? "text-purple-500" : "text-[#07B5A7]")}>
                                 <Tag className="w-3 h-3" />
                                 <span>{categoryName}</span>
                              </div>
@@ -206,7 +206,7 @@ export default function DealDetailView({
                          {(discount > 0 || deal.discount_amount) && (
                             <div className={cn(
                                 "px-2.5 py-1 rounded-lg font-black text-xs md:text-sm shadow-lg transform -rotate-2",
-                                isCoupon ? "bg-purple-500 text-white shadow-purple-500/20" : "bg-[#2BD45A] text-black shadow-[#2BD45A]/20"
+                                isCoupon ? "bg-purple-500 text-white shadow-purple-500/20" : "bg-[#07B5A7] text-black shadow-[#07B5A7]/20"
                             )}>
                                {discount > 0 ? `-${discount}%` : `$${deal.discount_amount} OFF`}
                             </div>
@@ -303,7 +303,7 @@ export default function DealDetailView({
                                 "w-full flex items-center justify-center gap-2 font-bold py-3 rounded-xl transition-all shadow-lg hover:-translate-y-0.5 text-sm md:text-base",
                                 isCoupon 
                                     ? "bg-purple-500 hover:bg-purple-600 text-white shadow-purple-500/20 hover:shadow-purple-500/40" 
-                                    : "bg-[#2BD45A] hover:bg-[#25b84e] text-black shadow-[#2BD45A]/20 hover:shadow-[#2BD45A]/40"
+                                    : "bg-[#07B5A7] hover:bg-[#25b84e] text-black shadow-[#07B5A7]/20 hover:shadow-[#07B5A7]/40"
                              )}
                          >
                              Ir a la oferta <ExternalLink className="w-4 h-4" />
@@ -350,7 +350,7 @@ export default function DealDetailView({
                               ? "bg-red-500/10 border-red-500/20 text-red-400" 
                               : isCoupon 
                                 ? "bg-purple-500/10 border-purple-500/20 text-purple-500" 
-                                : "bg-[#2BD45A]/10 border-[#2BD45A]/20 text-[#2BD45A]"
+                                : "bg-[#07B5A7]/10 border-[#07B5A7]/20 text-[#07B5A7]"
                          )}>
                             <Calendar className="w-3 h-3" />
                             <span className="font-medium">
@@ -436,7 +436,7 @@ export default function DealDetailView({
                         {deal.description && deal.description.length > 200 && (
                             <button 
                                 onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                                className="text-[#2BD45A] text-xs font-bold mt-1.5 hover:underline focus:outline-none"
+                                className="text-[#07B5A7] text-xs font-bold mt-1.5 hover:underline focus:outline-none"
                             >
                                 {isDescriptionExpanded ? "Mostrar menos" : "Mostrar más"}
                             </button>
@@ -463,7 +463,7 @@ export default function DealDetailView({
              <div className="glass-panel p-3 md:p-4 relative group overflow-hidden rounded-2xl order-1 flex flex-col gap-3 w-full">
                 <div className={cn(
                   "absolute -top-20 -right-20 w-64 h-64 opacity-5 blur-[80px] rounded-full pointer-events-none",
-                  isCoupon ? "bg-purple-500" : "bg-[#2BD45A]"
+                  isCoupon ? "bg-purple-500" : "bg-[#07B5A7]"
                 )} />
                 
                 {/* Paused Banner */}
@@ -478,7 +478,7 @@ export default function DealDetailView({
                 {expiresAt && !isExpired && deal.status !== 'paused' && (
                    <Countdown 
                      targetDate={expiresAt} 
-                     className={cn("relative bg-black/40 rounded-xl mb-4 border", isCoupon ? "border-purple-500/20" : "border-[#2BD45A]/20")} 
+                     className={cn("relative bg-black/40 rounded-xl mb-4 border", isCoupon ? "border-purple-500/20" : "border-[#07B5A7]/20")} 
                      size="md" 
                      isCoupon={isCoupon}
                    />
@@ -492,7 +492,7 @@ export default function DealDetailView({
                         disabled={isPreview || !onVote}
                         className={cn(
                           "p-2 rounded-xl transition-all hover:scale-110 active:scale-95 hover:bg-white/10",
-                          userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#2BD45A]") : "text-zinc-500",
+                          userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") : "text-zinc-500",
                           (isPreview || !onVote) && "opacity-50 cursor-not-allowed"
                         )}
                       >
@@ -503,13 +503,13 @@ export default function DealDetailView({
                           <Flame 
                               className={cn(
                                   "transition-colors w-4 h-4 mb-0.5",
-                                  userVote === 'hot' ? (isCoupon ? "text-purple-500 fill-purple-500" : "text-[#2BD45A] fill-[#2BD45A]") :
+                                  userVote === 'hot' ? (isCoupon ? "text-purple-500 fill-purple-500" : "text-[#07B5A7] fill-[#07B5A7]") :
                                   userVote === 'cold' ? "text-blue-500 fill-blue-500" : "text-zinc-600"
                               )} 
                           />
                           <span className={cn(
                               "font-black text-xs md:text-sm",
-                              userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#2BD45A]") :
+                              userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") :
                               userVote === 'cold' ? "text-blue-500" : "text-white"
                           )}>
                               {votes}°
@@ -589,7 +589,7 @@ export default function DealDetailView({
                                 onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(idx); }}
                                 className={cn(
                                   "w-1.5 h-1.5 rounded-full transition-all",
-                                  idx === currentImageIndex ? (isCoupon ? "bg-purple-500 w-3" : "bg-[#2BD45A] w-3") : "bg-white/50 hover:bg-white/80"
+                                  idx === currentImageIndex ? (isCoupon ? "bg-purple-500 w-3" : "bg-[#07B5A7] w-3") : "bg-white/50 hover:bg-white/80"
                                 )}
                               />
                             ))}
@@ -609,7 +609,7 @@ export default function DealDetailView({
                           onClick={() => setCurrentImageIndex(idx)}
                           className={cn(
                             "relative w-full aspect-square rounded-lg overflow-hidden border-2 transition-all",
-                            idx === currentImageIndex ? (isCoupon ? "border-purple-500 ring-2 ring-purple-500/20" : "border-[#2BD45A] ring-2 ring-[#2BD45A]/20") : "border-transparent opacity-60 hover:opacity-100 bg-zinc-900"
+                            idx === currentImageIndex ? (isCoupon ? "border-purple-500 ring-2 ring-purple-500/20" : "border-[#07B5A7] ring-2 ring-[#07B5A7]/20") : "border-transparent opacity-60 hover:opacity-100 bg-zinc-900"
                           )}
                         >
                           <img src={url} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover pointer-events-none" />

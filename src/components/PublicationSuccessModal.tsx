@@ -39,13 +39,13 @@ export default function PublicationSuccessModal({ isOpen, onClose, dealId }: Pub
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-[#18191c] border border-[#2d2e33] p-6 text-left align-middle shadow-xl transition-all relative">
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-[#222222] border border-[#2d2e33] p-6 text-left align-middle shadow-xl transition-all relative">
                 {/* Background Glow */}
-                <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-[#2BD45A] opacity-10 blur-[60px] rounded-full pointer-events-none"></div>
+                <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-[#07B5A7] opacity-10 blur-[60px] rounded-full pointer-events-none"></div>
                 
                 <div className="relative z-10 flex flex-col items-center text-center">
-                  <div className="w-16 h-16 bg-[#2BD45A]/10 rounded-full flex items-center justify-center mb-6 ring-1 ring-[#2BD45A]/30">
-                    <CheckCircle className="w-8 h-8 text-[#2BD45A]" />
+                  <div className="w-16 h-16 bg-[#07B5A7]/10 rounded-full flex items-center justify-center mb-6 ring-1 ring-[#07B5A7]/30">
+                    <CheckCircle className="w-8 h-8 text-[#07B5A7]" />
                   </div>
                   
                   <Dialog.Title
@@ -74,7 +74,7 @@ export default function PublicationSuccessModal({ isOpen, onClose, dealId }: Pub
                   <div className="mt-8 flex flex-col gap-3 w-full">
                     <Link
                       href="/mis-publicaciones"
-                      className="w-full inline-flex justify-center items-center gap-2 rounded-xl bg-[#2BD45A] px-4 py-3 text-sm font-bold text-black hover:bg-[#25b84e] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#2BD45A] transition-all"
+                      className="w-full inline-flex justify-center items-center gap-2 rounded-xl bg-[#07B5A7] px-4 py-3 text-sm font-bold text-black hover:bg-[#25b84e] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#07B5A7] transition-all"
                       onClick={onClose}
                     >
                       <FileText size={18} />

@@ -20,7 +20,7 @@ export default function ProfileTabs() {
     <div className="flex items-center gap-1 border-b border-[#2d2e33] overflow-x-auto scrollbar-hide px-1 md:px-2 pt-1">
       <Link 
         href="/mis-publicaciones"
-        className="px-4 md:px-6 py-3 text-xs md:text-sm font-bold text-white border-b-2 border-[#2BD45A] bg-[#2BD45A]/5 rounded-t-lg transition-colors whitespace-nowrap flex items-center gap-2 shrink-0"
+        className="px-4 md:px-6 py-3 text-xs md:text-sm font-bold text-white border-b-2 border-[#07B5A7] bg-[#07B5A7]/5 rounded-t-lg transition-colors whitespace-nowrap flex items-center gap-2 shrink-0"
       >
         Gestionar Publicaciones
         <ExternalLink size={14} />

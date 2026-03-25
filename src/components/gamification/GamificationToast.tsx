@@ -96,7 +96,7 @@ export default function GamificationToast() {
                 <Trophy size={20} />
               </div>
             ) : (
-              <div className={`p-2 rounded-full ${toast.isNegative ? 'bg-red-500/20 text-red-400' : 'bg-[#2BD45A]/20 text-[#2BD45A]'}`}>
+              <div className={`p-2 rounded-full ${toast.isNegative ? 'bg-red-500/20 text-red-400' : 'bg-[#07B5A7]/20 text-[#07B5A7]'}`}>
                 {toast.isNegative ? <ArrowUp className="rotate-180" size={16} /> : <Star size={16} />}
               </div>
             )}

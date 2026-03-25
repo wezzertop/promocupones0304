@@ -50,7 +50,7 @@ export default function Sidebar() {
         />
       )}
 
-      <aside className={`fixed left-0 top-0 h-screen w-64 bg-[#0f1012] border-r border-[#2d2e33] flex flex-col z-50 transition-transform duration-300 ease-in-out ${
+      <aside className={`fixed left-0 top-0 h-screen w-64 bg-[#161616] border-r border-[#2d2e33] flex flex-col z-50 transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } ${
           isHeaderVisible ? 'lg:translate-x-0' : 'lg:-translate-x-full'
@@ -88,11 +88,11 @@ export default function Sidebar() {
                     onClick={closeSidebar}
                     className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
                       isActive 
-                        ? 'bg-[#2BD45A]/10 text-[#2BD45A]' 
-                        : 'text-gray-400 hover:bg-[#18191c] hover:text-white'
+                        ? 'bg-[#07B5A7]/10 text-[#07B5A7]' 
+                        : 'text-gray-400 hover:bg-[#222222] hover:text-white'
                     }`}
                   >
-                    <Icon size={20} className={isActive ? 'text-[#2BD45A]' : 'text-gray-500 group-hover:text-white transition-colors'} />
+                    <Icon size={20} className={isActive ? 'text-[#07B5A7]' : 'text-gray-500 group-hover:text-white transition-colors'} />
                     {item.label}
                   </Link>
                 )
@@ -116,16 +116,16 @@ export default function Sidebar() {
                     onClick={closeSidebar}
                     className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
                       isActive 
-                        ? 'bg-[#2BD45A]/10 text-[#2BD45A]' 
-                        : 'text-gray-400 hover:bg-[#18191c] hover:text-white'
+                        ? 'bg-[#07B5A7]/10 text-[#07B5A7]' 
+                        : 'text-gray-400 hover:bg-[#222222] hover:text-white'
                     }`}
                   >
-                    <Icon size={20} className={isActive ? 'text-[#2BD45A]' : 'text-gray-500 group-hover:text-white transition-colors'} />
+                    <Icon size={20} className={isActive ? 'text-[#07B5A7]' : 'text-gray-500 group-hover:text-white transition-colors'} />
                     {item.label}
                   </Link>
                 )
               })}
-              <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:bg-[#18191c] hover:text-white transition-all">
+              <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:bg-[#222222] hover:text-white transition-all">
                 <div className="w-5 flex justify-center">
                   <MoreHorizontal size={20} />
                 </div>

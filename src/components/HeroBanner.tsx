@@ -29,9 +29,9 @@ export default function HeroBanner() {
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
-          className="bg-gradient-to-r from-[#18191c] to-[#222327] rounded-3xl p-8 border border-[#2d2e33] relative overflow-hidden group"
+          className="bg-gradient-to-r from-[#222222] to-[#222327] rounded-3xl p-8 border border-[#2d2e33] relative overflow-hidden group"
         >
-          <div className="absolute top-0 right-0 w-64 h-64 bg-[#2BD45A] opacity-5 blur-[100px] rounded-full pointer-events-none"></div>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-[#07B5A7] opacity-5 blur-[100px] rounded-full pointer-events-none"></div>
           
           <button 
             onClick={handleDismiss}
@@ -42,13 +42,13 @@ export default function HeroBanner() {
           </button>
 
           <div className="relative z-10 max-w-2xl">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2BD45A]/10 text-[#2BD45A] text-xs font-bold uppercase tracking-wider mb-4 border border-[#2BD45A]/20">
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#07B5A7]/10 text-[#07B5A7] text-xs font-bold uppercase tracking-wider mb-4 border border-[#07B5A7]/20">
               <Sparkles size={14} />
               Comunidad Oficial
             </span>
             <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight leading-tight">
               Descubre ofertas reales <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2BD45A] to-emerald-400">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#07B5A7] to-emerald-400">
                 compartidas por gente como tú
               </span>
             </h1>

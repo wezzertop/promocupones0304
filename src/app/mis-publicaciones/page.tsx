@@ -102,7 +102,7 @@ export default async function MyDealsPage() {
         </div>
         <Link 
           href="/publicar" 
-          className="hidden md:flex items-center gap-2 px-4 py-2 bg-[#2BD45A] hover:bg-[#25b84e] text-black font-bold rounded-xl transition-all shadow-lg shadow-[#2BD45A]/20"
+          className="hidden md:flex items-center gap-2 px-4 py-2 bg-[#07B5A7] hover:bg-[#25b84e] text-black font-bold rounded-xl transition-all shadow-lg shadow-[#07B5A7]/20"
         >
           <Tag size={18} />
           Nueva Oferta
@@ -115,7 +115,7 @@ export default async function MyDealsPage() {
           deals.map((deal) => (
             <div 
               key={deal.id} 
-              className="bg-[#18191c] border border-[#2d2e33] rounded-2xl overflow-hidden hover:border-[#2BD45A]/30 transition-all group hover:scale-[1.01] shadow-md hover:shadow-xl transform-gpu"
+              className="bg-[#222222] border border-[#2d2e33] rounded-2xl overflow-hidden hover:border-[#07B5A7]/30 transition-all group hover:scale-[1.01] shadow-md hover:shadow-xl transform-gpu"
             >
               <div className="p-4 md:p-6 flex flex-col md:flex-row gap-6">
                 {/* Image */}
@@ -160,7 +160,7 @@ export default async function MyDealsPage() {
                     </span>
                     
                     {deal.deal_price && (
-                      <span className="text-[#2BD45A] font-bold">
+                      <span className="text-[#07B5A7] font-bold">
                         ${deal.deal_price}
                       </span>
                     )}
@@ -212,7 +212,7 @@ export default async function MyDealsPage() {
             </div>
           ))
         ) : (
-          <div className="py-20 flex flex-col items-center justify-center text-center bg-[#18191c] rounded-3xl border border-[#2d2e33] border-dashed">
+          <div className="py-20 flex flex-col items-center justify-center text-center bg-[#222222] rounded-3xl border border-[#2d2e33] border-dashed">
             <div className="w-16 h-16 bg-[#222327] rounded-full flex items-center justify-center mb-4 text-gray-500">
               <Tag size={32} />
             </div>
@@ -222,7 +222,7 @@ export default async function MyDealsPage() {
             </p>
             <Link 
               href="/publicar"
-              className="px-6 py-3 bg-[#2BD45A] hover:bg-[#25b84e] text-black font-bold rounded-xl transition-colors shadow-lg shadow-[#2BD45A]/20"
+              className="px-6 py-3 bg-[#07B5A7] hover:bg-[#25b84e] text-black font-bold rounded-xl transition-colors shadow-lg shadow-[#07B5A7]/20"
             >
               Publicar Oferta
             </Link>

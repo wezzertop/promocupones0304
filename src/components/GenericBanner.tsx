@@ -24,7 +24,7 @@ interface GenericBannerProps {
   iconColorClass?: string // e.g. "text-orange-500"
   iconBgClass?: string // e.g. "bg-orange-500/10"
   iconBorderClass?: string // e.g. "border-orange-500/20"
-  gradientFrom?: string // e.g. "from-[#18191c]"
+  gradientFrom?: string // e.g. "from-[#222222]"
   gradientTo?: string // e.g. "to-[#222327]"
   glowColorClass?: string // e.g. "bg-orange-500"
 }
@@ -35,12 +35,12 @@ export default function GenericBanner({
   description,
   iconName,
   iconLabel,
-  iconColorClass = "text-[#2BD45A]",
-  iconBgClass = "bg-[#2BD45A]/10",
-  iconBorderClass = "border-[#2BD45A]/20",
-  gradientFrom = "from-[#18191c]",
+  iconColorClass = "text-[#07B5A7]",
+  iconBgClass = "bg-[#07B5A7]/10",
+  iconBorderClass = "border-[#07B5A7]/20",
+  gradientFrom = "from-[#222222]",
   gradientTo = "to-[#222327]",
-  glowColorClass = "bg-[#2BD45A]"
+  glowColorClass = "bg-[#07B5A7]"
 }: GenericBannerProps) {
   const [isVisible, setIsVisible] = useState(true)
   const storageKey = `banner_dismissed_${id}`

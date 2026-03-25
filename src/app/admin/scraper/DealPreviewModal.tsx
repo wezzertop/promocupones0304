@@ -61,9 +61,9 @@ export default function DealPreviewModal({ deal, isOpen, onClose, categoryName =
       <div className="relative w-full max-w-5xl bg-[#121212] rounded-2xl shadow-2xl border border-white/10 overflow-hidden max-h-[90vh] flex flex-col">
         
         {/* Header with Close Button */}
-        <div className="flex items-center justify-between p-4 border-b border-white/5 bg-[#18191c]">
+        <div className="flex items-center justify-between p-4 border-b border-white/5 bg-[#222222]">
           <h2 className="text-lg font-bold text-white flex items-center gap-2">
-            <span className="bg-[#2BD45A] text-black text-xs px-2 py-0.5 rounded font-bold uppercase">Previsualización</span>
+            <span className="bg-[#07B5A7] text-black text-xs px-2 py-0.5 rounded font-bold uppercase">Previsualización</span>
             Vista de Usuario Final
           </h2>
           <button 
@@ -82,10 +82,10 @@ export default function DealPreviewModal({ deal, isOpen, onClose, categoryName =
                 <div className="lg:col-span-7 space-y-4 order-1">
                     {/* Countdown Banner */}
                     {expiresAt && (
-                        <Countdown targetDate={expiresAt} className="relative bg-black/40 rounded-xl border border-[#2BD45A]/20" size="md" />
+                        <Countdown targetDate={expiresAt} className="relative bg-black/40 rounded-xl border border-[#07B5A7]/20" size="md" />
                     )}
 
-                    <div className="glass-panel p-4 relative group overflow-hidden rounded-2xl bg-[#18191c] border border-white/5 flex flex-col gap-3">
+                    <div className="glass-panel p-4 relative group overflow-hidden rounded-2xl bg-[#222222] border border-white/5 flex flex-col gap-3">
                         
                         {/* Main Image */}
                         <div className="relative rounded-xl overflow-hidden bg-white p-2 flex items-center justify-center w-full aspect-video group/image border border-white/5">
@@ -142,7 +142,7 @@ export default function DealPreviewModal({ deal, isOpen, onClose, categoryName =
                                         onClick={() => setCurrentImageIndex(idx)}
                                         className={cn(
                                             "relative w-16 h-16 rounded-lg overflow-hidden border-2 flex-shrink-0 transition-all bg-white p-1",
-                                            idx === currentImageIndex ? "border-[#2BD45A]" : "border-transparent opacity-60 hover:opacity-100"
+                                            idx === currentImageIndex ? "border-[#07B5A7]" : "border-transparent opacity-60 hover:opacity-100"
                                         )}
                                     >
                                         <img src={url} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-contain" />
@@ -155,7 +155,7 @@ export default function DealPreviewModal({ deal, isOpen, onClose, categoryName =
 
                 {/* Right Column: Info (5 cols) */}
                 <div className="lg:col-span-5 space-y-4 order-2">
-                    <div className="glass-panel rounded-2xl bg-[#18191c] border border-white/5 p-5 space-y-4">
+                    <div className="glass-panel rounded-2xl bg-[#222222] border border-white/5 p-5 space-y-4">
                         
                         {/* Meta Tags */}
                         <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold tracking-wider mb-2 uppercase">
@@ -169,7 +169,7 @@ export default function DealPreviewModal({ deal, isOpen, onClose, categoryName =
                                 <span>Online</span>
                             </div>
                             <span className="text-zinc-700">|</span>
-                            <div className="flex items-center gap-1.5 text-[#2BD45A]">
+                            <div className="flex items-center gap-1.5 text-[#07B5A7]">
                                 <Tag className="w-3 h-3" />
                                 <span>{categoryName}</span>
                             </div>
@@ -202,7 +202,7 @@ export default function DealPreviewModal({ deal, isOpen, onClose, categoryName =
                                 )}
                             </div>
                             {discount > 0 && (
-                                <div className="bg-[#2BD45A] text-black px-2.5 py-1 rounded-lg font-black text-sm shadow-lg shadow-[#2BD45A]/20 transform -rotate-2">
+                                <div className="bg-[#07B5A7] text-black px-2.5 py-1 rounded-lg font-black text-sm shadow-lg shadow-[#07B5A7]/20 transform -rotate-2">
                                     -{discount}%
                                 </div>
                             )}
@@ -250,7 +250,7 @@ export default function DealPreviewModal({ deal, isOpen, onClose, categoryName =
                             href={deal.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-full flex items-center justify-center gap-2 bg-[#2BD45A] hover:bg-[#25b84e] text-black font-bold py-3 rounded-xl transition-all shadow-lg shadow-[#2BD45A]/20 hover:shadow-[#2BD45A]/40 hover:-translate-y-0.5"
+                            className="w-full flex items-center justify-center gap-2 bg-[#07B5A7] hover:bg-[#25b84e] text-black font-bold py-3 rounded-xl transition-all shadow-lg shadow-[#07B5A7]/20 hover:shadow-[#07B5A7]/40 hover:-translate-y-0.5"
                         >
                             Ver en {storeName} <ExternalLink className="w-4 h-4" />
                         </a>
@@ -265,7 +265,7 @@ export default function DealPreviewModal({ deal, isOpen, onClose, categoryName =
                                 {deal.description && deal.description.length > 200 && (
                                     <button 
                                         onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                                        className="text-[#2BD45A] text-xs font-bold mt-1.5 hover:underline focus:outline-none"
+                                        className="text-[#07B5A7] text-xs font-bold mt-1.5 hover:underline focus:outline-none"
                                     >
                                         {isDescriptionExpanded ? "Mostrar menos" : "Mostrar más"}
                                     </button>

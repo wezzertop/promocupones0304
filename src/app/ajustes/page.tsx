@@ -153,7 +153,7 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#2BD45A]"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#07B5A7]"></div>
       </div>
     )
   }
@@ -168,7 +168,7 @@ export default function SettingsPage() {
         <button 
           onClick={handleSave}
           disabled={saving}
-          className="px-6 py-2.5 bg-[#2BD45A] hover:bg-[#25b84e] text-black font-bold rounded-xl transition-all shadow-lg shadow-[#2BD45A]/20 flex items-center gap-2 disabled:opacity-50"
+          className="px-6 py-2.5 bg-[#07B5A7] hover:bg-[#25b84e] text-black font-bold rounded-xl transition-all shadow-lg shadow-[#07B5A7]/20 flex items-center gap-2 disabled:opacity-50"
         >
           {saving ? 'Guardando...' : (
             <>
@@ -180,10 +180,10 @@ export default function SettingsPage() {
       </div>
 
       {/* Account Settings */}
-      <div className="bg-[#18191c] border border-[#2d2e33] rounded-3xl overflow-hidden">
+      <div className="bg-[#222222] border border-[#2d2e33] rounded-3xl overflow-hidden">
         <div className="p-6 border-b border-[#2d2e33]">
           <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <User className="text-[#2BD45A]" size={20} />
+            <User className="text-[#07B5A7]" size={20} />
             Cuenta
           </h2>
         </div>
@@ -212,7 +212,7 @@ export default function SettingsPage() {
                             <Camera className="text-white" size={24} />
                         </div>
                     </div>
-                    <div className="absolute bottom-0 right-0 bg-[#2BD45A] text-black p-1.5 rounded-full border-4 border-[#18191c]">
+                    <div className="absolute bottom-0 right-0 bg-[#07B5A7] text-black p-1.5 rounded-full border-4 border-[#222222]">
                         <Upload size={14} />
                     </div>
                     <input 
@@ -232,7 +232,7 @@ export default function SettingsPage() {
                     </p>
                     <button 
                         onClick={() => fileInputRef.current?.click()}
-                        className="text-sm font-bold text-[#2BD45A] hover:text-[#25b84e] transition-colors"
+                        className="text-sm font-bold text-[#07B5A7] hover:text-[#25b84e] transition-colors"
                     >
                         Cambiar imagen
                     </button>
@@ -246,7 +246,7 @@ export default function SettingsPage() {
                 type="text" 
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full bg-[#222327] border border-[#2d2e33] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#2BD45A] transition-colors"
+                className="w-full bg-[#222327] border border-[#2d2e33] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#07B5A7] transition-colors"
                 placeholder="Tu nombre de usuario"
               />
             </div>
@@ -265,7 +265,7 @@ export default function SettingsPage() {
             <h3 className="text-sm font-bold text-white mb-4">Seguridad</h3>
             <button className="flex items-center justify-between w-full p-4 bg-[#222327] hover:bg-[#2d2e33] rounded-xl transition-colors border border-[#2d2e33] group">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-[#18191c] rounded-lg text-gray-400 group-hover:text-white transition-colors">
+                <div className="p-2 bg-[#222222] rounded-lg text-gray-400 group-hover:text-white transition-colors">
                   <Lock size={18} />
                 </div>
                 <div className="text-left">
@@ -273,7 +273,7 @@ export default function SettingsPage() {
                   <span className="text-xs text-gray-500">Actualiza tu clave de acceso</span>
                 </div>
               </div>
-              <span className="text-xs font-bold text-[#2BD45A]">Actualizar</span>
+              <span className="text-xs font-bold text-[#07B5A7]">Actualizar</span>
             </button>
 
             <div className="mt-4">
@@ -285,7 +285,7 @@ export default function SettingsPage() {
             <button 
               onClick={handleSave}
               disabled={saving}
-              className="px-6 py-2.5 bg-[#2BD45A] hover:bg-[#25b84e] text-black font-bold rounded-xl transition-all shadow-lg shadow-[#2BD45A]/20 flex items-center gap-2 disabled:opacity-50"
+              className="px-6 py-2.5 bg-[#07B5A7] hover:bg-[#25b84e] text-black font-bold rounded-xl transition-all shadow-lg shadow-[#07B5A7]/20 flex items-center gap-2 disabled:opacity-50"
             >
               {saving ? 'Guardando...' : (
                 <>
@@ -299,7 +299,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Notifications */}
-      <div className="bg-[#18191c] border border-[#2d2e33] rounded-3xl overflow-hidden">
+      <div className="bg-[#222222] border border-[#2d2e33] rounded-3xl overflow-hidden">
         <div className="p-6 border-b border-[#2d2e33]">
           <h2 className="text-xl font-bold text-white flex items-center gap-2">
             <Bell className="text-orange-500" size={20} />
@@ -309,7 +309,7 @@ export default function SettingsPage() {
         <div className="p-6 space-y-4">
           <div className="flex items-center justify-between p-4 bg-[#222327] rounded-xl border border-[#2d2e33]">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#18191c] rounded-lg text-gray-400">
+              <div className="p-2 bg-[#222222] rounded-lg text-gray-400">
                 <Mail size={18} />
               </div>
               <div>
@@ -319,13 +319,13 @@ export default function SettingsPage() {
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" checked={notifications.email} onChange={() => setNotifications(prev => ({...prev, email: !prev.email}))} className="sr-only peer" />
-              <div className="w-11 h-6 bg-[#2d2e33] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2BD45A]"></div>
+              <div className="w-11 h-6 bg-[#2d2e33] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#07B5A7]"></div>
             </label>
           </div>
 
           <div className="flex items-center justify-between p-4 bg-[#222327] rounded-xl border border-[#2d2e33]">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#18191c] rounded-lg text-gray-400">
+              <div className="p-2 bg-[#222222] rounded-lg text-gray-400">
                 <Bell size={18} />
               </div>
               <div>
@@ -335,14 +335,14 @@ export default function SettingsPage() {
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" checked={notifications.push} onChange={() => setNotifications(prev => ({...prev, push: !prev.push}))} className="sr-only peer" />
-              <div className="w-11 h-6 bg-[#2d2e33] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2BD45A]"></div>
+              <div className="w-11 h-6 bg-[#2d2e33] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#07B5A7]"></div>
             </label>
           </div>
         </div>
       </div>
 
       {/* Preferences */}
-      <div className="bg-[#18191c] border border-[#2d2e33] rounded-3xl overflow-hidden">
+      <div className="bg-[#222222] border border-[#2d2e33] rounded-3xl overflow-hidden">
         <div className="p-6 border-b border-[#2d2e33]">
           <h2 className="text-xl font-bold text-white flex items-center gap-2">
             <Globe className="text-blue-500" size={20} />
@@ -352,7 +352,7 @@ export default function SettingsPage() {
         <div className="p-6 space-y-4">
           <div className="flex items-center justify-between p-4 bg-[#222327] rounded-xl border border-[#2d2e33]">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#18191c] rounded-lg text-gray-400">
+              <div className="p-2 bg-[#222222] rounded-lg text-gray-400">
                 <Moon size={18} />
               </div>
               <div>
@@ -360,12 +360,12 @@ export default function SettingsPage() {
                 <span className="text-xs text-gray-500">Siempre activo en Cupoferta</span>
               </div>
             </div>
-            <span className="text-xs font-bold text-[#2BD45A] px-3 py-1 bg-[#2BD45A]/10 rounded-full">Activo</span>
+            <span className="text-xs font-bold text-[#07B5A7] px-3 py-1 bg-[#07B5A7]/10 rounded-full">Activo</span>
           </div>
 
           <div className="flex items-center justify-between p-4 bg-[#222327] rounded-xl border border-[#2d2e33]">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#18191c] rounded-lg text-gray-400">
+              <div className="p-2 bg-[#222222] rounded-lg text-gray-400">
                 <Globe size={18} />
               </div>
               <div>
@@ -373,7 +373,7 @@ export default function SettingsPage() {
                 <span className="text-xs text-gray-500">Selecciona tu idioma preferido</span>
               </div>
             </div>
-            <select className="bg-[#18191c] text-white text-sm rounded-lg border border-[#2d2e33] focus:ring-[#2BD45A] focus:border-[#2BD45A] block p-2.5">
+            <select className="bg-[#222222] text-white text-sm rounded-lg border border-[#2d2e33] focus:ring-[#07B5A7] focus:border-[#07B5A7] block p-2.5">
               <option value="es">Español</option>
               <option value="en">English</option>
             </select>

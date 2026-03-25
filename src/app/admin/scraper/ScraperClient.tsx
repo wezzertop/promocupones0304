@@ -419,10 +419,10 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="flex items-center justify-between sticky top-14 lg:top-0 z-40 bg-[#09090b]/80 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg">
+      <div className="flex items-center justify-between sticky top-14 lg:top-0 z-40 bg-[#161616]/80 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
-            <ShoppingCart className="text-[#2BD45A]" size={28} />
+            <ShoppingCart className="text-[#07B5A7]" size={28} />
             Scraper de Ofertas
           </h1>
           <p className="text-gray-400 text-sm mt-1">Extrae y publica ofertas desde Mercado Libre y Amazon.</p>
@@ -434,7 +434,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
         <button
           onClick={() => setActiveTab('search')}
           className={`pb-4 px-4 font-medium transition-colors relative ${
-            activeTab === 'search' ? 'text-[#2BD45A]' : 'text-gray-400 hover:text-white'
+            activeTab === 'search' ? 'text-[#07B5A7]' : 'text-gray-400 hover:text-white'
           }`}
         >
           <div className="flex items-center gap-2">
@@ -442,13 +442,13 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
             Búsqueda
           </div>
           {activeTab === 'search' && (
-            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#2BD45A]" />
+            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#07B5A7]" />
           )}
         </button>
         <button
           onClick={() => setActiveTab('url')}
           className={`pb-4 px-4 font-medium transition-colors relative ${
-            activeTab === 'url' ? 'text-[#2BD45A]' : 'text-gray-400 hover:text-white'
+            activeTab === 'url' ? 'text-[#07B5A7]' : 'text-gray-400 hover:text-white'
           }`}
         >
           <div className="flex items-center gap-2">
@@ -456,13 +456,13 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
             Importar URL
           </div>
           {activeTab === 'url' && (
-            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#2BD45A]" />
+            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#07B5A7]" />
           )}
         </button>
         <button
           onClick={() => setActiveTab('logs')}
           className={`pb-4 px-4 font-medium transition-colors relative ${
-            activeTab === 'logs' ? 'text-[#2BD45A]' : 'text-gray-400 hover:text-white'
+            activeTab === 'logs' ? 'text-[#07B5A7]' : 'text-gray-400 hover:text-white'
           }`}
         >
           <div className="flex items-center gap-2">
@@ -470,13 +470,13 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
             Logs
           </div>
           {activeTab === 'logs' && (
-            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#2BD45A]" />
+            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#07B5A7]" />
           )}
         </button>
         <button
           onClick={() => setActiveTab('bulk')}
           className={`pb-4 px-4 font-medium transition-colors relative ${
-            activeTab === 'bulk' ? 'text-[#2BD45A]' : 'text-gray-400 hover:text-white'
+            activeTab === 'bulk' ? 'text-[#07B5A7]' : 'text-gray-400 hover:text-white'
           }`}
         >
           <div className="flex items-center gap-2">
@@ -484,7 +484,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
             Ofertas Masivas
           </div>
           {activeTab === 'bulk' && (
-            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#2BD45A]" />
+            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#07B5A7]" />
           )}
         </button>
       </div>
@@ -502,7 +502,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
             </button>
           </div>
           
-          <div className="bg-[#18191c] rounded-2xl border border-[#2d2e33] overflow-hidden">
+          <div className="bg-[#222222] rounded-2xl border border-[#2d2e33] overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm text-gray-400">
                 <thead className="bg-[#222327] text-white uppercase font-medium">
@@ -570,7 +570,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
               <button
                 onClick={() => handleBulkScrape('amazon')}
                 disabled={loading}
-                className="flex flex-col items-center justify-center p-8 bg-[#18191c] border border-[#2d2e33] rounded-2xl hover:border-[#2BD45A] hover:bg-[#222327] transition-all group disabled:opacity-50 relative overflow-hidden"
+                className="flex flex-col items-center justify-center p-8 bg-[#222222] border border-[#2d2e33] rounded-2xl hover:border-[#07B5A7] hover:bg-[#222327] transition-all group disabled:opacity-50 relative overflow-hidden"
               >
                 <div className="absolute top-0 right-0 p-4 opacity-10">
                     <ShoppingCart size={120} />
@@ -580,13 +580,13 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2 z-10">Ofertas Amazon</h3>
                 <p className="text-gray-400 text-center z-10">Extraer las mejores ofertas del día</p>
-                {loading && source === 'amazon' && !showHtmlImport && <Loader2 className="animate-spin mt-4 text-[#2BD45A]" />}
+                {loading && source === 'amazon' && !showHtmlImport && <Loader2 className="animate-spin mt-4 text-[#07B5A7]" />}
               </button>
 
               <button
                 onClick={() => handleBulkScrape('mercadolibre')}
                 disabled={loading}
-                className="flex flex-col items-center justify-center p-8 bg-[#18191c] border border-[#2d2e33] rounded-2xl hover:border-[#ffe600] hover:bg-[#222327] transition-all group disabled:opacity-50 relative overflow-hidden"
+                className="flex flex-col items-center justify-center p-8 bg-[#222222] border border-[#2d2e33] rounded-2xl hover:border-[#ffe600] hover:bg-[#222327] transition-all group disabled:opacity-50 relative overflow-hidden"
               >
                  <div className="absolute top-0 right-0 p-4 opacity-10">
                     <Tag size={120} />
@@ -611,7 +611,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
             </div>
 
             {showHtmlImport && (
-                <div id="html-import-section" className="bg-[#18191c] p-6 rounded-2xl border border-[#2d2e33] mb-6 animate-fade-in">
+                <div id="html-import-section" className="bg-[#222222] p-6 rounded-2xl border border-[#2d2e33] mb-6 animate-fade-in">
                     <h3 className="text-white font-bold mb-4">Importar HTML Manualmente</h3>
                     <p className="text-sm text-gray-400 mb-4">
                         Si la extracción automática falla (por bloqueos de seguridad), copia el código fuente de la página de ofertas:
@@ -625,7 +625,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
                         <div className="flex gap-4">
                             <button 
                                 onClick={() => setSource('amazon')}
-                                className={`px-4 py-2 rounded-lg border ${source === 'amazon' ? 'bg-[#2BD45A]/20 border-[#2BD45A] text-[#2BD45A]' : 'border-[#2d2e33] text-gray-400'}`}
+                                className={`px-4 py-2 rounded-lg border ${source === 'amazon' ? 'bg-[#07B5A7]/20 border-[#07B5A7] text-[#07B5A7]' : 'border-[#2d2e33] text-gray-400'}`}
                             >
                                 Amazon
                             </button>
@@ -642,13 +642,13 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
                         value={htmlInput}
                         onChange={(e) => setHtmlInput(e.target.value)}
                         placeholder="Pega el código HTML aquí..."
-                        className="w-full h-40 bg-[#222327] text-white p-4 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#2BD45A] font-mono text-xs mb-4"
+                        className="w-full h-40 bg-[#222327] text-white p-4 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#07B5A7] font-mono text-xs mb-4"
                     />
                     
                     <button
                         onClick={handleHtmlImport}
                         disabled={loading || !htmlInput.trim()}
-                        className="bg-[#2BD45A] text-black font-bold px-6 py-3 rounded-xl hover:bg-[#25b84e] transition-colors disabled:opacity-50 flex items-center gap-2"
+                        className="bg-[#07B5A7] text-black font-bold px-6 py-3 rounded-xl hover:bg-[#25b84e] transition-colors disabled:opacity-50 flex items-center gap-2"
                     >
                         {loading ? <Loader2 className="animate-spin" /> : <Upload size={20} />}
                         Procesar HTML
@@ -657,7 +657,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
             )}
             </>
            ) : (
-          <div className="bg-[#18191c] p-6 rounded-2xl border border-[#2d2e33]">
+          <div className="bg-[#222222] p-6 rounded-2xl border border-[#2d2e33]">
             <form onSubmit={activeTab === 'search' ? handleSearch : handleUrlScrape} className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
                 {activeTab === 'search' ? (
@@ -668,7 +668,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
                       placeholder="Ej: iPhone 15, Laptop Gamer..."
-                      className="w-full bg-[#222327] text-white pl-10 pr-4 py-3 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#2BD45A]"
+                      className="w-full bg-[#222327] text-white pl-10 pr-4 py-3 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#07B5A7]"
                     />
                   </>
                 ) : (
@@ -678,7 +678,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
                       value={urlInput}
                       onChange={(e) => setUrlInput(e.target.value)}
                       placeholder="Pega las URLs de Amazon o Mercado Libre (una por línea)..."
-                      className="w-full bg-[#222327] text-white pl-10 pr-4 py-3 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#2BD45A] min-h-[100px]"
+                      className="w-full bg-[#222327] text-white pl-10 pr-4 py-3 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#07B5A7] min-h-[100px]"
                     />
                   </>
                 )}
@@ -687,7 +687,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
               <select
                 value={source}
                 onChange={(e) => setSource(e.target.value as any)}
-                className={`bg-[#222327] text-white px-4 py-3 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#2BD45A] ${
+                className={`bg-[#222327] text-white px-4 py-3 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#07B5A7] ${
                   activeTab === 'url' ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
                 disabled={activeTab === 'url'} // Auto-detected for URL
@@ -699,7 +699,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
               <button
                 type="submit"
                 disabled={loading || (activeTab === 'search' ? !query.trim() : !urlInput.trim())}
-                className="bg-[#2BD45A] text-black font-bold px-6 py-3 rounded-xl hover:bg-[#25b84e] transition-colors disabled:opacity-50 flex items-center gap-2 whitespace-nowrap"
+                className="bg-[#07B5A7] text-black font-bold px-6 py-3 rounded-xl hover:bg-[#25b84e] transition-colors disabled:opacity-50 flex items-center gap-2 whitespace-nowrap"
               >
                 {loading ? <Loader2 className="animate-spin" /> : (activeTab === 'search' ? <Search size={20} /> : <Upload />)}
                 {activeTab === 'search' ? 'Buscar' : 'Extraer'}
@@ -709,14 +709,14 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
           )}
 
           {/* Category Selection for Publishing */}
-          <div className="flex flex-col md:flex-row gap-4 bg-[#18191c] p-4 rounded-xl border border-[#2d2e33] sticky top-[136px] lg:top-[88px] z-30 shadow-lg backdrop-blur-md bg-[#18191c]/90">
+          <div className="flex flex-col md:flex-row gap-4 bg-[#222222] p-4 rounded-xl border border-[#2d2e33] sticky top-[136px] lg:top-[88px] z-30 shadow-lg backdrop-blur-md bg-[#222222]/90">
             <div className="flex items-center gap-2 flex-1">
-                <Tag className="text-[#2BD45A]" size={20} />
+                <Tag className="text-[#07B5A7]" size={20} />
                 <span className="text-gray-300 font-medium whitespace-nowrap hidden sm:inline">Categoría:</span>
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="bg-[#222327] text-white px-4 py-2 rounded-lg border border-[#2d2e33] focus:outline-none focus:border-[#2BD45A] w-full"
+                  className="bg-[#222327] text-white px-4 py-2 rounded-lg border border-[#2d2e33] focus:outline-none focus:border-[#07B5A7] w-full"
                 >
                   {categories.map(cat => (
                     <option key={cat.id} value={cat.id}>{cat.name}</option>
@@ -729,7 +729,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as any)}
-                  className="bg-[#222327] text-white px-4 py-2 rounded-lg border border-[#2d2e33] focus:outline-none focus:border-[#2BD45A] w-full"
+                  className="bg-[#222327] text-white px-4 py-2 rounded-lg border border-[#2d2e33] focus:outline-none focus:border-[#07B5A7] w-full"
                 >
                   <option value="price_asc">Precio: Menor a Mayor</option>
                   <option value="price_desc">Precio: Mayor a Menor</option>
@@ -751,7 +751,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
                         <button
                             onClick={handlePublishSelected}
                             disabled={loading}
-                            className="px-4 py-2 bg-[#2BD45A] hover:bg-[#25b84e] text-black rounded-lg font-bold transition-colors text-sm flex items-center gap-2 whitespace-nowrap shadow-lg shadow-[#2BD45A]/20"
+                            className="px-4 py-2 bg-[#07B5A7] hover:bg-[#25b84e] text-black rounded-lg font-bold transition-colors text-sm flex items-center gap-2 whitespace-nowrap shadow-lg shadow-[#07B5A7]/20"
                         >
                             {loading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
                             Publicar ({selectedDeals.size})
@@ -778,7 +778,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
             </div>
           ) : (
             !loading && (query || urlInput) && (
-              <div className="text-center py-20 bg-[#18191c] rounded-2xl border border-[#2d2e33] border-dashed">
+              <div className="text-center py-20 bg-[#222222] rounded-2xl border border-[#2d2e33] border-dashed">
                 <div className="w-16 h-16 bg-[#222327] rounded-full flex items-center justify-center mx-auto mb-4 text-gray-500">
                   <Search size={32} />
                 </div>

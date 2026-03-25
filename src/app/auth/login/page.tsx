@@ -74,8 +74,8 @@ export default function LoginPage() {
 
         <div className="glass-panel p-8 rounded-2xl border border-white/10 relative overflow-hidden">
             {/* Background decorative gradient */}
-            <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#2BD45A]/20 rounded-full blur-3xl pointer-events-none"></div>
-            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-[#2BD45A]/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#07B5A7]/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-[#07B5A7]/20 rounded-full blur-3xl pointer-events-none"></div>
 
           <form onSubmit={handleLogin} className="space-y-6 relative z-10">
             {error && (
@@ -96,7 +96,7 @@ export default function LoginPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600"
+                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#07B5A7]/50 focus:border-[#07B5A7]/50 transition-all placeholder:text-zinc-600"
                     placeholder="tu@email.com"
                   />
                 </div>
@@ -105,7 +105,7 @@ export default function LoginPage() {
               <div>
                 <div className="flex items-center justify-between mb-1.5 ml-1">
                   <label className="block text-sm font-medium text-zinc-300">Contraseña</label>
-                  <Link href="/auth/forgot-password" className="text-xs text-[#2BD45A] hover:text-[#25b84e] transition-colors">
+                  <Link href="/auth/forgot-password" className="text-xs text-[#07B5A7] hover:text-[#25b84e] transition-colors">
                     ¿Olvidaste tu contraseña?
                   </Link>
                 </div>
@@ -118,7 +118,7 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600"
+                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#07B5A7]/50 focus:border-[#07B5A7]/50 transition-all placeholder:text-zinc-600"
                     placeholder="••••••••"
                   />
                 </div>
@@ -133,7 +133,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#2BD45A] hover:bg-[#25b84e] text-black font-bold py-3.5 rounded-xl shadow-lg shadow-[#2BD45A]/20 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full bg-[#07B5A7] hover:bg-[#25b84e] text-black font-bold py-3.5 rounded-xl shadow-lg shadow-[#07B5A7]/20 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {loading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -182,16 +182,16 @@ export default function LoginPage() {
 
             <p className="text-xs text-center text-zinc-500 mt-4">
               Al iniciar sesión, aceptas nuestros{' '}
-              <Link href="/terms" className="text-zinc-400 hover:text-[#2BD45A] underline">Términos y Condiciones</Link>
+              <Link href="/terms" className="text-zinc-400 hover:text-[#07B5A7] underline">Términos y Condiciones</Link>
               {' '}y{' '}
-              <Link href="/privacy" className="text-zinc-400 hover:text-[#2BD45A] underline">Política de Privacidad</Link>.
+              <Link href="/privacy" className="text-zinc-400 hover:text-[#07B5A7] underline">Política de Privacidad</Link>.
             </p>
           </form>
         </div>
 
         <p className="text-center mt-6 text-zinc-400">
           ¿No tienes una cuenta?{' '}
-          <Link href="/auth/register" className="text-[#2BD45A] hover:text-[#25b84e] font-medium transition-colors">
+          <Link href="/auth/register" className="text-[#07B5A7] hover:text-[#25b84e] font-medium transition-colors">
             Regístrate aquí
           </Link>
         </p>

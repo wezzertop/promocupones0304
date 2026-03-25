@@ -38,12 +38,12 @@ export default function NotificationsClient() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
-      <div className="bg-[#09090b]/80 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg sticky top-14 lg:top-0 z-40">
+      <div className="bg-[#161616]/80 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg sticky top-14 lg:top-0 z-40">
         <h1 className="text-2xl md:text-3xl font-bold text-white">Enviar Notificaciones</h1>
         <p className="text-zinc-400 text-sm mt-1">Envía alertas importantes a usuarios específicos</p>
       </div>
 
-      <div className="bg-[#18191c] border border-white/5 rounded-2xl p-8">
+      <div className="bg-[#222222] border border-white/5 rounded-2xl p-8">
         <form onSubmit={handleSend} className="space-y-6">
           
           <div>

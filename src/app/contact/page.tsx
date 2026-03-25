@@ -12,7 +12,7 @@ function SubmitButton() {
     <button 
       type="submit"
       disabled={pending}
-      className="w-full bg-[#2BD45A] text-black font-bold py-2.5 rounded-lg text-sm hover:bg-[#25b84e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+      className="w-full bg-[#07B5A7] text-black font-bold py-2.5 rounded-lg text-sm hover:bg-[#25b84e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
     >
       {pending ? (
         <>
@@ -57,7 +57,7 @@ export default function ContactPage() {
           <div className="space-y-6">
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
-                <Mail className="text-[#2BD45A]" size={20} />
+                <Mail className="text-[#07B5A7]" size={20} />
               </div>
               <div>
                 <h3 className="font-bold text-white mb-1">Email</h3>
@@ -68,7 +68,7 @@ export default function ContactPage() {
             
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
-                <MapPin className="text-[#2BD45A]" size={20} />
+                <MapPin className="text-[#07B5A7]" size={20} />
               </div>
               <div>
                 <h3 className="font-bold text-white mb-1">Oficina</h3>
@@ -81,7 +81,7 @@ export default function ContactPage() {
           </div>
         </div>
         
-        <div className="bg-[#18191c] rounded-2xl p-6 border border-[#2d2e33]">
+        <div className="bg-[#222222] rounded-2xl p-6 border border-[#2d2e33]">
           {formState?.success ? (
             <div className="h-full flex flex-col items-center justify-center text-center py-12 space-y-4">
               <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center text-green-500 mb-2">
@@ -93,7 +93,7 @@ export default function ContactPage() {
               </p>
               <button 
                 onClick={() => setFormState(null)}
-                className="mt-4 text-[#2BD45A] hover:underline text-sm"
+                className="mt-4 text-[#07B5A7] hover:underline text-sm"
               >
                 Enviar otro mensaje
               </button>
@@ -113,7 +113,7 @@ export default function ContactPage() {
                   name="name"
                   type="text" 
                   required
-                  className="w-full bg-[#222327] border border-[#2d2e33] rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#2BD45A]/50 transition-colors"
+                  className="w-full bg-[#222327] border border-[#2d2e33] rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#07B5A7]/50 transition-colors"
                   placeholder="Tu nombre completo"
                 />
                 {formState?.error?.name && (
@@ -128,7 +128,7 @@ export default function ContactPage() {
                   name="email"
                   type="email" 
                   required
-                  className="w-full bg-[#222327] border border-[#2d2e33] rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#2BD45A]/50 transition-colors"
+                  className="w-full bg-[#222327] border border-[#2d2e33] rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#07B5A7]/50 transition-colors"
                   placeholder="tu@email.com"
                 />
                 {formState?.error?.email && (
@@ -143,7 +143,7 @@ export default function ContactPage() {
                   name="message"
                   required
                   rows={4}
-                  className="w-full bg-[#222327] border border-[#2d2e33] rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#2BD45A]/50 resize-none transition-colors"
+                  className="w-full bg-[#222327] border border-[#2d2e33] rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#07B5A7]/50 resize-none transition-colors"
                   placeholder="¿En qué podemos ayudarte?"
                 />
                 {formState?.error?.message && (

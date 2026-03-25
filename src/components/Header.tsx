@@ -99,7 +99,7 @@ export default function Header({ user }: HeaderProps) {
   }
 
   return (
-    <header className={`fixed lg:sticky top-0 z-40 h-14 bg-[#0f1012]/80 backdrop-blur-md border-b border-[#2d2e33] flex items-center px-2 md:px-4 transition-transform duration-300 w-full ${isHeaderVisible ? 'translate-y-0' : 'lg:-translate-y-full'}`}>
+    <header className={`fixed lg:sticky top-0 z-40 h-14 bg-[#161616]/80 backdrop-blur-md border-b border-[#2d2e33] flex items-center px-2 md:px-4 transition-transform duration-300 w-full ${isHeaderVisible ? 'translate-y-0' : 'lg:-translate-y-full'}`}>
       {/* Mobile Menu Trigger */}
       <div className="lg:hidden shrink-0 mr-1 md:mr-2 w-10 h-10 flex items-center justify-center">
         <button 
@@ -114,7 +114,7 @@ export default function Header({ user }: HeaderProps) {
       <div className="flex-1 w-full max-w-2xl relative group mx-1 md:mx-4 lg:mx-8">
         <form onSubmit={handleSearchSubmit} className="w-full relative">
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none z-10">
-            <Search className="h-4 w-4 text-gray-500 group-focus-within:text-[#2BD45A] transition-colors" />
+            <Search className="h-4 w-4 text-gray-500 group-focus-within:text-[#07B5A7] transition-colors" />
           </div>
           <input
             ref={searchInputRef}
@@ -128,7 +128,7 @@ export default function Header({ user }: HeaderProps) {
             onFocus={() => setIsSearchSuggestionsOpen(true)}
             placeholder="Buscar..."
             autoComplete="off"
-            className="w-full bg-[#18191c] text-white pl-9 pr-2 py-2.5 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#2BD45A]/50 focus:ring-1 focus:ring-[#2BD45A]/50 transition-[border-color,box-shadow] duration-200 placeholder:text-gray-600 text-sm relative z-0"
+            className="w-full bg-[#222222] text-white pl-9 pr-2 py-2.5 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#07B5A7]/50 focus:ring-1 focus:ring-[#07B5A7]/50 transition-[border-color,box-shadow] duration-200 placeholder:text-gray-600 text-sm relative z-0"
           />
           <div className="absolute right-3 top-2.5 hidden sm:flex items-center gap-1 pointer-events-none">
             <kbd className="hidden md:inline-flex h-5 items-center gap-1 rounded border border-[#2d2e33] bg-[#222327] px-1.5 font-mono text-[10px] font-medium text-gray-500 opacity-100">
@@ -163,14 +163,14 @@ export default function Header({ user }: HeaderProps) {
           <div className="relative">
             <button 
               onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-              className="flex items-center gap-3 pl-2 pr-1 py-1 rounded-xl hover:bg-[#18191c] transition-colors border border-transparent hover:border-[#2d2e33]"
+              className="flex items-center gap-3 pl-2 pr-1 py-1 rounded-xl hover:bg-[#222222] transition-colors border border-transparent hover:border-[#2d2e33]"
             >
               <div className="hidden sm:block text-right">
                 <p className="text-sm font-medium text-white leading-none mb-1">
                   {user.user_metadata?.username || user.email?.split('@')[0]}
                 </p>
                 <div className="flex items-center justify-end gap-1">
-                  <p className="text-xs text-[#2BD45A]">
+                  <p className="text-xs text-[#07B5A7]">
                     {userLevel ? `Nivel ${userLevel}` : 'Miembro Pro'}
                   </p>
                   {userLevel && userLevel >= 50 && (
@@ -178,7 +178,7 @@ export default function Header({ user }: HeaderProps) {
                   )}
                 </div>
               </div>
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#2BD45A] to-[#25b84e] flex items-center justify-center text-black font-bold shadow-lg shadow-[#2BD45A]/20 overflow-hidden relative border-2 border-[#2BD45A]/30 group">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#07B5A7] to-[#25b84e] flex items-center justify-center text-black font-bold shadow-lg shadow-[#07B5A7]/20 overflow-hidden relative border-2 border-[#07B5A7]/30 group">
                 {user.user_metadata?.avatar_url || user.user_metadata?.picture ? (
                   <Image 
                     src={user.user_metadata.avatar_url || user.user_metadata.picture} 
@@ -192,12 +192,12 @@ export default function Header({ user }: HeaderProps) {
                   (user.user_metadata?.username?.[0] || user.email?.[0] || 'U').toUpperCase()
                 )}
                 {/* Online Status Indicator (Pulse) */}
-                <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-[#2BD45A] rounded-full border-2 border-[#18191c] animate-pulse z-10 shadow-[0_0_8px_#2BD45A] transform translate-x-1/4 -translate-y-1/4"></div>
+                <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-[#07B5A7] rounded-full border-2 border-[#222222] animate-pulse z-10 shadow-[0_0_8px_#07B5A7] transform translate-x-1/4 -translate-y-1/4"></div>
               </div>
             </button>
 
             {isUserMenuOpen && (
-              <div className="absolute right-0 top-full mt-2 w-56 bg-[#18191c] border border-[#2d2e33] rounded-xl shadow-2xl py-1 z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+              <div className="absolute right-0 top-full mt-2 w-56 bg-[#222222] border border-[#2d2e33] rounded-xl shadow-2xl py-1 z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                 <div className="px-4 py-3 border-b border-[#2d2e33] sm:hidden">
                   <p className="text-sm font-medium text-white truncate">
                     {user.user_metadata?.username || user.email?.split('@')[0]}
@@ -245,7 +245,7 @@ export default function Header({ user }: HeaderProps) {
         ) : (
           <Link 
             href="/auth/login" 
-            className="flex items-center gap-2 px-5 py-2.5 bg-[#2BD45A] hover:bg-[#25b84e] text-black font-bold rounded-xl text-sm transition-all shadow-[0_0_15px_rgba(43,212,90,0.3)] hover:shadow-[0_0_20px_rgba(43,212,90,0.5)]"
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#07B5A7] hover:bg-[#25b84e] text-black font-bold rounded-xl text-sm transition-all shadow-[0_0_15px_rgba(43,212,90,0.3)] hover:shadow-[0_0_20px_rgba(43,212,90,0.5)]"
           >
             <UserIcon size={18} />
             <span className="hidden sm:inline">Acceder</span>

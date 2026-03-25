@@ -20,7 +20,7 @@ export default function BadgeList({ badges, userBadges }: BadgeListProps) {
     <div className="bg-zinc-900/50 border border-white/10 rounded-2xl p-6">
       <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
         <span>Insignias</span>
-        <span className="text-sm bg-[#2BD45A]/20 text-[#2BD45A] px-2 py-0.5 rounded-full font-medium">
+        <span className="text-sm bg-[#07B5A7]/20 text-[#07B5A7] px-2 py-0.5 rounded-full font-medium">
           {userBadges.length} / {badges.length}
         </span>
       </h3>
@@ -39,13 +39,13 @@ export default function BadgeList({ badges, userBadges }: BadgeListProps) {
                 relative group rounded-xl p-4 flex flex-col items-center text-center
                 border transition-all duration-300
                 ${earned 
-                  ? 'bg-zinc-800/50 border-[#2BD45A]/30 hover:border-[#2BD45A]/60' 
+                  ? 'bg-zinc-800/50 border-[#07B5A7]/30 hover:border-[#07B5A7]/60' 
                   : 'bg-black/30 border-white/5 opacity-60 grayscale'
                 }
               `}
             >
               {earned && (
-                <div className="absolute top-2 right-2 text-[#2BD45A]">
+                <div className="absolute top-2 right-2 text-[#07B5A7]">
                   <Check className="w-4 h-4" />
                 </div>
               )}

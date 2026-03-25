@@ -19,14 +19,14 @@ export default function ToastSystem() {
             layout
             className={`
               pointer-events-auto flex items-start gap-3 p-4 rounded-xl shadow-2xl border backdrop-blur-xl
-              ${toast.type === 'success' ? 'bg-[#18191c]/90 border-[#2BD45A]/20 text-white' : ''}
-              ${toast.type === 'error' ? 'bg-[#18191c]/90 border-red-500/20 text-white' : ''}
-              ${toast.type === 'info' ? 'bg-[#18191c]/90 border-blue-500/20 text-white' : ''}
-              ${toast.type === 'warning' ? 'bg-[#18191c]/90 border-yellow-500/20 text-white' : ''}
+              ${toast.type === 'success' ? 'bg-[#222222]/90 border-[#07B5A7]/20 text-white' : ''}
+              ${toast.type === 'error' ? 'bg-[#222222]/90 border-red-500/20 text-white' : ''}
+              ${toast.type === 'info' ? 'bg-[#222222]/90 border-blue-500/20 text-white' : ''}
+              ${toast.type === 'warning' ? 'bg-[#222222]/90 border-yellow-500/20 text-white' : ''}
             `}
           >
             <div className={`mt-0.5 shrink-0
-              ${toast.type === 'success' ? 'text-[#2BD45A]' : ''}
+              ${toast.type === 'success' ? 'text-[#07B5A7]' : ''}
               ${toast.type === 'error' ? 'text-red-500' : ''}
               ${toast.type === 'info' ? 'text-blue-500' : ''}
               ${toast.type === 'warning' ? 'text-yellow-500' : ''}

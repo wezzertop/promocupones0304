@@ -40,13 +40,13 @@ export default function ForgotPasswordPage() {
 
         <div className="glass-panel p-8 rounded-2xl border border-white/10 relative overflow-hidden">
             {/* Background decorative gradient */}
-            <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#2BD45A]/20 rounded-full blur-3xl pointer-events-none"></div>
-            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-[#2BD45A]/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#07B5A7]/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-[#07B5A7]/20 rounded-full blur-3xl pointer-events-none"></div>
 
           {success ? (
             <div className="text-center py-4 relative z-10">
               <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8 text-[#2BD45A]" />
+                <CheckCircle className="w-8 h-8 text-[#07B5A7]" />
               </div>
               <h3 className="text-xl font-bold text-white mb-2">¡Revisa tu correo!</h3>
               <p className="text-zinc-400 mb-6 text-sm">
@@ -66,7 +66,7 @@ export default function ForgotPasswordPage() {
                 <div className="block">
                   <Link 
                     href="/auth/login"
-                    className="inline-flex items-center text-[#2BD45A] hover:underline"
+                    className="inline-flex items-center text-[#07B5A7] hover:underline"
                   >
                     <ArrowLeft className="w-4 h-4 mr-1" /> Volver al inicio de sesión
                   </Link>
@@ -93,7 +93,7 @@ export default function ForgotPasswordPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2BD45A]/50 focus:border-[#2BD45A]/50 transition-all placeholder:text-zinc-600"
+                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#07B5A7]/50 focus:border-[#07B5A7]/50 transition-all placeholder:text-zinc-600"
                       placeholder="tu@email.com"
                     />
                   </div>
@@ -103,7 +103,7 @@ export default function ForgotPasswordPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#2BD45A] hover:bg-[#25b84e] text-black font-bold py-3.5 rounded-xl shadow-lg shadow-[#2BD45A]/20 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full bg-[#07B5A7] hover:bg-[#25b84e] text-black font-bold py-3.5 rounded-xl shadow-lg shadow-[#07B5A7]/20 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
@@ -119,7 +119,7 @@ export default function ForgotPasswordPage() {
 
         <p className="text-center mt-6 text-zinc-400">
           ¿Te acordaste?{' '}
-          <Link href="/auth/login" className="text-[#2BD45A] hover:text-[#25b84e] font-medium transition-colors">
+          <Link href="/auth/login" className="text-[#07B5A7] hover:text-[#25b84e] font-medium transition-colors">
             Inicia sesión aquí
           </Link>
         </p>

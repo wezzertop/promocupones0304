@@ -29,10 +29,10 @@ export default function ScraperDealCard({
 
   return (
     <div className={cn(
-      "group relative flex flex-col md:flex-row bg-[#09090b] rounded-xl md:rounded-3xl overflow-hidden border border-white/5 transition-all duration-300 md:hover:scale-[1.01] shadow-xl shadow-black/50 hover:shadow-2xl h-auto w-full",
-      isPublished ? "border-green-500/20 shadow-green-500/5" : "hover:border-[#2BD45A]/50 hover:shadow-[#2BD45A]/10",
+      "group relative flex flex-col md:flex-row bg-[#161616] rounded-xl md:rounded-3xl overflow-hidden border border-white/5 transition-all duration-300 md:hover:scale-[1.01] shadow-xl shadow-black/50 hover:shadow-2xl h-auto w-full",
+      isPublished ? "border-green-500/20 shadow-green-500/5" : "hover:border-[#07B5A7]/50 hover:shadow-[#07B5A7]/10",
       deal.availability === 'out_of_stock' && "opacity-60 grayscale",
-      isSelected && "border-[#2BD45A] ring-1 ring-[#2BD45A]"
+      isSelected && "border-[#07B5A7] ring-1 ring-[#07B5A7]"
     )}>
       
       {/* Checkbox Overlay */}
@@ -42,7 +42,7 @@ export default function ScraperDealCard({
             checked={isSelected}
             onChange={() => onToggleSelect(deal.id)}
             disabled={isPublished || deal.availability === 'out_of_stock'}
-            className="w-5 h-5 rounded border-gray-600 bg-[#222327] text-[#2BD45A] focus:ring-[#2BD45A] cursor-pointer"
+            className="w-5 h-5 rounded border-gray-600 bg-[#222327] text-[#07B5A7] focus:ring-[#07B5A7] cursor-pointer"
         />
       </div>
 
@@ -77,7 +77,7 @@ export default function ScraperDealCard({
       </div>
 
       {/* Content Section */}
-      <div className="flex-1 flex flex-col p-4 md:p-6 justify-between relative bg-gradient-to-br from-[#09090b] to-black">
+      <div className="flex-1 flex flex-col p-4 md:p-6 justify-between relative bg-gradient-to-br from-[#161616] to-black">
         
         <div onClick={() => setExpanded(!expanded)} className="cursor-pointer">
             {/* Header / Badges */}
@@ -100,7 +100,7 @@ export default function ScraperDealCard({
 
             {/* Title */}
             <h3 
-                className="text-base md:text-lg font-bold text-white leading-tight mb-2 line-clamp-2 hover:text-[#2BD45A] transition-colors"
+                className="text-base md:text-lg font-bold text-white leading-tight mb-2 line-clamp-2 hover:text-[#07B5A7] transition-colors"
                 title={deal.title}
             >
                 {deal.title}
@@ -135,7 +135,7 @@ export default function ScraperDealCard({
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                 <div className="flex items-end gap-3">
                     <div className="flex flex-col">
-                        <span className="text-2xl md:text-3xl font-black text-[#2BD45A] tracking-tight">
+                        <span className="text-2xl md:text-3xl font-black text-[#07B5A7] tracking-tight">
                             ${deal.price.toLocaleString()}
                         </span>
                         {deal.original_price && (
@@ -184,7 +184,7 @@ export default function ScraperDealCard({
                     <button
                         onClick={() => onPublish(deal)}
                         disabled={isPublishing || deal.availability === 'out_of_stock'}
-                        className="flex-1 sm:flex-none px-6 bg-[#2BD45A] hover:bg-[#25b84e] text-black h-10 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:scale-100 shadow-[0_0_20px_rgba(43,212,90,0.2)] hover:shadow-[0_0_30px_rgba(43,212,90,0.4)] whitespace-nowrap"
+                        className="flex-1 sm:flex-none px-6 bg-[#07B5A7] hover:bg-[#25b84e] text-black h-10 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:scale-100 shadow-[0_0_20px_rgba(43,212,90,0.2)] hover:shadow-[0_0_30px_rgba(43,212,90,0.4)] whitespace-nowrap"
                     >
                         {isPublishing ? (
                         <Loader2 size={18} className="animate-spin" />

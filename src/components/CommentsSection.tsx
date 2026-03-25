@@ -43,16 +43,16 @@ export default function CommentsSection({ dealId, isCoupon = false }: CommentsSe
   const [loading, setLoading] = useState(true)
 
   // Color Constants
-  const accentText = isCoupon ? "text-purple-500" : "text-[#2BD45A]"
-  const accentBg = isCoupon ? "bg-purple-500" : "bg-[#2BD45A]"
+  const accentText = isCoupon ? "text-purple-500" : "text-[#07B5A7]"
+  const accentBg = isCoupon ? "bg-purple-500" : "bg-[#07B5A7]"
   const accentBgHover = isCoupon ? "hover:bg-purple-600" : "hover:bg-[#25b84e]"
-  const accentBorder = isCoupon ? "border-purple-500" : "border-[#2BD45A]"
-  const accentFocusBorder = isCoupon ? "focus:border-purple-500/50" : "focus:border-[#2BD45A]/50"
-  const accentFocusRing = isCoupon ? "focus:ring-purple-500/50" : "focus:ring-[#2BD45A]/50"
-  const accentTargetBg = isCoupon ? "target:bg-purple-500/10" : "target:bg-[#2BD45A]/10"
-  const accentTargetBorder = isCoupon ? "target:border-purple-500/30" : "target:border-[#2BD45A]/30"
-  const accentTextHover = isCoupon ? "hover:text-purple-500" : "hover:text-[#2BD45A]"
-  const accentBgLight = isCoupon ? "bg-purple-500/10" : "bg-[#2BD45A]/10"
+  const accentBorder = isCoupon ? "border-purple-500" : "border-[#07B5A7]"
+  const accentFocusBorder = isCoupon ? "focus:border-purple-500/50" : "focus:border-[#07B5A7]/50"
+  const accentFocusRing = isCoupon ? "focus:ring-purple-500/50" : "focus:ring-[#07B5A7]/50"
+  const accentTargetBg = isCoupon ? "target:bg-purple-500/10" : "target:bg-[#07B5A7]/10"
+  const accentTargetBorder = isCoupon ? "target:border-purple-500/30" : "target:border-[#07B5A7]/30"
+  const accentTextHover = isCoupon ? "hover:text-purple-500" : "hover:text-[#07B5A7]"
+  const accentBgLight = isCoupon ? "bg-purple-500/10" : "bg-[#07B5A7]/10"
   const [newComment, setNewComment] = useState('')
   const [replyTo, setReplyTo] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)

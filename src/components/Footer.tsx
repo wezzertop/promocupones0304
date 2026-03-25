@@ -4,7 +4,7 @@ import { Facebook, Twitter, Instagram, Youtube, Mail, Heart } from 'lucide-react
 
 export default function Footer() {
   return (
-    <footer className="mt-auto border-t border-[#2d2e33] bg-[#0f1012] w-full overflow-hidden">
+    <footer className="mt-auto border-t border-[#2d2e33] bg-[#161616] w-full overflow-hidden">
       <div className="max-w-[1920px] mx-auto px-4 sm:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 mb-12">
           {/* Brand */}
@@ -52,14 +52,14 @@ export default function Footer() {
 
           <div className="col-span-1">
             <h3 className="font-bold text-white mb-6">Mantente actualizado</h3>
-            <div className="bg-[#18191c] p-1.5 rounded-xl border border-[#2d2e33] flex items-center mb-4 focus-within:border-[#2BD45A] transition-colors">
+            <div className="bg-[#222222] p-1.5 rounded-xl border border-[#2d2e33] flex items-center mb-4 focus-within:border-[#07B5A7] transition-colors">
               <Mail className="ml-3 text-gray-500" size={18} />
               <input 
                 type="email" 
                 placeholder="tu@email.com" 
                 className="bg-transparent border-none text-white text-sm w-full focus:ring-0 px-3 py-2"
               />
-              <button className="bg-[#2BD45A] text-black p-2 rounded-lg hover:bg-[#25b84e] transition-colors">
+              <button className="bg-[#07B5A7] text-black p-2 rounded-lg hover:bg-[#25b84e] transition-colors">
                 <Heart size={18} />
               </button>
             </div>
@@ -108,7 +108,7 @@ export default function Footer() {
 
 function SocialLink({ icon: Icon }: { icon: any }) {
   return (
-    <Link href="#" className="w-10 h-10 rounded-lg bg-[#18191c] border border-[#2d2e33] flex items-center justify-center text-gray-400 hover:text-white hover:border-[#2BD45A] hover:bg-[#2BD45A]/10 transition-all">
+    <Link href="#" className="w-10 h-10 rounded-lg bg-[#222222] border border-[#2d2e33] flex items-center justify-center text-gray-400 hover:text-white hover:border-[#07B5A7] hover:bg-[#07B5A7]/10 transition-all">
       <Icon size={18} />
     </Link>
   )
@@ -121,7 +121,7 @@ function FooterColumn({ title, links }: { title: string, links: { label: string,
       <ul className="space-y-3 text-sm">
         {links.map((link) => (
           <li key={link.href}>
-            <Link href={link.href} className="text-gray-500 hover:text-[#2BD45A] transition-colors">
+            <Link href={link.href} className="text-gray-500 hover:text-[#07B5A7] transition-colors">
               {link.label}
             </Link>
           </li>

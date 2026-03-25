@@ -48,7 +48,7 @@ export default function Leaderboard() {
     <div className="bg-zinc-900/50 border border-white/10 rounded-2xl p-6">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-xl font-bold text-white flex items-center gap-2">
-          <Trophy className="w-5 h-5 text-[#2BD45A]" />
+          <Trophy className="w-5 h-5 text-[#07B5A7]" />
           Tabla de Clasificación
         </h3>
         
@@ -57,7 +57,7 @@ export default function Leaderboard() {
             onClick={() => setPeriod('weekly')}
             className={`px-3 py-1 text-sm rounded-md transition-all ${
               period === 'weekly' 
-                ? 'bg-[#2BD45A] text-black font-medium' 
+                ? 'bg-[#07B5A7] text-black font-medium' 
                 : 'text-zinc-400 hover:text-white'
             }`}
           >
@@ -67,7 +67,7 @@ export default function Leaderboard() {
             onClick={() => setPeriod('monthly')}
             className={`px-3 py-1 text-sm rounded-md transition-all ${
               period === 'monthly' 
-                ? 'bg-[#2BD45A] text-black font-medium' 
+                ? 'bg-[#07B5A7] text-black font-medium' 
                 : 'text-zinc-400 hover:text-white'
             }`}
           >
@@ -77,7 +77,7 @@ export default function Leaderboard() {
             onClick={() => setPeriod('all_time')}
             className={`px-3 py-1 text-sm rounded-md transition-all ${
               period === 'all_time' 
-                ? 'bg-[#2BD45A] text-black font-medium' 
+                ? 'bg-[#07B5A7] text-black font-medium' 
                 : 'text-zinc-400 hover:text-white'
             }`}
           >
@@ -141,7 +141,7 @@ export default function Leaderboard() {
               </div>
               
               <div className="text-right">
-                <div className="font-mono font-bold text-[#2BD45A]">
+                <div className="font-mono font-bold text-[#07B5A7]">
                   {entry.total_xp.toLocaleString()} XP
                 </div>
               </div>

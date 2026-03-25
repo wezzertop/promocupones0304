@@ -27,7 +27,7 @@ export default async function RootLayout({
 
   return (
     <html lang="es" className="dark">
-      <body className={`${inter.className} min-h-screen bg-[#0f1012] text-white`}>
+      <body className={`${inter.className} min-h-screen bg-[#161616] text-white`}>
         <ClientLayout user={user}>
           {children}
         </ClientLayout>
