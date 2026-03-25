@@ -294,17 +294,17 @@ export default function DealCard({
                  {deal.user.username[0]?.toUpperCase() || 'U'}
                </div>
              )}
-             <span className="text-zinc-500 font-medium truncate">{deal.user.username}</span>
+             <span className="text-[11px] sm:text-xs text-zinc-400 font-medium truncate max-w-[90px] sm:max-w-[120px]">{deal.user.username}</span>
           </Link>
        ) : (
           <div className="flex items-center gap-1.5 shrink-0">
               <div className="w-[16px] h-[16px] md:w-[20px] md:h-[20px] shrink-0 rounded-[10px] bg-zinc-800 flex items-center justify-center text-[10px] text-zinc-300 font-bold">U</div>
-              <span className="text-zinc-500 font-medium truncate">Anónimo</span>
+              <span className="text-[11px] sm:text-xs text-zinc-400 font-medium truncate">Anónimo</span>
           </div>
        )}
        <span className="text-zinc-600 font-bold shrink-0">•</span>
        {deal.store && (
-          <span className="text-[#07B5A7] font-bold truncate shrink-0 max-w-[80px] sm:max-w-none">{deal.store.name}</span>
+          <span className="text-xs sm:text-sm text-[#07B5A7] font-black truncate shrink-0 max-w-[100px] sm:max-w-none">{deal.store.name}</span>
        )}
      </div>
   )

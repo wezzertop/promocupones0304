@@ -7,7 +7,11 @@ import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import Link from 'next/link'
 
-export default function NotificationCenter() {
+interface NotificationCenterProps {
+  isMobile?: boolean;
+}
+
+export default function NotificationCenter({ isMobile = false }: NotificationCenterProps) {
   const [notifications, setNotifications] = useState<any[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [isOpen, setIsOpen] = useState(false)
@@ -88,11 +92,13 @@ export default function NotificationCenter() {
     <div className="relative">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-zinc-400 hover:text-white hover:bg-white/10 rounded-full transition-colors"
+        className={isMobile 
+          ? "relative flex items-center justify-center text-zinc-500 hover:text-white transition-colors" 
+          : "relative p-2 text-zinc-400 hover:text-white hover:bg-white/10 rounded-full transition-colors"}
       >
-        <Bell className="w-5 h-5" />
+        <Bell size={isMobile ? 22 : 20} strokeWidth={2} />
         {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-[#161616]"></span>
+          <span className={`absolute bg-red-500 rounded-full border-2 border-[#161616] ${isMobile ? '-top-0.5 -right-0.5 w-2.5 h-2.5' : 'top-1 right-1 w-2.5 h-2.5'}`}></span>
         )}
       </button>
 
@@ -102,7 +108,7 @@ export default function NotificationCenter() {
             className="fixed inset-0 z-40" 
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute right-0 mt-2 w-80 md:w-96 bg-[#222222] border border-white/10 rounded-xl shadow-xl z-50 overflow-hidden">
+          <div className={`absolute right-[-60px] sm:right-0 w-[320px] md:w-96 bg-[#222222] border border-white/10 rounded-xl shadow-xl z-50 overflow-hidden ${isMobile ? 'bottom-full mb-3' : 'top-full mt-2'}`}>
             <div className="p-4 border-b border-white/5 flex items-center justify-between">
               <h3 className="font-semibold text-white">Notificaciones</h3>
               {unreadCount > 0 && (

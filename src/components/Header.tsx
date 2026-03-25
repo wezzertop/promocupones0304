@@ -1,10 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { Search, Bell, User as UserIcon, LogOut, Settings, Menu, BadgeCheck, Shield } from 'lucide-react'
+import { Search, Bell, User as UserIcon, LogOut, Settings, Menu, BadgeCheck, Shield, Sparkles, Flame, Clock } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { User as SupabaseUser } from '@supabase/supabase-js'
 import { useScrollDirection } from '@/hooks/useScrollDirection'
 import { useUIStore } from '@/lib/store'
@@ -24,10 +24,20 @@ export default function Header({ user }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [isSearchSuggestionsOpen, setIsSearchSuggestionsOpen] = useState(false)
   const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
   const supabase = createClient()
   useScrollDirection() // Initialize scroll listener
   const { isHeaderVisible, toggleSidebar } = useUIStore()
   const searchInputRef = useRef<HTMLInputElement>(null)
+  const isHome = pathname === '/'
+  const currentFilter = searchParams?.get('filter') || 'foryou'
+
+  const handleFilterChange = (filter: string) => {
+    const params = new URLSearchParams(searchParams?.toString() || '')
+    params.set('filter', filter)
+    router.push(`/?${params.toString()}`)
+  }
   
   // Keyboard shortcut for search
   useEffect(() => {
@@ -99,7 +109,7 @@ export default function Header({ user }: HeaderProps) {
   }
 
   return (
-    <header className={`fixed lg:sticky top-0 z-40 h-14 bg-[#161616]/80 backdrop-blur-md border-b border-[#2d2e33] flex items-center px-2 md:px-4 transition-transform duration-300 w-full ${isHeaderVisible ? 'translate-y-0' : 'lg:-translate-y-full'}`}>
+    <header className={`fixed lg:sticky top-0 z-40 h-14 bg-[#161616]/80 backdrop-blur-md border-b border-[#2d2e33] flex items-center px-2 md:px-4 transition-transform duration-300 w-full ${isHeaderVisible ? 'translate-y-0' : '-translate-y-full'}`}>
       {/* Mobile Menu Trigger */}
       <div className="lg:hidden shrink-0 mr-1 md:mr-2 w-10 h-10 flex items-center justify-center">
         <button 
@@ -110,8 +120,23 @@ export default function Header({ user }: HeaderProps) {
         </button>
       </div>
 
+      {/* Mobile Nav Filters (Home Only) */}
+      {isHome && (
+        <div className="sm:hidden flex-1 flex flex-row items-center gap-1.5 overflow-x-auto scrollbar-hide px-1 justify-end opacity-90 pr-2">
+          <button onClick={() => handleFilterChange('foryou')} className={`shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-[10px] text-[11px] font-bold transition-all ${currentFilter === 'foryou' ? 'bg-[#222327] text-white shadow-md' : 'text-gray-400'}`}>
+            <Sparkles size={14} className={currentFilter === 'foryou' ? 'text-[#07B5A7]' : ''}/> Para ti
+          </button>
+          <button onClick={() => handleFilterChange('popular')} className={`shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-[10px] text-[11px] font-bold transition-all ${currentFilter === 'popular' ? 'bg-[#222327] text-white shadow-md' : 'text-gray-400'}`}>
+            <Flame size={14} className={currentFilter === 'popular' ? 'text-orange-500' : ''}/> Más votadas
+          </button>
+          <button onClick={() => handleFilterChange('recent')} className={`shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-[10px] text-[11px] font-bold transition-all ${currentFilter === 'recent' ? 'bg-[#222327] text-white shadow-md' : 'text-gray-400'}`}>
+            <Clock size={14} className={currentFilter === 'recent' ? 'text-blue-500' : ''}/> Recientes
+          </button>
+        </div>
+      )}
+
       {/* Search Bar */}
-      <div className="flex-1 w-full max-w-2xl relative group mx-1 md:mx-4 lg:mx-8">
+      <div className="hidden sm:block flex-1 w-full max-w-2xl relative group mx-1 md:mx-4 lg:mx-8">
         <form onSubmit={handleSearchSubmit} className="w-full relative">
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none z-10">
             <Search className="h-4 w-4 text-gray-500 group-focus-within:text-[#07B5A7] transition-colors" />
@@ -146,7 +171,7 @@ export default function Header({ user }: HeaderProps) {
       </div>
 
       {/* Right Actions */}
-      <div className="flex items-center gap-1 sm:gap-4 ml-auto w-[100px] sm:w-auto justify-end">
+      <div className="hidden sm:flex items-center gap-1 sm:gap-4 ml-auto w-[100px] sm:w-auto justify-end">
         {isAdminOrMod && (
           <Link 
             href="/admin/moderation" 

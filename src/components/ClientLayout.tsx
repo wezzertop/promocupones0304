@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Sidebar from "@/components/Sidebar";
 import FloatingActionButton from "@/components/FloatingActionButton";
+import MobileBottomNav from "@/components/MobileBottomNav";
 import AdSidebars from "@/components/AdSidebars";
 import { useUIStore } from '@/lib/store'
 import { User as SupabaseUser } from '@supabase/supabase-js'
@@ -77,10 +78,11 @@ export default function ClientLayout({ children, user: initialUser }: ClientLayo
       <Sidebar />
       <div className={`flex-1 flex flex-col min-h-screen transition-[padding] duration-300 ease-in-out ${isHeaderVisible ? 'lg:pl-64' : 'lg:pl-0'}`}>
         <Header user={user} />
-        <main className="flex-1 p-2 pt-14 md:p-4 md:pt-[80px] lg:p-8 lg:pt-8 max-w-[1920px] mx-auto w-full">
+        <main className="flex-1 p-2 pt-14 pb-20 md:p-4 md:pt-[80px] md:pb-4 lg:p-8 lg:pt-8 lg:pb-8 max-w-[1920px] mx-auto w-full">
           {children}
         </main>
         <Footer />
+        <MobileBottomNav user={user} />
       </div>
       <FloatingActionButton />
       <AdSidebars />
