@@ -4,28 +4,28 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence, PanInfo } from 'framer-motion'
-import { 
-    MessageSquare, 
-    Share2, 
-    ExternalLink, 
-    Clock, 
-    Bookmark, 
-    ArrowUp,
-    ArrowDown,
-    Store as StoreIcon,
-    Tag,
-    Truck,
-    ChevronLeft,
-    ChevronRight,
-    Flag,
-    Flame,
-    Globe,
-    Copy,
-    Check,
-    Ticket,
-    X,
-    ArrowUpRight
-  } from 'lucide-react'
+import {
+  MessageSquare,
+  Share2,
+  ExternalLink,
+  Clock,
+  Bookmark,
+  ArrowUp,
+  ArrowDown,
+  Store as StoreIcon,
+  Tag,
+  Truck,
+  ChevronLeft,
+  ChevronRight,
+  Flag,
+  Flame,
+  Globe,
+  Copy,
+  Check,
+  Ticket,
+  X,
+  ArrowUpRight
+} from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { Deal } from '@/types'
@@ -44,9 +44,9 @@ interface DealCardProps {
   onReject?: () => void
 }
 
-export default function DealCard({ 
-  deal, 
-  initialUserVote = null, 
+export default function DealCard({
+  deal,
+  initialUserVote = null,
   initialIsSaved = false,
   variant = 'default',
   onApprove,
@@ -59,9 +59,9 @@ export default function DealCard({
   const [isReportModalOpen, setIsReportModalOpen] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
   const { addToast } = useUIStore()
-  
+
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  
+
   const supabase = createClient()
   const isExpired = deal.status === 'expired' || (deal.expires_at && new Date(deal.expires_at) < new Date())
   const hasMultipleImages = deal.image_urls && deal.image_urls.length > 1
@@ -69,7 +69,7 @@ export default function DealCard({
   const isCoupon = deal.deal_type === 'coupon'
 
   // Removed useEffect for data fetching to solve N+1 problem
-  
+
   // Sync with props if they change (optional, depending on if we expect real-time updates from parent)
   useEffect(() => {
     if (initialUserVote !== undefined) setUserVote(initialUserVote)
@@ -122,7 +122,7 @@ export default function DealCard({
 
     try {
       const { data: { session } } = await supabase.auth.getSession()
-      
+
       if (!session) {
         addToast({
           type: 'info',
@@ -134,7 +134,7 @@ export default function DealCard({
 
       const previousVote = userVote
       const previousCount = votes
-      
+
       let newVote = type
       let newCount = votes
 
@@ -155,7 +155,7 @@ export default function DealCard({
       setUserVote(newVote as any)
 
       let error;
-      
+
       if (userVote === type) {
         const { error: deleteError } = await (supabase.from('votes') as any)
           .delete()
@@ -197,7 +197,7 @@ export default function DealCard({
       // Optimistic update
       const newSavedState = !isSaved
       setIsSaved(newSavedState)
-      
+
       if (newSavedState) {
         await (supabase.from('saves') as any).insert({ user_id: session.user.id, deal_id: deal.id })
       } else {
@@ -230,11 +230,11 @@ export default function DealCard({
   const handleCopyCode = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    
+
     // Si ya está copiado y el usuario vuelve a hacer clic, abrir el enlace
     if (isCopied) {
-       window.open(deal.deal_url, '_blank')
-       return
+      window.open(deal.deal_url, '_blank')
+      return
     }
 
     if (deal.coupon_code) {
@@ -247,12 +247,12 @@ export default function DealCard({
       })
       // No resetear isCopied automáticamente tan rápido, o manejarlo diferente
       // setTimeout(() => setIsCopied(false), 2000) 
-      
+
       // Also open the link automatically
       window.open(deal.deal_url, '_blank')
     } else {
-        // Fallback si no hay código (solo visitar)
-        window.open(deal.deal_url, '_blank')
+      // Fallback si no hay código (solo visitar)
+      window.open(deal.deal_url, '_blank')
     }
   }
 
@@ -277,56 +277,56 @@ export default function DealCard({
     return `${days}d`
   }
 
-  const dealLink = variant === 'moderation' 
-    ? `/oferta/${deal.id}?from=/admin/moderation&label=Volver a moderación` 
+  const dealLink = variant === 'moderation'
+    ? `/oferta/${deal.id}?from=/admin/moderation&label=Volver a moderación`
     : `/oferta/${deal.id}`
 
   const renderHeaderLeft = () => (
-     <div className="flex flex-1 items-center gap-1.5 text-[10px] md:text-xs min-w-0 pr-2">
-       {deal.user?.username ? (
-          <Link href={`/usuario/${encodeURIComponent(deal.user.username)}`} className="flex items-center gap-1.5 hover:underline shrink-0 min-w-0" onClick={(e) => e.stopPropagation()}>
-             {deal.user.avatar_url ? (
-               <div className="w-[16px] h-[16px] md:w-[20px] md:h-[20px] shrink-0 rounded-[10px] overflow-hidden">
-                 <Image src={deal.user.avatar_url} alt="" width={20} height={20} className="object-cover" unoptimized/>
-               </div>
-             ) : (
-               <div className="w-[16px] h-[16px] md:w-[20px] md:h-[20px] shrink-0 rounded-[10px] bg-zinc-800 flex items-center justify-center text-[10px] text-zinc-300 font-bold">
-                 {deal.user.username[0]?.toUpperCase() || 'U'}
-               </div>
-             )}
-             <span className="text-[11px] sm:text-xs text-zinc-400 font-medium truncate max-w-[90px] sm:max-w-[120px]">{deal.user.username}</span>
-          </Link>
-       ) : (
-          <div className="flex items-center gap-1.5 shrink-0">
-              <div className="w-[16px] h-[16px] md:w-[20px] md:h-[20px] shrink-0 rounded-[10px] bg-zinc-800 flex items-center justify-center text-[10px] text-zinc-300 font-bold">U</div>
-              <span className="text-[11px] sm:text-xs text-zinc-400 font-medium truncate">Anónimo</span>
-          </div>
-       )}
-       <span className="text-zinc-600 font-bold shrink-0">•</span>
-       {deal.store && (
-          <span className="text-xs sm:text-sm text-[#07B5A7] font-black truncate shrink-0 max-w-[100px] sm:max-w-none">{deal.store.name}</span>
-       )}
-     </div>
+    <div className="flex flex-1 items-center gap-1.5 text-[10px] md:text-xs min-w-0 pr-2">
+      {deal.user?.username ? (
+        <Link href={`/usuario/${encodeURIComponent(deal.user.username)}`} className="flex items-center gap-1.5 hover:underline shrink-0 min-w-0" onClick={(e) => e.stopPropagation()}>
+          {deal.user.avatar_url ? (
+            <div className="w-[16px] h-[16px] md:w-[20px] md:h-[20px] shrink-0 rounded-[10px] overflow-hidden">
+              <Image src={deal.user.avatar_url} alt="" width={20} height={20} className="object-cover" unoptimized />
+            </div>
+          ) : (
+            <div className="w-[16px] h-[16px] md:w-[20px] md:h-[20px] shrink-0 rounded-[10px] bg-zinc-800 flex items-center justify-center text-[10px] text-zinc-300 font-bold">
+              {deal.user.username[0]?.toUpperCase() || 'U'}
+            </div>
+          )}
+          <span className="text-[11px] sm:text-xs text-zinc-400 font-medium truncate max-w-[90px] sm:max-w-[120px]">{deal.user.username}</span>
+        </Link>
+      ) : (
+        <div className="flex items-center gap-1.5 shrink-0">
+          <div className="w-[16px] h-[16px] md:w-[20px] md:h-[20px] shrink-0 rounded-[10px] bg-zinc-800 flex items-center justify-center text-[10px] text-zinc-300 font-bold">U</div>
+          <span className="text-[11px] sm:text-xs text-zinc-400 font-medium truncate">Anónimo</span>
+        </div>
+      )}
+      <span className="text-zinc-600 font-bold shrink-0">•</span>
+      {deal.store && (
+        <span className="text-xs sm:text-sm text-[#07B5A7] font-black truncate shrink-0 max-w-[100px] sm:max-w-none">{deal.store.name}</span>
+      )}
+    </div>
   )
 
   const renderHeaderRight = () => (
-     <div className="flex items-center gap-0.5 md:gap-1 shrink-0 text-zinc-500">
-        <div className="flex items-center gap-1.5 text-[10px] md:text-xs px-1.5 py-1" title={new Date(deal.created_at).toLocaleString('es-MX')}>
-           <Clock size={14} className="md:w-4 md:h-4 stroke-[2px]" />
-           <span className="font-medium align-middle tracking-wide">{formatTimeAgo(deal.created_at)}</span>
-        </div>
-        <Link href={`${dealLink}#comments`} className="flex items-center gap-1.5 text-[10px] md:text-xs px-1.5 py-1 rounded-[6px] hover:bg-white/5 hover:text-zinc-300 transition-colors" title="Comentarios" onClick={(e) => e.stopPropagation()}>
-           <MessageSquare size={14} className="md:w-4 md:h-4 stroke-[2px]" />
-           <span className="font-medium align-middle">{deal.comments_count || 0}</span>
-        </Link>
-        <span className="text-white/10 mx-0.5 hidden sm:inline">|</span>
-        <button onClick={(e) => { e.preventDefault(); handleShare(); }} className="p-1.5 rounded-[6px] hover:bg-white/5 hover:text-zinc-300 transition-colors" title="Compartir">
-           <Share2 size={14} className="md:w-4 md:h-4 stroke-[2px]" />
-        </button>
-        <button onClick={(e) => { e.preventDefault(); handleSave(); }} className={cn("p-1.5 rounded-[6px] hover:bg-white/5 transition-colors", isSaved ? "text-[#07B5A7]" : "hover:text-zinc-300")} title="Guardar">
-           <Bookmark size={14} className={cn("md:w-4 md:h-4 stroke-[2px]", isSaved ? "fill-current" : "")} />
-        </button>
-     </div>
+    <div className="flex items-center gap-0.5 md:gap-1 shrink-0 text-zinc-500">
+      <div className="flex items-center gap-1.5 text-[10px] md:text-xs px-1.5 py-1" title={new Date(deal.created_at).toLocaleString('es-MX')}>
+        <Clock size={14} className="md:w-4 md:h-4 stroke-[2px]" />
+        <span className="font-medium align-middle tracking-wide">{formatTimeAgo(deal.created_at)}</span>
+      </div>
+      <Link href={`${dealLink}#comments`} className="flex items-center gap-1.5 text-[10px] md:text-xs px-1.5 py-1 rounded-[6px] hover:bg-white/5 hover:text-zinc-300 transition-colors" title="Comentarios" onClick={(e) => e.stopPropagation()}>
+        <MessageSquare size={14} className="md:w-4 md:h-4 stroke-[2px]" />
+        <span className="font-medium align-middle">{deal.comments_count || 0}</span>
+      </Link>
+      <span className="text-white/10 mx-0.5 hidden sm:inline">|</span>
+      <button onClick={(e) => { e.preventDefault(); handleShare(); }} className="p-1.5 rounded-[6px] hover:bg-white/5 hover:text-zinc-300 transition-colors" title="Compartir">
+        <Share2 size={14} className="md:w-4 md:h-4 stroke-[2px]" />
+      </button>
+      <button onClick={(e) => { e.preventDefault(); handleSave(); }} className={cn("p-1.5 rounded-[6px] hover:bg-white/5 transition-colors", isSaved ? "text-[#07B5A7]" : "hover:text-zinc-300")} title="Guardar">
+        <Bookmark size={14} className={cn("md:w-4 md:h-4 stroke-[2px]", isSaved ? "fill-current" : "")} />
+      </button>
+    </div>
   )
 
   return (
@@ -338,85 +338,85 @@ export default function DealCard({
 
       {/* --- MOBILE HEADER --- */}
       <div className="flex md:hidden items-center justify-between w-full p-2.5 pb-2 border-b border-white/5 relative z-10 bg-[#161616] overflow-hidden">
-         {renderHeaderLeft()}
-         {renderHeaderRight()}
+        {renderHeaderLeft()}
+        {renderHeaderRight()}
       </div>
-      
+
       {/* Component A: Vertical Voting Sidebar */}
       {variant === 'default' && (
-      <div className="hidden md:flex flex-col items-center justify-between gap-1 md:gap-2 w-full bg-[#111111] border-r border-white/5 py-2 md:py-4 z-10">
-        <button 
-          onClick={(e) => { e.preventDefault(); handleVote('hot'); }}
-          className={cn(
-            "p-1.5 rounded-[10px] transition-all hover:bg-white/10 active:scale-95",
-            userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") : "text-zinc-500 hover:text-white"
-          )}
-        >
-          <ArrowUp size={20} strokeWidth={3} />
-        </button>
-        
-        <span className={cn(
+        <div className="hidden md:flex flex-col items-center justify-between gap-1 md:gap-2 w-full bg-[#111111] border-r border-white/5 py-2 md:py-4 z-10">
+          <button
+            onClick={(e) => { e.preventDefault(); handleVote('hot'); }}
+            className={cn(
+              "p-1.5 rounded-[10px] transition-all hover:bg-white/10 active:scale-95",
+              userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") : "text-zinc-500 hover:text-white"
+            )}
+          >
+            <ArrowUp size={20} strokeWidth={3} />
+          </button>
+
+          <span className={cn(
             "font-black text-xs md:text-sm",
             userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") :
-            userVote === 'cold' ? "text-blue-500" : "text-white"
-        )}>
+              userVote === 'cold' ? "text-blue-500" : "text-white"
+          )}>
             {votes}°
-        </span>
-        
-        <button 
-          onClick={(e) => { e.preventDefault(); handleVote('cold'); }}
-          className={cn(
-            "p-1.5 rounded-[10px] transition-all hover:bg-white/10 active:scale-95",
-            userVote === 'cold' ? "text-blue-500" : "text-zinc-500 hover:text-white"
-          )}
-        >
-          <ArrowDown size={20} strokeWidth={3} />
-        </button>
-      </div>
+          </span>
+
+          <button
+            onClick={(e) => { e.preventDefault(); handleVote('cold'); }}
+            className={cn(
+              "p-1.5 rounded-[10px] transition-all hover:bg-white/10 active:scale-95",
+              userVote === 'cold' ? "text-blue-500" : "text-zinc-500 hover:text-white"
+            )}
+          >
+            <ArrowDown size={20} strokeWidth={3} />
+          </button>
+        </div>
       )}
 
       {/* --- MD CONTENTS WRAPPER --- */}
       <div className="grid grid-cols-[100px_minmax(0,1fr)] sm:grid-cols-[120px_minmax(0,1fr)] w-full md:contents p-2 md:p-0 gap-2 md:gap-0 h-full">
 
-      {/* Component B: Image Area */}
-      <div className="w-full flex flex-col items-center justify-start md:justify-center p-0 md:p-3 relative group/image md:border-r border-white/5 bg-[#1a1a1a]">
-        {deal.status !== 'active' && (
+        {/* Component B: Image Area */}
+        <div className="w-full flex flex-col items-center justify-start md:justify-center p-0 md:p-3 relative group/image md:border-r border-white/5 bg-[#1a1a1a]">
+          {deal.status !== 'active' && (
             <div className="absolute top-2 left-2 z-30 pointer-events-none">
               <span className={cn(
                 "px-2 py-0.5 rounded-[10px] text-[8px] md:text-[10px] font-black uppercase tracking-wider text-white shadow-sm",
                 deal.status === 'pending' ? "bg-yellow-500" :
-                deal.status === 'rejected' ? "bg-red-500" :
-                deal.status === 'expired' ? "bg-zinc-500" :
-                deal.status === 'revision' ? "bg-blue-500" :
-                "bg-zinc-500"
+                  deal.status === 'rejected' ? "bg-red-500" :
+                    deal.status === 'expired' ? "bg-zinc-500" :
+                      deal.status === 'revision' ? "bg-blue-500" :
+                        "bg-zinc-500"
               )}>
                 {deal.status === 'pending' ? 'Pendiente' :
-                 deal.status === 'rejected' ? 'Rechazada' :
-                 deal.status === 'expired' ? 'Expirada' :
-                 deal.status === 'revision' ? 'Revisión' :
-                 deal.status}
+                  deal.status === 'rejected' ? 'Rechazada' :
+                    deal.status === 'expired' ? 'Expirada' :
+                      deal.status === 'revision' ? 'Revisión' :
+                        deal.status}
               </span>
             </div>
-        )}
+          )}
 
-        <div className="relative w-full aspect-square bg-transparent rounded-[10px] flex items-center justify-center overflow-hidden shrink-0">
-          {deal.image_urls && deal.image_urls.length > 0 ? (
-            <>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentImageIndex}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  whileHover={{ scale: 1.05 }}
-                  drag={hasMultipleImages ? "x" : false}
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={0.2}
-                  onDragEnd={handleDragEnd}
-                  className="w-full h-full relative cursor-grab active:cursor-grabbing touch-pan-y"
-                >
-                   <Image
+          <div className="relative w-full aspect-square bg-transparent rounded-[10px] flex items-center justify-center overflow-hidden shrink-0">
+            {deal.image_urls && deal.image_urls.length > 0 ? (
+              <>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentImageIndex}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    whileHover={{ scale: 1.05 }}
+                    drag={hasMultipleImages ? "x" : false}
+                    dragConstraints={{ left: 0, right: 0 }}
+                    dragElastic={0.2}
+                    onDragEnd={handleDragEnd}
+                    className="w-full h-full relative cursor-grab active:cursor-grabbing touch-pan-y"
+                  >
+                    <Image
                       src={deal.image_urls[currentImageIndex]}
                       alt={deal.title}
                       fill
@@ -424,212 +424,212 @@ export default function DealCard({
                       sizes="(max-width: 768px) 100px, 200px"
                       priority={currentImageIndex === 0}
                       unoptimized
-                   />
-                </motion.div>
-              </AnimatePresence>
-              
-              {hasMultipleImages && (
-                <>
-                  <button 
-                    onClick={prevImage}
-                    className="hidden md:flex absolute left-1 top-1/2 -translate-y-1/2 z-20 p-1.5 rounded-[10px] bg-black/40 hover:bg-black/80 text-white transition-all opacity-0 group-hover/image:opacity-100"
-                  >
-                    <ChevronLeft size={16} />
-                  </button>
-                  <button 
-                    onClick={nextImage}
-                    className="hidden md:flex absolute right-1 top-1/2 -translate-y-1/2 z-20 p-1.5 rounded-[10px] bg-black/40 hover:bg-black/80 text-white transition-all opacity-0 group-hover/image:opacity-100"
-                  >
-                    <ChevronRight size={16} />
-                  </button>
-                  
-                  <div className="md:hidden absolute bottom-1 left-1/2 -translate-x-1/2 z-20 flex gap-0.5 pointer-events-none bg-black/20 px-1.5 py-0.5 rounded-[10px]">
-                    {deal.image_urls.map((_, idx) => (
-                      <div 
-                        key={idx} 
-                        className={cn(
-                          "w-1 h-1 rounded-[10px] transition-all", 
-                          idx === currentImageIndex ? "bg-white" : "bg-white/40"
-                        )}
-                      />
-                    ))}
-                  </div>
-                </>
-              )}
-            </>
-          ) : (
-            <div className="text-zinc-600 flex flex-col items-center justify-center h-full">
-              <Tag size={24} className="mb-2 text-zinc-400" />
-              <span className="text-[8px] md:text-[10px] font-black uppercase tracking-wider text-center text-zinc-500">Sin imagen</span>
+                    />
+                  </motion.div>
+                </AnimatePresence>
+
+                {hasMultipleImages && (
+                  <>
+                    <button
+                      onClick={prevImage}
+                      className="hidden md:flex absolute left-1 top-1/2 -translate-y-1/2 z-20 p-1.5 rounded-[10px] bg-black/40 hover:bg-black/80 text-white transition-all opacity-0 group-hover/image:opacity-100"
+                    >
+                      <ChevronLeft size={16} />
+                    </button>
+                    <button
+                      onClick={nextImage}
+                      className="hidden md:flex absolute right-1 top-1/2 -translate-y-1/2 z-20 p-1.5 rounded-[10px] bg-black/40 hover:bg-black/80 text-white transition-all opacity-0 group-hover/image:opacity-100"
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+
+                    <div className="md:hidden absolute bottom-1 left-1/2 -translate-x-1/2 z-20 flex gap-0.5 pointer-events-none bg-black/20 px-1.5 py-0.5 rounded-[10px]">
+                      {deal.image_urls.map((_, idx) => (
+                        <div
+                          key={idx}
+                          className={cn(
+                            "w-1 h-1 rounded-[10px] transition-all",
+                            idx === currentImageIndex ? "bg-white" : "bg-white/40"
+                          )}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
+              </>
+            ) : (
+              <div className="text-zinc-600 flex flex-col items-center justify-center h-full">
+                <Tag size={24} className="mb-2 text-zinc-400" />
+                <span className="text-[8px] md:text-[10px] font-black uppercase tracking-wider text-center text-zinc-500">Sin imagen</span>
+              </div>
+            )}
+          </div>
+
+          {/* Mobile Voting */}
+          {variant === 'default' && (
+            <div className="flex md:hidden items-center justify-between w-full mt-2 bg-black/20 rounded-[6px] p-1 border border-white/5 shrink-0 shadow-lg">
+              <button
+                onClick={(e) => { e.preventDefault(); handleVote('cold'); }}
+                className={cn(
+                  "p-1.5 rounded-[4px] transition-all hover:bg-white/10 active:scale-95",
+                  userVote === 'cold' ? "text-blue-500" : "text-zinc-500 hover:text-white"
+                )}
+              >
+                <ArrowDown size={14} strokeWidth={3} />
+              </button>
+              <span className={cn(
+                "font-black text-[10px] sm:text-xs",
+                userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") :
+                  userVote === 'cold' ? "text-blue-500" : "text-white"
+              )}>
+                {votes}°
+              </span>
+              <button
+                onClick={(e) => { e.preventDefault(); handleVote('hot'); }}
+                className={cn(
+                  "p-1.5 rounded-[4px] transition-all hover:bg-white/10 active:scale-95",
+                  userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") : "text-zinc-500 hover:text-white"
+                )}
+              >
+                <ArrowUp size={14} strokeWidth={3} />
+              </button>
             </div>
           )}
         </div>
 
-        {/* Mobile Voting */}
-        {variant === 'default' && (
-          <div className="flex md:hidden items-center justify-between w-full mt-2 bg-black/20 rounded-[6px] p-1 border border-white/5 shrink-0 shadow-lg">
-            <button 
-              onClick={(e) => { e.preventDefault(); handleVote('cold'); }}
-              className={cn(
-                "p-1.5 rounded-[4px] transition-all hover:bg-white/10 active:scale-95",
-                userVote === 'cold' ? "text-blue-500" : "text-zinc-500 hover:text-white"
-              )}
-            >
-              <ArrowDown size={14} strokeWidth={3} />
-            </button>
-            <span className={cn(
-                "font-black text-[10px] sm:text-xs",
-                userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") :
-                userVote === 'cold' ? "text-blue-500" : "text-white"
-            )}>
-                {votes}°
-            </span>
-            <button 
-              onClick={(e) => { e.preventDefault(); handleVote('hot'); }}
-              className={cn(
-                "p-1.5 rounded-[4px] transition-all hover:bg-white/10 active:scale-95",
-                userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") : "text-zinc-500 hover:text-white"
-              )}
-            >
-              <ArrowUp size={14} strokeWidth={3} />
-            </button>
-          </div>
-        )}
-      </div>
+        {/* Component C: Info Body */}
+        <div className="flex flex-col p-[8px] md:p-[20px] relative min-w-0 justify-between overflow-hidden h-full">
 
-      {/* Component C: Info Body */}
-      <div className="flex flex-col p-[8px] md:p-[20px] relative min-w-0 justify-between overflow-hidden h-full">
-        
-        <div className="flex flex-col gap-1 md:gap-2 min-w-0 w-full overflow-hidden">
+          <div className="flex flex-col gap-1 md:gap-2 min-w-0 w-full overflow-hidden">
             {/* Desktop Header Fragment */}
             <div className="hidden md:flex items-center justify-between w-full gap-2">
-               {renderHeaderLeft()}
-               {renderHeaderRight()}
+              {renderHeaderLeft()}
+              {renderHeaderRight()}
             </div>
 
             {/* Body */}
             {deal.expires_at && !isExpired && (
-                <div className="flex items-center gap-1.5 text-rose-500 mb-0.5 mt-0.5">
-                    <Clock size={12} className="stroke-[2.5px] shrink-0 md:w-3.5 md:h-3.5" />
-                    <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider flex items-center gap-1">Termina en <Countdown targetDate={deal.expires_at} className="bg-transparent border-none text-current p-0 m-0 font-bold inline" /></span>
-                </div>
+              <div className="flex items-center gap-1.5 text-rose-500 mb-0.5 mt-0.5">
+                <Clock size={12} className="stroke-[2.5px] shrink-0 md:w-3.5 md:h-3.5" />
+                <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider flex items-center gap-1">Termina en <Countdown targetDate={deal.expires_at} className="bg-transparent border-none text-current p-0 m-0 font-bold inline" /></span>
+              </div>
             )}
-            
+
             <Link href={dealLink} className="block group/link" onClick={(e) => e.stopPropagation()}>
-                <h3 className="text-white font-bold text-sm md:text-xl leading-tight line-clamp-2 md:line-clamp-1 group-hover/link:text-[#07B5A7] transition-colors">
-                  {deal.title}
-                </h3>
+              <h3 className="text-white font-bold text-sm md:text-xl leading-tight line-clamp-2 md:line-clamp-1 group-hover/link:text-[#07B5A7] transition-colors">
+                {deal.title}
+              </h3>
             </Link>
 
             <p className="text-zinc-400 text-[10px] md:text-sm line-clamp-2 mt-0.5 md:mt-1 leading-relaxed">
-                {deal.description}
+              {deal.description}
             </p>
-        </div>
+          </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between mt-2 md:mt-4 w-full gap-1 pt-2 border-t border-white/5">
+          {/* Footer */}
+          <div className="flex items-center justify-between mt-2 md:mt-4 w-full gap-1 pt-2 border-t border-white/5">
             <div className="flex-1 flex flex-col justify-center min-w-0 pr-1 gap-1 md:gap-1.5">
-                {isCoupon ? (
-                  <>
-                    <div className="flex items-center flex-nowrap gap-1.5 md:gap-2">
-                        <span className="text-lg md:text-3xl font-black text-white leading-none shrink-0 tracking-tight">
-                            {deal.discount_percentage ? `${deal.discount_percentage}% OFF` : (deal.discount_amount ? `${formatPrice(deal.discount_amount)} OFF` : 'Cupón')}
-                        </span>
-                        {deal.coupon_code && (
-                            <span className="bg-purple-500/20 text-purple-400 px-1.5 py-0.5 md:px-2 md:py-0.5 rounded-[10px] text-[10px] md:text-xs font-black uppercase font-mono border border-purple-500/30 shrink-0">
-                                {deal.coupon_code}
-                            </span>
-                        )}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="flex items-center flex-nowrap gap-1.5 md:gap-2">
-                        <span className="text-lg md:text-2xl font-black text-[#07B5A7] leading-none shrink-0 tracking-tight">
-                            {deal.deal_price ? formatPrice(deal.deal_price) : 'Gratis'}
-                        </span>
-                        {deal.original_price && deal.original_price > (deal.deal_price || 0) && (
-                            <span className="text-xs md:text-sm font-medium text-zinc-500 line-through decoration-red-500 decoration-1 shrink-0">
-                                {formatPrice(deal.original_price)}
-                            </span>
-                        )}
-                        {deal.discount_percentage && (
-                            <span className="bg-[#f5cb17] text-black text-[10px] sm:text-[11px] md:text-xs font-black px-1.5 py-0.5 rounded-[10px] leading-none flex items-center shrink-0">
-                                -{deal.discount_percentage}%
-                            </span>
-                        )}
-                    </div>
-                    
-                    {isFreeShipping ? (
-                        <div className="flex w-fit items-center gap-1 bg-lime-500/10 px-1.5 md:px-2 py-0.5 md:py-1 rounded-[4px] text-[9px] md:text-xs font-bold uppercase tracking-wide border border-lime-500/20">
-                            <Truck size={12} className="md:w-3.5 md:h-3.5 text-lime-400" strokeWidth={2.5}/>
-                            <span className="text-lime-400">Gratis</span>
-                        </div>
-                    ) : (
-                        <div className="flex w-fit items-center gap-1 bg-rose-500/10 px-1.5 md:px-2 py-0.5 md:py-1 rounded-[4px] text-[9px] md:text-xs font-bold uppercase tracking-wide border border-rose-500/20">
-                            <Truck size={12} className="md:w-3.5 md:h-3.5 text-rose-500" strokeWidth={2.5}/>
-                            <span className="text-rose-500">Ver</span>
-                        </div>
+              {isCoupon ? (
+                <>
+                  <div className="flex items-center flex-nowrap gap-1.5 md:gap-2">
+                    <span className="text-lg md:text-3xl font-black text-white leading-none shrink-0 tracking-tight">
+                      {deal.discount_percentage ? `${deal.discount_percentage}% OFF` : (deal.discount_amount ? `${formatPrice(deal.discount_amount)} OFF` : 'Cupón')}
+                    </span>
+                    {deal.coupon_code && (
+                      <span className="bg-purple-500/20 text-purple-400 px-1.5 py-0.5 md:px-2 md:py-0.5 rounded-[10px] text-[10px] md:text-xs font-black uppercase font-mono border border-purple-500/30 shrink-0">
+                        {deal.coupon_code}
+                      </span>
                     )}
-                  </>
-                )}
-            </div>
-            
-            {isCoupon ? (
-                <button 
-                  onClick={handleCopyCode}
-                  className={cn(
-                      "flex items-center gap-1 md:gap-1.5 px-2 md:px-4 h-[28px] md:h-[36px] shrink-0 rounded-[10px] font-black text-[8px] md:text-xs uppercase tracking-wider transition-all ml-1 md:ml-2",
-                      isCopied ? "bg-white text-black" : "bg-[#07B5A7] text-white hover:opacity-90"
-                  )}
-                  onClickCapture={(e) => e.stopPropagation()}
-                >
-                    <span className="hidden sm:inline">{isCopied ? 'COPIADO' : 'VER CUPÓN'}</span>
-                    <span className="sm:hidden">{isCopied ? 'OK' : 'CUPÓN'}</span>
-                    <ExternalLink size={12} strokeWidth={3} className={cn("md:w-4 md:h-4", isCopied ? "hidden" : "block")} />
-                    <Check size={12} strokeWidth={3} className={cn("md:w-4 md:h-4", isCopied ? "block" : "hidden")} />
-                </button>
-            ) : (
-                <a 
-                  href={deal.deal_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-1 md:gap-1.5 px-2 md:px-4 h-[28px] md:h-[36px] bg-[#07B5A7] hover:opacity-90 text-white font-black text-[8px] md:text-xs shrink-0 rounded-[10px] uppercase tracking-wider transition-colors ml-1 md:ml-2"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                    <span className="hidden sm:inline">IR AL CHOLLO</span>
-                    <span className="sm:hidden">VER</span>
-                    <ArrowUpRight size={12} strokeWidth={3} className="md:w-4 md:h-4" />
-                </a>
-            )}
-        </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center flex-nowrap gap-1.5 md:gap-2">
+                    <span className="text-lg md:text-2xl font-black text-[#07B5A7] leading-none shrink-0 tracking-tight">
+                      {deal.deal_price ? formatPrice(deal.deal_price) : 'Gratis'}
+                    </span>
+                    {deal.original_price && deal.original_price > (deal.deal_price || 0) && (
+                      <span className="text-xs md:text-sm font-medium text-zinc-500 line-through decoration-red-500 decoration-1 shrink-0">
+                        {formatPrice(deal.original_price)}
+                      </span>
+                    )}
+                    {deal.discount_percentage && (
+                      <span className="bg-[#f5cb17] text-black text-[10px] sm:text-[11px] md:text-xs font-black px-1.5 py-0.5 rounded-[10px] leading-none flex items-center shrink-0">
+                        -{deal.discount_percentage}%
+                      </span>
+                    )}
+                  </div>
 
-        {variant === 'moderation' && (
-          <div className="flex items-center gap-2 md:gap-3 w-full mt-3 md:mt-4 pt-3 md:pt-4 border-t border-white/5">
-             <button 
+                  {isFreeShipping ? (
+                    <div className="flex w-fit items-center gap-1 bg-lime-500/10 px-1.5 md:px-2 py-0.5 md:py-1 rounded-[4px] text-[9px] md:text-xs font-bold uppercase tracking-wide border border-lime-500/20">
+                      <Truck size={12} className="md:w-3.5 md:h-3.5 text-lime-400" strokeWidth={2.5} />
+                      <span className="text-lime-400">Gratis</span>
+                    </div>
+                  ) : (
+                    <div className="flex w-fit items-center gap-1 bg-rose-500/10 px-1.5 md:px-2 py-0.5 md:py-1 rounded-[4px] text-[9px] md:text-xs font-bold uppercase tracking-wide border border-rose-500/20">
+                      <Truck size={12} className="md:w-3.5 md:h-3.5 text-rose-500" strokeWidth={2.5} />
+                      <span className="text-rose-500">Ver</span>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+
+            {isCoupon ? (
+              <button
+                onClick={handleCopyCode}
+                className={cn(
+                  "flex items-center gap-1 md:gap-1.5 px-2 md:px-4 h-[28px] md:h-[36px] shrink-0 rounded-[10px] font-black text-[8px] md:text-xs uppercase tracking-wider transition-all ml-1 md:ml-2",
+                  isCopied ? "bg-white text-black" : "bg-[#07B5A7] text-white hover:opacity-90"
+                )}
+                onClickCapture={(e) => e.stopPropagation()}
+              >
+                <span className="hidden sm:inline">{isCopied ? 'COPIADO' : 'VER CUPÓN'}</span>
+                <span className="sm:hidden">{isCopied ? 'OK' : 'CUPÓN'}</span>
+                <ExternalLink size={12} strokeWidth={3} className={cn("md:w-4 md:h-4", isCopied ? "hidden" : "block")} />
+                <Check size={12} strokeWidth={3} className={cn("md:w-4 md:h-4", isCopied ? "block" : "hidden")} />
+              </button>
+            ) : (
+              <a
+                href={deal.deal_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-1 md:gap-1.5 px-2 md:px-4 h-[28px] md:h-[36px] bg-[#07B5A7] hover:opacity-90 text-white font-black text-[8px] md:text-xs shrink-0 rounded-[10px] uppercase tracking-wider transition-colors ml-1 md:ml-2"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <span className="hidden sm:inline">IR A OFERTA</span>
+                <span className="sm:hidden">VER</span>
+                <ArrowUpRight size={12} strokeWidth={3} className="md:w-4 md:h-4" />
+              </a>
+            )}
+          </div>
+
+          {variant === 'moderation' && (
+            <div className="flex items-center gap-2 md:gap-3 w-full mt-3 md:mt-4 pt-3 md:pt-4 border-t border-white/5">
+              <button
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); onReject?.(); }}
                 className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-500 h-[32px] md:h-[36px] rounded-[10px] text-[10px] md:text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
               >
                 <X size={14} className="md:w-4 md:h-4" /> Rechazar
               </button>
-              <button 
+              <button
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); onApprove?.(); }}
                 className="flex-1 bg-[#07B5A7]/10 hover:bg-[#07B5A7]/20 text-[#07B5A7] h-[32px] md:h-[36px] rounded-[10px] text-[10px] md:text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
               >
                 <Check size={14} className="md:w-4 md:h-4" /> Aprobar
               </button>
-          </div>
-        )}
+            </div>
+          )}
+
+        </div>
 
       </div>
-      
-      </div>
 
-      <ReportModal 
-        isOpen={isReportModalOpen} 
-        onClose={() => setIsReportModalOpen(false)} 
-        targetId={deal.id} 
-        targetType="deal" 
+      <ReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        targetId={deal.id}
+        targetType="deal"
       />
     </div>
   )
