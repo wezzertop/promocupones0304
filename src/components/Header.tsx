@@ -112,14 +112,19 @@ export default function Header({ user }: HeaderProps) {
 
   return (
     <header className={`fixed lg:sticky top-0 z-40 h-14 bg-background/80 backdrop-blur-md border-b border-border flex items-center px-2 md:px-4 transition-transform duration-300 w-full ${isHeaderVisible ? 'translate-y-0' : '-translate-y-full'}`}>
-      {/* Mobile Menu Trigger */}
-      <div className="lg:hidden shrink-0 mr-1 md:mr-2 w-10 h-10 flex items-center justify-center">
-        <button 
-          className="p-2 text-gray-400 hover:text-foreground"
-          onClick={toggleSidebar}
-        >
-          <Menu size={24} />
-        </button>
+      {/* Mobile Menu Trigger & Theme Toggle */}
+      <div className="lg:hidden flex items-center shrink-0 mr-1 md:mr-2">
+        <div className="w-10 h-10 flex items-center justify-center">
+          <button 
+            className="p-2 text-gray-400 hover:text-foreground"
+            onClick={toggleSidebar}
+          >
+            <Menu size={24} />
+          </button>
+        </div>
+        <div className="sm:hidden block z-50 relative pointer-events-auto">
+          <ThemeToggle />
+        </div>
       </div>
 
       {/* Mobile Nav Filters (Home Only) */}
@@ -291,8 +296,8 @@ export default function Header({ user }: HeaderProps) {
         )}
       </div>
 
-      {/* Global Alert Button for Mobile */}
-      <div className="sm:hidden">
+      {/* Mobile Right Actions */}
+      <div className="sm:hidden flex flex-1 justify-end items-center gap-1 shrink-0 ml-1">
         {user && <SearchAlertButton initialKeyword={searchQuery} userId={user.id} />}
       </div>
     </header>

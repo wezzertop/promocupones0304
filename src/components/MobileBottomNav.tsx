@@ -120,7 +120,7 @@ export default function MobileBottomNav({ user }: MobileBottomNavProps) {
         <div className="relative w-14 h-full flex items-center justify-center -mt-6">
           <Link 
             href="/publicar"
-            className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-tr from-[#07B5A7] to-[#25b84e] shadow-[0_0_20px_rgba(7,181,167,0.4)] active:scale-95 transition-transform"
+            className="flex items-center justify-center w-14 h-14 rounded-full bg-[#07B5A7] shadow-[0_0_20px_rgba(7,181,167,0.4)] active:scale-95 transition-transform"
           >
             <Plus size={28} color="black" strokeWidth={3} />
           </Link>

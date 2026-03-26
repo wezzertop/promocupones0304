@@ -11,14 +11,16 @@ export function useScrollDirection() {
   const lastScrollY = useRef(0)
 
   useEffect(() => {
-    // Disable scroll hide logic on specific pages
-    // The user wants navigation to stay visible on these pages
+    // Disable scroll hide logic on specific pages for desktop
+    // The user wants navigation to stay visible on these pages on desktop,
+    // but on mobile the header should always hide on scroll down to save space.
     const alwaysVisibleRoutes = ['/oferta', '/perfil', '/ajustes', '/settings', '/publicar', '/login', '/registro', '/usuario']
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
     const shouldAlwaysShow = alwaysVisibleRoutes.some(route => pathname?.startsWith(route))
 
-    if (shouldAlwaysShow) {
+    if (shouldAlwaysShow && !isMobile) {
       setHeaderVisible(true)
-      // We return early, so no scroll listener is added.
+      // We return early, so no scroll listener is added on desktop for these routes.
       // The cleanup function from the previous effect (if any) will remove the old listener.
       return
     }
@@ -28,7 +30,8 @@ export function useScrollDirection() {
 
     const updateScrollDirection = () => {
       // Double check inside the handler to be safe
-      if (alwaysVisibleRoutes.some(route => window.location.pathname.startsWith(route))) {
+      const isMobileNow = window.innerWidth < 768
+      if (!isMobileNow && alwaysVisibleRoutes.some(route => window.location.pathname.startsWith(route))) {
          return
       }
 
