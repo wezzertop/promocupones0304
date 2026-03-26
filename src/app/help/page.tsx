@@ -96,17 +96,17 @@ export default function HelpCenterPage() {
     <div className="max-w-5xl mx-auto py-12 px-6 animate-fade-in min-h-screen">
       <Link 
         href="/" 
-        className="inline-flex items-center gap-2 text-zinc-400 hover:text-white mb-8 transition-colors text-sm"
+        className="inline-flex items-center gap-2 text-zinc-500 dark:text-zinc-400 hover:text-foreground mb-8 transition-colors text-sm"
       >
         <ArrowLeft size={16} />
         Volver al inicio
       </Link>
 
       <div className="text-center mb-16">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">
+        <h1 className="text-4xl md:text-5xl font-extrabold text-foreground mb-6 tracking-tight">
           Centro de Ayuda
         </h1>
-        <p className="text-lg text-zinc-400 max-w-2xl mx-auto mb-10">
+        <p className="text-lg text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto mb-10">
           Encuentra respuestas a tus preguntas y aprende a sacar el máximo provecho de Cupoferta.
         </p>
 
@@ -120,7 +120,7 @@ export default function HelpCenterPage() {
             placeholder="Buscar ayuda (ej. karma, publicar, cuenta)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#222222] border border-[#2d2e33] text-white text-lg rounded-2xl pl-12 pr-6 py-4 focus:outline-none focus:border-[#07B5A7]/50 focus:ring-2 focus:ring-[#07B5A7]/20 transition-all placeholder:text-zinc-600 shadow-xl"
+            className="w-full bg-surface border border-border text-foreground text-lg rounded-2xl pl-12 pr-6 py-4 focus:outline-none focus:border-[#07B5A7]/50 focus:ring-2 focus:ring-[#07B5A7]/20 transition-all placeholder:text-zinc-600 shadow-xl"
           />
         </div>
       </div>
@@ -138,13 +138,13 @@ export default function HelpCenterPage() {
                 className={`p-6 rounded-2xl border transition-all text-left group ${
                   isSelected 
                     ? 'bg-[#07B5A7]/10 border-[#07B5A7] ring-1 ring-[#07B5A7]' 
-                    : 'bg-[#222222] border-[#2d2e33] hover:border-[#07B5A7]/30 hover:bg-[#222327]'
+                    : 'bg-surface border-border hover:border-[#07B5A7]/30 hover:bg-surface-hover'
                 }`}
               >
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 transition-colors ${isSelected ? 'bg-[#07B5A7] text-black' : `${cat.bg} ${cat.color}`}`}>
                   <Icon size={20} />
                 </div>
-                <h3 className={`font-bold mb-1 transition-colors ${isSelected ? 'text-white' : 'text-zinc-300 group-hover:text-white'}`}>
+                <h3 className={`font-bold mb-1 transition-colors ${isSelected ? 'text-foreground' : 'text-zinc-600 dark:text-zinc-300 group-hover:text-foreground'}`}>
                   {cat.title}
                 </h3>
                 <p className="text-xs text-zinc-500 font-medium">
@@ -162,30 +162,30 @@ export default function HelpCenterPage() {
           filteredFAQs.map((faq) => (
             <div 
               key={faq.id} 
-              className="bg-[#222222] border border-[#2d2e33] rounded-2xl overflow-hidden hover:border-[#07B5A7]/30 transition-all group"
+              className="bg-surface border border-border rounded-2xl overflow-hidden hover:border-[#07B5A7]/30 transition-all group"
             >
               <details className="group/details">
                 <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
-                  <h3 className="text-lg font-bold text-white group-hover:text-[#07B5A7] transition-colors pr-8">
+                  <h3 className="text-lg font-bold text-foreground group-hover:text-[#07B5A7] transition-colors pr-8">
                     {faq.question}
                   </h3>
-                  <div className="w-8 h-8 rounded-full bg-[#222327] flex items-center justify-center text-zinc-400 group-open/details:rotate-90 transition-transform">
+                  <div className="w-8 h-8 rounded-full bg-surface-hover flex items-center justify-center text-zinc-500 dark:text-zinc-400 group-open/details:rotate-90 transition-transform">
                     <ChevronRight size={18} />
                   </div>
                 </summary>
-                <div className="px-6 pb-6 pt-0 text-zinc-400 leading-relaxed border-t border-[#2d2e33] mt-0 pt-4 animate-in slide-in-from-top-2 fade-in duration-200">
+                <div className="px-6 pb-6 pt-0 text-zinc-500 dark:text-zinc-400 leading-relaxed border-t border-border mt-0 pt-4 animate-in slide-in-from-top-2 fade-in duration-200">
                   {faq.answer}
                 </div>
               </details>
             </div>
           ))
         ) : (
-          <div className="text-center py-20 bg-[#222222] rounded-3xl border border-[#2d2e33] border-dashed">
-            <div className="w-16 h-16 bg-[#222327] rounded-full flex items-center justify-center mx-auto mb-4 text-zinc-500">
+          <div className="text-center py-20 bg-surface rounded-3xl border border-border border-dashed">
+            <div className="w-16 h-16 bg-surface-hover rounded-full flex items-center justify-center mx-auto mb-4 text-zinc-500">
               <Search size={32} />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">No encontramos respuestas</h3>
-            <p className="text-zinc-400 max-w-md mx-auto">
+            <h3 className="text-xl font-bold text-foreground mb-2">No encontramos respuestas</h3>
+            <p className="text-zinc-500 dark:text-zinc-400 max-w-md mx-auto">
               Intenta con otras palabras clave o navega por las categorías.
             </p>
             <button 
@@ -199,14 +199,14 @@ export default function HelpCenterPage() {
       </div>
 
       {/* Still need help? */}
-      <div className="mt-20 text-center border-t border-[#2d2e33] pt-12">
-        <h3 className="text-2xl font-bold text-white mb-4">¿Aún necesitas ayuda?</h3>
-        <p className="text-zinc-400 mb-8">
+      <div className="mt-20 text-center border-t border-border pt-12">
+        <h3 className="text-2xl font-bold text-foreground mb-4">¿Aún necesitas ayuda?</h3>
+        <p className="text-zinc-500 dark:text-zinc-400 mb-8">
           Nuestro equipo de soporte está disponible para resolver cualquier duda que tengas.
         </p>
         <Link 
           href="/contact" 
-          className="inline-flex items-center justify-center px-8 py-4 bg-[#222327] hover:bg-[#2d2e33] text-white font-bold rounded-xl border border-[#2d2e33] hover:border-[#07B5A7]/50 transition-all gap-2"
+          className="inline-flex items-center justify-center px-8 py-4 bg-surface-hover hover:bg-black/5 dark:hover:bg-[#2d2e33] text-foreground font-bold rounded-xl border border-border hover:border-[#07B5A7]/50 transition-all gap-2"
         >
           <MessageSquare size={18} />
           Contactar Soporte

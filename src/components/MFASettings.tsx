@@ -111,8 +111,8 @@ export default function MFASettings() {
   }
 
   return (
-    <div className="bg-[#222222] border border-[#2d2e33] rounded-3xl overflow-hidden mt-8">
-        <div className="p-6 border-b border-[#2d2e33]">
+    <div className="bg-surface border border-border rounded-3xl overflow-hidden mt-8">
+        <div className="p-6 border-b border-border">
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
                 <ShieldCheck className="text-[#07B5A7]" size={20} />
                 Autenticación en dos pasos (MFA)
@@ -174,7 +174,7 @@ export default function MFASettings() {
                                 value={verifyCode}
                                 onChange={(e) => setVerifyCode(e.target.value)}
                                 placeholder="123456"
-                                className="flex-1 bg-[#222327] border border-[#2d2e33] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#07B5A7] tracking-widest text-center text-lg"
+                                className="flex-1 bg-surface-hover border border-border rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#07B5A7] tracking-widest text-center text-lg"
                                 maxLength={6}
                             />
                             <button 

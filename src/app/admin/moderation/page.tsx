@@ -208,7 +208,7 @@ export default function ModerationPage() {
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 sticky top-14 lg:top-0 z-40 bg-[#161616]/80 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 sticky top-14 lg:top-0 z-40 bg-background/80 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg">
         <div className="flex items-center gap-4">
            <Link 
              href="/" 
@@ -257,8 +257,8 @@ export default function ModerationPage() {
 
       <div className="flex flex-col gap-4">
         {deals.length === 0 ? (
-          <div className="text-center py-20 text-zinc-500 bg-[#222222] rounded-3xl border border-[#2d2e33] border-dashed">
-            <div className="w-16 h-16 bg-[#222327] rounded-full flex items-center justify-center mb-4 mx-auto text-zinc-600">
+          <div className="text-center py-20 text-zinc-500 bg-surface rounded-3xl border border-border border-dashed">
+            <div className="w-16 h-16 bg-surface-hover rounded-full flex items-center justify-center mb-4 mx-auto text-zinc-600">
                <Check size={32} />
             </div>
             <h3 className="text-xl font-bold text-white mb-2">¡Todo limpio!</h3>
@@ -310,7 +310,7 @@ export default function ModerationPage() {
       {/* Reject Modal */}
       {isRejectModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-[#222222] rounded-2xl border border-white/10 w-full max-w-md p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-surface rounded-2xl border border-white/10 w-full max-w-md p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             <h3 className="text-xl font-bold text-white mb-4">
               {selectedDeal ? 'Rechazar Publicación' : `Rechazar ${selectedDeals.size} Publicaciones`}
             </h3>
@@ -352,15 +352,15 @@ export default function ModerationPage() {
       {/* History Modal */}
       {historyModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={() => setHistoryModalOpen(false)}>
-          <div className="bg-[#222222] rounded-2xl border border-white/10 w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col shadow-2xl animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
-            <div className="p-6 border-b border-white/5 flex justify-between items-center bg-[#161616]">
+          <div className="bg-surface rounded-2xl border border-white/10 w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col shadow-2xl animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+            <div className="p-6 border-b border-white/5 flex justify-between items-center bg-background">
               <h3 className="text-xl font-bold text-white">Historial de Usuario</h3>
               <button onClick={() => setHistoryModalOpen(false)} className="text-zinc-500 hover:text-white p-1 rounded-lg hover:bg-white/5 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
             
-            <div className="p-6 overflow-y-auto custom-scrollbar bg-[#161616]">
+            <div className="p-6 overflow-y-auto custom-scrollbar bg-background">
               {historyLoading ? (
                 <div className="flex justify-center py-8 text-zinc-500 animate-pulse">Cargando información...</div>
               ) : (

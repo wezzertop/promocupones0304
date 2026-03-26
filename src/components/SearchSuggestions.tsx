@@ -141,7 +141,7 @@ export default function SearchSuggestions({ query, isOpen, onClose, onSelect }: 
   return (
     <div 
       ref={containerRef}
-      className="absolute top-full left-0 right-0 mt-2 bg-[#222222] border border-[#2d2e33] rounded-2xl shadow-2xl z-[100] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
+      className="absolute top-full left-0 right-0 mt-2 bg-surface border border-border rounded-2xl shadow-2xl z-[100] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
     >
       <div className="max-h-[min(80vh,480px)] overflow-y-auto scrollbar-hide">
         {loading && suggestions.length === 0 ? (
@@ -165,7 +165,7 @@ export default function SearchSuggestions({ query, isOpen, onClose, onSelect }: 
                 >
                   <div className={cn(
                     "w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-colors relative overflow-hidden",
-                    isActive ? "bg-[#07B5A7] text-black" : "bg-[#222327] text-gray-500 group-hover:text-white"
+                    isActive ? "bg-[#07B5A7] text-black" : "bg-surface-hover text-gray-500 group-hover:text-foreground"
                   )}>
                     {suggestion.image_url ? (
                       <Image 
@@ -208,10 +208,10 @@ export default function SearchSuggestions({ query, isOpen, onClose, onSelect }: 
               )
             })}
             
-            <div className="mt-2 p-2 border-t border-[#2d2e33]">
+            <div className="mt-2 p-2 border-t border-border">
               <button
                 onClick={() => onSelect(query)}
-                className="w-full flex items-center gap-3 px-3 py-2 text-xs font-bold text-gray-500 hover:text-white transition-colors"
+                className="w-full flex items-center gap-3 px-3 py-2 text-xs font-bold text-gray-500 hover:text-foreground transition-colors"
               >
                 <Search size={14} />
                 VER TODOS LOS RESULTADOS PARA "{query.toUpperCase()}"
@@ -230,7 +230,7 @@ export default function SearchSuggestions({ query, isOpen, onClose, onSelect }: 
                 <button
                   key={term}
                   onClick={() => onSelect(term)}
-                  className="px-3 py-1.5 rounded-lg bg-[#222327] border border-[#2d2e33] text-sm text-gray-300 hover:text-[#07B5A7] hover:border-[#07B5A7]/50 transition-all"
+                  className="px-3 py-1.5 rounded-lg bg-surface-hover border border-border text-sm text-gray-300 hover:text-[#07B5A7] hover:border-[#07B5A7]/50 transition-all"
                 >
                   {term}
                 </button>

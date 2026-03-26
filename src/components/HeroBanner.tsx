@@ -29,7 +29,7 @@ export default function HeroBanner() {
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
-          className="bg-gradient-to-r from-[#222222] to-[#222327] rounded-3xl p-8 border border-[#2d2e33] relative overflow-hidden group"
+          className="bg-gradient-to-r from-surface to-surface-hover rounded-3xl p-8 border border-border relative overflow-hidden group"
         >
           <div className="absolute top-0 right-0 w-64 h-64 bg-[#07B5A7] opacity-5 blur-[100px] rounded-full pointer-events-none"></div>
           

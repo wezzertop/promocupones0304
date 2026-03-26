@@ -17,8 +17,8 @@ export default function BadgeList({ badges, userBadges }: BadgeListProps) {
   }
 
   return (
-    <div className="bg-zinc-900/50 border border-white/10 rounded-2xl p-6">
-      <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+    <div className="bg-surface border border-border rounded-2xl p-6">
+      <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
         <span>Insignias</span>
         <span className="text-sm bg-[#07B5A7]/20 text-[#07B5A7] px-2 py-0.5 rounded-full font-medium">
           {userBadges.length} / {badges.length}
@@ -39,8 +39,8 @@ export default function BadgeList({ badges, userBadges }: BadgeListProps) {
                 relative group rounded-xl p-4 flex flex-col items-center text-center
                 border transition-all duration-300
                 ${earned 
-                  ? 'bg-zinc-800/50 border-[#07B5A7]/30 hover:border-[#07B5A7]/60' 
-                  : 'bg-black/30 border-white/5 opacity-60 grayscale'
+                  ? 'bg-surface-hover/50 border-[#07B5A7]/30 hover:border-[#07B5A7]/60' 
+                  : 'bg-surface-hover border-border opacity-60 grayscale'
                 }
               `}
             >
@@ -56,7 +56,7 @@ export default function BadgeList({ badges, userBadges }: BadgeListProps) {
                 </div>
               )}
               
-              <div className="w-12 h-12 mb-3 rounded-full bg-zinc-800 flex items-center justify-center overflow-hidden border border-white/10">
+              <div className="w-12 h-12 mb-3 rounded-full bg-surface-hover flex items-center justify-center overflow-hidden border border-border">
                 {badge.icon_url ? (
                   <Image 
                     src={badge.icon_url} 
@@ -70,15 +70,15 @@ export default function BadgeList({ badges, userBadges }: BadgeListProps) {
                 )}
               </div>
               
-              <h4 className={`text-sm font-semibold mb-1 ${earned ? 'text-white' : 'text-zinc-500'}`}>
+              <h4 className={`text-sm font-semibold mb-1 ${earned ? 'text-foreground' : 'text-zinc-500'}`}>
                 {badge.name}
               </h4>
               
-              <p className="text-xs text-zinc-400 line-clamp-2 mb-2 h-8">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2 mb-2 h-8">
                 {badge.description}
               </p>
               
-              <div className="text-[10px] uppercase tracking-wider font-bold text-zinc-500 bg-black/40 px-2 py-1 rounded-full w-full">
+              <div className="text-[10px] uppercase tracking-wider font-bold text-zinc-500 bg-surface-hover px-2 py-1 rounded-full w-full">
                 +{badge.xp_reward} XP
               </div>
             </motion.div>

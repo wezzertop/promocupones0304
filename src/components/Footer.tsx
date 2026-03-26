@@ -5,10 +5,9 @@ import { Facebook, Twitter, Instagram, Youtube, Mail, Heart } from 'lucide-react
 
 export default function Footer() {
   return (
-    <footer className="mt-auto border-t border-[#2d2e33] bg-[#161616] w-full overflow-hidden">
+    <footer className="mt-auto border-t border-border bg-background w-full overflow-hidden">
       <div className="max-w-[1920px] mx-auto px-4 sm:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 mb-12">
-          {/* Brand */}
           <div className="col-span-1 md:col-span-1">
             <Link href="/" className="relative h-10 w-48 block mb-6 group">
               <Logo className="w-full h-full justify-start transition-transform group-hover:scale-105 origin-left" />
@@ -17,11 +16,21 @@ export default function Footer() {
               La plataforma definitiva para encontrar y compartir las mejores ofertas.
               Únete a miles de compradores inteligentes hoy mismo.
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-4 mb-8">
               <SocialLink icon={Facebook} />
               <SocialLink icon={Twitter} />
               <SocialLink icon={Instagram} />
               <SocialLink icon={Youtube} />
+            </div>
+
+            {/* Descarga Apps */}
+            <div>
+              <h4 className="font-bold text-foreground text-sm mb-3">Lleva las ofertas contigo</h4>
+              <div className="flex flex-col gap-3">
+                <a href="#" className="block w-[160px] hover:opacity-80 transition-opacity">
+                  <Image src="/google-play-badge.svg" alt="Descargar en Google Play" width={160} height={47} className="w-full h-auto drop-shadow-sm" unoptimized />
+                </a>
+              </div>
             </div>
           </div>
 
@@ -47,13 +56,13 @@ export default function Footer() {
           />
 
           <div className="col-span-1">
-            <h3 className="font-bold text-white mb-6">Mantente actualizado</h3>
-            <div className="bg-[#222222] p-1.5 rounded-xl border border-[#2d2e33] flex items-center mb-4 focus-within:border-[#07B5A7] transition-colors">
+            <h3 className="font-bold text-foreground mb-6">Mantente actualizado</h3>
+            <div className="bg-surface p-1.5 rounded-xl border border-border flex items-center mb-4 focus-within:border-[#07B5A7] transition-colors">
               <Mail className="ml-3 text-gray-500" size={18} />
               <input 
                 type="email" 
                 placeholder="tu@email.com" 
-                className="bg-transparent border-none text-white text-sm w-full focus:ring-0 px-3 py-2"
+                className="bg-transparent border-none text-foreground text-sm w-full focus:ring-0 px-3 py-2"
               />
               <button className="bg-[#07B5A7] text-black p-2 rounded-lg hover:bg-[#25b84e] transition-colors">
                 <Heart size={18} />
@@ -66,10 +75,10 @@ export default function Footer() {
         </div>
 
         {/* Legal Disclaimer Section */}
-        <div className="border-t border-[#2d2e33] py-8">
+        <div className="border-t border-border py-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-xs text-gray-500 leading-relaxed">
             <div className="space-y-2">
-              <h4 className="font-bold text-gray-400">Exención de Responsabilidad de Precios</h4>
+              <h4 className="font-bold text-zinc-500 dark:text-gray-400">Exención de Responsabilidad de Precios</h4>
               <p>
                 Todos los precios, ofertas y promociones mostrados en Cupoferta están sujetos a cambios sin previo aviso por parte de los vendedores y tiendas originales. No nos hacemos responsables de las discrepancias entre el precio listado en nuestra plataforma y el precio final en el sitio del vendedor.
               </p>
@@ -78,7 +87,7 @@ export default function Footer() {
               </p>
             </div>
             <div className="space-y-2">
-              <h4 className="font-bold text-gray-400">Términos de Uso</h4>
+              <h4 className="font-bold text-zinc-500 dark:text-gray-400">Términos de Uso</h4>
               <p>
                 Al utilizar nuestros servicios, usted reconoce y acepta que Cupoferta no es responsable de ningún daño, pérdida o inconveniente derivado de cambios en los precios, disponibilidad de productos o errores en la información proporcionada.
               </p>
@@ -89,12 +98,12 @@ export default function Footer() {
           </div>
         </div>
         
-        <div className="border-t border-[#2d2e33] pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-600">
+        <div className="border-t border-border pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-600">
           <p>&copy; {new Date().getFullYear()} Cupoferta. Hecho con 💚 por la comunidad.</p>
           <div className="flex gap-6">
-            <Link href="/privacy" className="hover:text-gray-400 transition-colors">Privacidad</Link>
-            <Link href="/terms" className="hover:text-gray-400 transition-colors">Términos</Link>
-            <Link href="/cookies" className="hover:text-gray-400 transition-colors">Cookies</Link>
+            <Link href="/privacy" className="hover:text-zinc-500 dark:text-gray-400 transition-colors">Privacidad</Link>
+            <Link href="/terms" className="hover:text-zinc-500 dark:text-gray-400 transition-colors">Términos</Link>
+            <Link href="/cookies" className="hover:text-zinc-500 dark:text-gray-400 transition-colors">Cookies</Link>
           </div>
         </div>
       </div>
@@ -104,7 +113,7 @@ export default function Footer() {
 
 function SocialLink({ icon: Icon }: { icon: any }) {
   return (
-    <Link href="#" className="w-10 h-10 rounded-lg bg-[#222222] border border-[#2d2e33] flex items-center justify-center text-gray-400 hover:text-white hover:border-[#07B5A7] hover:bg-[#07B5A7]/10 transition-all">
+    <Link href="#" className="w-10 h-10 rounded-lg bg-surface border border-border flex items-center justify-center text-zinc-500 dark:text-gray-400 hover:text-foreground hover:border-[#07B5A7] hover:bg-[#07B5A7]/10 transition-all">
       <Icon size={18} />
     </Link>
   )
@@ -113,7 +122,7 @@ function SocialLink({ icon: Icon }: { icon: any }) {
 function FooterColumn({ title, links }: { title: string, links: { label: string, href: string }[] }) {
   return (
     <div>
-      <h3 className="font-bold text-white mb-6">{title}</h3>
+      <h3 className="font-bold text-foreground mb-6">{title}</h3>
       <ul className="space-y-3 text-sm">
         {links.map((link) => (
           <li key={link.href}>

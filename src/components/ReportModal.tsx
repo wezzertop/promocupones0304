@@ -72,7 +72,7 @@ export default function ReportModal({ isOpen, onClose, targetId, targetType }: R
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="bg-[#222222] rounded-2xl border border-white/10 w-full max-w-md p-6 relative">
+      <div className="bg-surface rounded-2xl border border-white/10 w-full max-w-md p-6 relative">
         <button 
           onClick={onClose}
           className="absolute top-4 right-4 text-zinc-400 hover:text-white transition-colors"

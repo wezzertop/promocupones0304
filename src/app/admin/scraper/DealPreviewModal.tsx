@@ -61,7 +61,7 @@ export default function DealPreviewModal({ deal, isOpen, onClose, categoryName =
       <div className="relative w-full max-w-5xl bg-[#121212] rounded-2xl shadow-2xl border border-white/10 overflow-hidden max-h-[90vh] flex flex-col">
         
         {/* Header with Close Button */}
-        <div className="flex items-center justify-between p-4 border-b border-white/5 bg-[#222222]">
+        <div className="flex items-center justify-between p-4 border-b border-white/5 bg-surface">
           <h2 className="text-lg font-bold text-white flex items-center gap-2">
             <span className="bg-[#07B5A7] text-black text-xs px-2 py-0.5 rounded font-bold uppercase">Previsualización</span>
             Vista de Usuario Final
@@ -85,7 +85,7 @@ export default function DealPreviewModal({ deal, isOpen, onClose, categoryName =
                         <Countdown targetDate={expiresAt} className="relative bg-black/40 rounded-xl border border-[#07B5A7]/20" size="md" />
                     )}
 
-                    <div className="glass-panel p-4 relative group overflow-hidden rounded-2xl bg-[#222222] border border-white/5 flex flex-col gap-3">
+                    <div className="glass-panel p-4 relative group overflow-hidden rounded-2xl bg-surface border border-white/5 flex flex-col gap-3">
                         
                         {/* Main Image */}
                         <div className="relative rounded-xl overflow-hidden bg-white p-2 flex items-center justify-center w-full aspect-video group/image border border-white/5">
@@ -155,7 +155,7 @@ export default function DealPreviewModal({ deal, isOpen, onClose, categoryName =
 
                 {/* Right Column: Info (5 cols) */}
                 <div className="lg:col-span-5 space-y-4 order-2">
-                    <div className="glass-panel rounded-2xl bg-[#222222] border border-white/5 p-5 space-y-4">
+                    <div className="glass-panel rounded-2xl bg-surface border border-white/5 p-5 space-y-4">
                         
                         {/* Meta Tags */}
                         <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold tracking-wider mb-2 uppercase">

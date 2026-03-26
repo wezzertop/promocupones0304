@@ -11,7 +11,7 @@ function ErrorContent() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] p-4">
-      <div className="bg-[#161616] border border-red-500/20 rounded-2xl p-8 max-w-md w-full text-center relative overflow-hidden">
+      <div className="bg-background border border-red-500/20 rounded-2xl p-8 max-w-md w-full text-center relative overflow-hidden">
         {/* Background glow */}
         <div className="absolute -top-20 -right-20 w-40 h-40 bg-red-500/10 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-red-500/10 rounded-full blur-3xl pointer-events-none"></div>

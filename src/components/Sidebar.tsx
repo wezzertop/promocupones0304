@@ -17,9 +17,8 @@ import {
   MoreHorizontal
 } from 'lucide-react'
 import { useUIStore } from '@/lib/store'
-import Image from 'next/image'
+import Image from 'next/image'
 import Logo from '@/components/Logo'
-
 const MENU_ITEMS = [
   { icon: Home, label: 'Inicio', href: '/' },
   { icon: Flame, label: 'Lo más Hot', href: '/hot' },
@@ -51,14 +50,14 @@ export default function Sidebar() {
         />
       )}
 
-      <aside className={`fixed left-0 top-0 h-screen w-64 bg-[#161616] border-r border-[#2d2e33] flex flex-col z-50 transition-transform duration-300 ease-in-out ${
+      <aside className={`fixed left-0 top-0 h-screen w-64 bg-background border-r border-border flex flex-col z-50 transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } ${
           isHeaderVisible ? 'lg:translate-x-0' : 'lg:-translate-x-full'
         }`}>
 
         {/* Logo Area */}
-        <div className="h-14 flex items-center justify-center border-b border-[#2d2e33]">
+        <div className="h-14 flex items-center justify-center border-b border-border">
           <Link href="/" className="relative h-10 w-[85%] block group" onClick={closeSidebar}>
             <Logo className="w-full h-full justify-center transition-transform group-hover:scale-105" iconClassName="h-7 w-auto drop-shadow-md" textClassName="text-xl" />
           </Link>
@@ -83,10 +82,10 @@ export default function Sidebar() {
                     className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
                       isActive 
                         ? 'bg-[#07B5A7]/10 text-[#07B5A7]' 
-                        : 'text-gray-400 hover:bg-[#222222] hover:text-white'
+                        : 'text-gray-400 hover:bg-surface hover:text-foreground'
                     }`}
                   >
-                    <Icon size={20} className={isActive ? 'text-[#07B5A7]' : 'text-gray-500 group-hover:text-white transition-colors'} />
+                    <Icon size={20} className={isActive ? 'text-[#07B5A7]' : 'text-gray-500 group-hover:text-foreground transition-colors'} />
                     {item.label}
                   </Link>
                 )
@@ -111,15 +110,15 @@ export default function Sidebar() {
                     className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
                       isActive 
                         ? 'bg-[#07B5A7]/10 text-[#07B5A7]' 
-                        : 'text-gray-400 hover:bg-[#222222] hover:text-white'
+                        : 'text-gray-400 hover:bg-surface hover:text-foreground'
                     }`}
                   >
-                    <Icon size={20} className={isActive ? 'text-[#07B5A7]' : 'text-gray-500 group-hover:text-white transition-colors'} />
+                    <Icon size={20} className={isActive ? 'text-[#07B5A7]' : 'text-gray-500 group-hover:text-foreground transition-colors'} />
                     {item.label}
                   </Link>
                 )
               })}
-              <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:bg-[#222222] hover:text-white transition-all">
+              <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:bg-surface hover:text-foreground transition-all">
                 <div className="w-5 flex justify-center">
                   <MoreHorizontal size={20} />
                 </div>
@@ -129,7 +128,15 @@ export default function Sidebar() {
           </div>
         </div>
         {/* Footer Area */}
-        {/* Eliminado porque ahora hay un botón flotante */}
+        {/* App Download Area */}
+        <div className="p-4 border-t border-border">
+          <h3 className="px-2 text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">Descarga la App</h3>
+          <div className="flex flex-col gap-2">
+            <Link href="#" className="block w-[140px] hover:opacity-80 transition-opacity">
+              <Image src="/google-play-badge.svg" alt="Descargar en Google Play" width={160} height={47} className="w-full h-auto drop-shadow-sm" unoptimized />
+            </Link>
+          </div>
+        </div>
       </aside>
     </>
   )

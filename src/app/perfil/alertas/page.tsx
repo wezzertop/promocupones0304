@@ -23,15 +23,15 @@ export default async function AlertsPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6 animate-fade-in p-4 md:p-8">
       <div className="flex items-center gap-4 mb-8">
-        <Link href="/perfil" className="p-2 hover:bg-white/5 rounded-full text-zinc-400 hover:text-white transition-colors">
+        <Link href="/perfil" className="p-2 hover:bg-surface-hover rounded-full text-zinc-500 dark:text-zinc-400 hover:text-foreground transition-colors">
           <ArrowLeft size={24} />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2 text-white">
+          <h1 className="text-2xl font-bold flex items-center gap-2 text-foreground">
             <BellRing className="text-[#07B5A7]" />
             Mis Alertas
           </h1>
-          <p className="text-zinc-400 text-sm mt-1">
+          <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-1">
             Administra las alertas de ofertas que te interesan.
           </p>
         </div>

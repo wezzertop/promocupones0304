@@ -399,7 +399,7 @@ export default function CommentsSection({ dealId, isCoupon = false }: CommentsSe
       id={`comment-${comment.id}`}
       className={cn(
         "flex gap-2.5 transition-colors duration-500 rounded-xl p-2", 
-        isReply ? "mt-3 ml-6 border-l-2 border-white/5 pl-3" : "mt-4",
+        isReply ? "mt-3 ml-6 border-l-2 border-border pl-3" : "mt-4",
         "target:border",
         accentTargetBg,
         accentTargetBorder
@@ -407,7 +407,7 @@ export default function CommentsSection({ dealId, isCoupon = false }: CommentsSe
     >
       <div className="flex-shrink-0">
         {comment.user?.avatar_url ? (
-          <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10 relative">
+          <div className="w-8 h-8 rounded-full overflow-hidden border border-border relative">
             <Image 
               src={comment.user.avatar_url} 
               alt={comment.user.username} 
@@ -416,14 +416,14 @@ export default function CommentsSection({ dealId, isCoupon = false }: CommentsSe
             />
           </div>
         ) : (
-          <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-[10px] text-zinc-400 font-bold border border-white/5">
+          <div className="w-8 h-8 rounded-full bg-surface-hover flex items-center justify-center text-[10px] text-zinc-400 font-bold border border-border">
             {(comment.user?.username || 'U').substring(0, 2).toUpperCase()}
           </div>
         )}
       </div>
       
       <div className="flex-1">
-        <div className="bg-white/5 rounded-xl p-3 border border-white/5">
+        <div className="bg-surface-hover rounded-xl p-3 border border-border">
           <div className="flex items-center justify-between mb-1.5">
             {comment.user?.username ? (
                <Link href={`/usuario/${encodeURIComponent(comment.user.username)}`} className="hover:underline">
@@ -444,7 +444,7 @@ export default function CommentsSection({ dealId, isCoupon = false }: CommentsSe
             onClick={() => handleVote(comment.id, 'like')}
             className={cn(
               "flex items-center gap-1 text-[10px] font-medium transition-colors",
-              comment.user_vote === 'like' ? accentText : "text-zinc-500 hover:text-white"
+              comment.user_vote === 'like' ? accentText : "text-zinc-500 hover:text-foreground"
             )}
           >
             <ThumbsUp size={12} className={comment.user_vote === 'like' ? "fill-current" : ""} />
@@ -455,7 +455,7 @@ export default function CommentsSection({ dealId, isCoupon = false }: CommentsSe
             onClick={() => handleVote(comment.id, 'dislike')}
             className={cn(
               "flex items-center gap-1 text-[10px] font-medium transition-colors",
-              comment.user_vote === 'dislike' ? "text-red-500" : "text-zinc-500 hover:text-white"
+              comment.user_vote === 'dislike' ? "text-red-500" : "text-zinc-500 hover:text-foreground"
             )}
           >
             <ThumbsDown size={12} className={comment.user_vote === 'dislike' ? "fill-current" : ""} />
@@ -492,8 +492,8 @@ export default function CommentsSection({ dealId, isCoupon = false }: CommentsSe
             </button>
             
             {reportingId === comment.id && (
-              <div className="absolute right-0 bottom-full mb-2 w-72 bg-[#18181b] border border-white/10 rounded-xl p-4 shadow-xl z-50 animate-in fade-in zoom-in-95">
-                <h4 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+              <div className="absolute right-0 bottom-full mb-2 w-72 bg-[#18181b] border border-border rounded-xl p-4 shadow-xl z-50 animate-in fade-in zoom-in-95">
+                <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
                   <Flag size={14} className="text-red-400" />
                   Reportar comentario
                 </h4>
@@ -504,7 +504,7 @@ export default function CommentsSection({ dealId, isCoupon = false }: CommentsSe
                     <select
                       value={reportReasonType}
                       onChange={(e) => setReportReasonType(e.target.value)}
-                      className="w-full bg-black/40 border border-white/10 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-red-500/50 appearance-none"
+                      className="w-full bg-surface-hover border border-border rounded-lg p-2 text-xs text-foreground focus:outline-none focus:border-red-500/50 appearance-none"
                     >
                       <option value="spam">Spam o publicidad no deseada</option>
                       <option value="offensive">Contenido ofensivo o inapropiado</option>
@@ -520,27 +520,27 @@ export default function CommentsSection({ dealId, isCoupon = false }: CommentsSe
                       value={reportDescription}
                       onChange={(e) => setReportDescription(e.target.value)}
                       placeholder="Describe brevemente el problema..."
-                      className="w-full bg-black/40 border border-white/10 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-red-500/50 resize-none"
+                      className="w-full bg-surface-hover border border-border rounded-lg p-2 text-xs text-foreground focus:outline-none focus:border-red-500/50 resize-none"
                       rows={3}
                     />
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-2 mt-4 pt-3 border-t border-white/5">
+                <div className="flex justify-end gap-2 mt-4 pt-3 border-t border-border">
                   <button 
                     onClick={() => {
                       setReportingId(null)
                       setReportDescription('')
                       setReportReasonType('spam')
                     }}
-                    className="px-3 py-1.5 text-xs text-zinc-400 hover:text-white transition-colors"
+                    className="px-3 py-1.5 text-xs text-zinc-400 hover:text-foreground transition-colors"
                   >
                     Cancelar
                   </button>
                   <button 
                     onClick={() => handleReport(comment.id)}
                     disabled={!reportDescription.trim()}
-                    className="px-3 py-1.5 bg-red-500 text-white rounded-lg text-xs font-bold hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-red-900/20"
+                    className="px-3 py-1.5 bg-red-500 text-foreground rounded-lg text-xs font-bold hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-red-900/20"
                   >
                     Enviar Reporte
                   </button>
@@ -565,7 +565,7 @@ export default function CommentsSection({ dealId, isCoupon = false }: CommentsSe
   return (
     <div className="" id="comments">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wide">
+        <h3 className="text-sm font-bold text-foreground flex items-center gap-2 uppercase tracking-wide">
           <MessageSquare className={cn("w-4 h-4", accentText)} />
           Comentarios ({totalCount})
         </h3>
@@ -587,7 +587,7 @@ export default function CommentsSection({ dealId, isCoupon = false }: CommentsSe
       )}
 
       {/* Main Comment Input */}
-      <div className="bg-white/5 rounded-2xl p-4 border border-white/5 mb-8">
+      <div className="bg-surface-hover rounded-2xl p-4 border border-border mb-8">
         {!session ? (
           <div className="text-center py-4">
             <p className="text-zinc-400 text-sm mb-3">Inicia sesión para unirte a la conversación</p>
@@ -616,14 +616,14 @@ export default function CommentsSection({ dealId, isCoupon = false }: CommentsSe
             </div>
             <div className="flex-1">
               {replyTo && (
-                <div className="flex items-center justify-between text-xs text-zinc-400 mb-2 bg-white/5 p-2 rounded-lg border border-white/5">
+                <div className="flex items-center justify-between text-xs text-zinc-400 mb-2 bg-surface-hover p-2 rounded-lg border border-border">
                   <span>Respondiendo comentario...</span>
                   <button 
                     onClick={() => {
                       setReplyTo(null)
                       setNewComment('')
                     }}
-                    className="text-white hover:text-red-400"
+                    className="text-foreground hover:text-red-400"
                   >
                     Cancelar
                   </button>
@@ -635,7 +635,7 @@ export default function CommentsSection({ dealId, isCoupon = false }: CommentsSe
                 placeholder={replyTo ? "Escribe tu respuesta..." : "¿Qué opinas de esta oferta?"}
                 rows={3}
                 className={cn(
-                  "w-full bg-black/20 border border-white/10 rounded-xl p-3 text-white placeholder:text-zinc-600 focus:outline-none focus:ring-1 transition-all resize-none text-sm",
+                  "w-full bg-surface-hover border border-border rounded-xl p-3 text-foreground placeholder:text-zinc-600 focus:outline-none focus:ring-1 transition-all resize-none text-sm",
                   accentFocusBorder,
                   accentFocusRing
                 )}
@@ -678,7 +678,7 @@ export default function CommentsSection({ dealId, isCoupon = false }: CommentsSe
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 bg-white/5 rounded-2xl border border-white/5 border-dashed">
+        <div className="text-center py-12 bg-surface-hover rounded-2xl border border-border border-dashed">
           <MessageSquare className="w-12 h-12 text-zinc-700 mx-auto mb-3" />
           <p className="text-zinc-400 font-medium">No hay comentarios aún</p>
           <p className="text-sm text-zinc-600 mt-1">Sé el primero en compartir tu opinión</p>

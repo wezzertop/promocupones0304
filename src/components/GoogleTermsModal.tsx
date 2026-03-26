@@ -17,7 +17,7 @@ export default function GoogleTermsModal({ isOpen, onClose, onAccept }: GoogleTe
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
-      <div className="w-full max-w-md bg-[#222222] border border-[#2d2e33] rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-4 duration-300">
+      <div className="w-full max-w-md bg-surface border border-border rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-4 duration-300">
         {/* Header with gradient line */}
         <div className="h-1.5 w-full bg-gradient-to-r from-transparent via-[#07B5A7] to-transparent opacity-50"></div>
         
@@ -91,7 +91,7 @@ export default function GoogleTermsModal({ isOpen, onClose, onAccept }: GoogleTe
           <div className="flex gap-3">
             <button
               onClick={onClose}
-              className="flex-1 px-4 py-3 rounded-xl border border-[#2d2e33] text-gray-400 hover:text-white hover:bg-[#222327] transition-all font-medium text-sm"
+              className="flex-1 px-4 py-3 rounded-xl border border-border text-gray-400 hover:text-white hover:bg-surface-hover transition-all font-medium text-sm"
             >
               Cancelar
             </button>

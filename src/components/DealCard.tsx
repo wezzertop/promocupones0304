@@ -315,15 +315,15 @@ export default function DealCard({
         <Clock size={14} className="md:w-4 md:h-4 stroke-[2px]" />
         <span className="font-medium align-middle tracking-wide">{formatTimeAgo(deal.created_at)}</span>
       </div>
-      <Link href={`${dealLink}#comments`} className="flex items-center gap-1.5 text-[10px] md:text-xs px-1.5 py-1 rounded-[6px] hover:bg-white/5 hover:text-zinc-300 transition-colors" title="Comentarios" onClick={(e) => e.stopPropagation()}>
+      <Link href={`${dealLink}#comments`} className="flex items-center gap-1.5 text-[10px] md:text-xs px-1.5 py-1 rounded-[6px] hover:bg-surface-hover hover:text-zinc-300 transition-colors" title="Comentarios" onClick={(e) => e.stopPropagation()}>
         <MessageSquare size={14} className="md:w-4 md:h-4 stroke-[2px]" />
         <span className="font-medium align-middle">{deal.comments_count || 0}</span>
       </Link>
-      <span className="text-white/10 mx-0.5 hidden sm:inline">|</span>
-      <button onClick={(e) => { e.preventDefault(); handleShare(); }} className="p-1.5 rounded-[6px] hover:bg-white/5 hover:text-zinc-300 transition-colors" title="Compartir">
+      <span className="text-border mx-0.5 hidden sm:inline">|</span>
+      <button onClick={(e) => { e.preventDefault(); handleShare(); }} className="p-1.5 rounded-[6px] hover:bg-surface-hover hover:text-zinc-300 transition-colors" title="Compartir">
         <Share2 size={14} className="md:w-4 md:h-4 stroke-[2px]" />
       </button>
-      <button onClick={(e) => { e.preventDefault(); handleSave(); }} className={cn("p-1.5 rounded-[6px] hover:bg-white/5 transition-colors", isSaved ? "text-[#07B5A7]" : "hover:text-zinc-300")} title="Guardar">
+      <button onClick={(e) => { e.preventDefault(); handleSave(); }} className={cn("p-1.5 rounded-[6px] hover:bg-surface-hover transition-colors", isSaved ? "text-[#07B5A7]" : "hover:text-zinc-300")} title="Guardar">
         <Bookmark size={14} className={cn("md:w-4 md:h-4 stroke-[2px]", isSaved ? "fill-current" : "")} />
       </button>
     </div>
@@ -331,25 +331,25 @@ export default function DealCard({
 
   return (
     <div className={cn(
-      "group relative flex flex-col md:grid md:grid-cols-[50px_180px_1fr] bg-[#161616] rounded-[10px] overflow-hidden border border-white/5 transition-all duration-300 md:hover:scale-[1.01] hover:border-white/10 shadow-xl shadow-black/50 hover:shadow-2xl w-full mx-auto md:mx-0",
+      "group relative flex flex-col md:grid md:grid-cols-[50px_180px_1fr] bg-background rounded-[10px] overflow-hidden border border-border transition-all duration-300 md:hover:scale-[1.01] hover:border-white/10 shadow-xl shadow-black/50 hover:shadow-2xl w-full mx-auto md:mx-0",
       isCoupon ? "hover:border-purple-500/50 hover:shadow-purple-500/10" : "hover:border-[#07B5A7]/50 hover:shadow-[#07B5A7]/10",
       isExpired && "opacity-60 grayscale"
     )}>
 
       {/* --- MOBILE HEADER --- */}
-      <div className="flex md:hidden items-center justify-between w-full p-2.5 pb-2 border-b border-white/5 relative z-10 bg-[#161616] overflow-hidden">
+      <div className="flex md:hidden items-center justify-between w-full p-2.5 pb-2 border-b border-border relative z-10 bg-background overflow-hidden">
         {renderHeaderLeft()}
         {renderHeaderRight()}
       </div>
 
       {/* Component A: Vertical Voting Sidebar */}
       {variant === 'default' && (
-        <div className="hidden md:flex flex-col items-center justify-between gap-1 md:gap-2 w-full bg-[#111111] border-r border-white/5 py-2 md:py-4 z-10">
+        <div className="hidden md:flex flex-col items-center justify-between gap-1 md:gap-2 w-full bg-surface-hover border-r border-border py-2 md:py-4 z-10">
           <button
             onClick={(e) => { e.preventDefault(); handleVote('hot'); }}
             className={cn(
-              "p-1.5 rounded-[10px] transition-all hover:bg-white/10 active:scale-95",
-              userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") : "text-zinc-500 hover:text-white"
+              "p-1.5 rounded-[10px] transition-all hover:bg-surface-hover active:scale-95",
+              userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") : "text-zinc-500 hover:text-foreground"
             )}
           >
             <ArrowUp size={20} strokeWidth={3} />
@@ -358,7 +358,7 @@ export default function DealCard({
           <span className={cn(
             "font-black text-xs md:text-sm",
             userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") :
-              userVote === 'cold' ? "text-blue-500" : "text-white"
+              userVote === 'cold' ? "text-blue-500" : "text-foreground"
           )}>
             {votes}°
           </span>
@@ -366,8 +366,8 @@ export default function DealCard({
           <button
             onClick={(e) => { e.preventDefault(); handleVote('cold'); }}
             className={cn(
-              "p-1.5 rounded-[10px] transition-all hover:bg-white/10 active:scale-95",
-              userVote === 'cold' ? "text-blue-500" : "text-zinc-500 hover:text-white"
+              "p-1.5 rounded-[10px] transition-all hover:bg-surface-hover active:scale-95",
+              userVote === 'cold' ? "text-blue-500" : "text-zinc-500 hover:text-foreground"
             )}
           >
             <ArrowDown size={20} strokeWidth={3} />
@@ -379,7 +379,7 @@ export default function DealCard({
       <div className="grid grid-cols-[100px_minmax(0,1fr)] sm:grid-cols-[120px_minmax(0,1fr)] w-full md:contents p-2 md:p-0 gap-2 md:gap-0 h-full">
 
         {/* Component B: Image Area */}
-        <div className="w-full flex flex-col items-center justify-start md:justify-center p-0 md:p-3 relative group/image md:border-r border-white/5 bg-[#1a1a1a]">
+        <div className="w-full flex flex-col items-center justify-start md:justify-center p-0 md:p-3 relative group/image md:border-r border-border bg-surface">
           {deal.status !== 'active' && (
             <div className="absolute top-2 left-2 z-30 pointer-events-none">
               <span className={cn(
@@ -467,12 +467,12 @@ export default function DealCard({
 
           {/* Mobile Voting */}
           {variant === 'default' && (
-            <div className="flex md:hidden items-center justify-between w-full mt-2 bg-black/20 rounded-[6px] p-1 border border-white/5 shrink-0 shadow-lg">
+            <div className="flex md:hidden items-center justify-between w-full mt-2 bg-surface-hover rounded-[6px] p-1 border border-border shrink-0 shadow-lg">
               <button
                 onClick={(e) => { e.preventDefault(); handleVote('cold'); }}
                 className={cn(
-                  "p-1.5 rounded-[4px] transition-all hover:bg-white/10 active:scale-95",
-                  userVote === 'cold' ? "text-blue-500" : "text-zinc-500 hover:text-white"
+                  "p-1.5 rounded-[4px] transition-all hover:bg-surface-hover active:scale-95",
+                  userVote === 'cold' ? "text-blue-500" : "text-zinc-500 hover:text-foreground"
                 )}
               >
                 <ArrowDown size={14} strokeWidth={3} />
@@ -480,15 +480,15 @@ export default function DealCard({
               <span className={cn(
                 "font-black text-[10px] sm:text-xs",
                 userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") :
-                  userVote === 'cold' ? "text-blue-500" : "text-white"
+                  userVote === 'cold' ? "text-blue-500" : "text-foreground"
               )}>
                 {votes}°
               </span>
               <button
                 onClick={(e) => { e.preventDefault(); handleVote('hot'); }}
                 className={cn(
-                  "p-1.5 rounded-[4px] transition-all hover:bg-white/10 active:scale-95",
-                  userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") : "text-zinc-500 hover:text-white"
+                  "p-1.5 rounded-[4px] transition-all hover:bg-surface-hover active:scale-95",
+                  userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") : "text-zinc-500 hover:text-foreground"
                 )}
               >
                 <ArrowUp size={14} strokeWidth={3} />
@@ -516,7 +516,7 @@ export default function DealCard({
             )}
 
             <Link href={dealLink} className="block group/link" onClick={(e) => e.stopPropagation()}>
-              <h3 className="text-white font-bold text-sm md:text-xl leading-tight line-clamp-2 md:line-clamp-1 group-hover/link:text-[#07B5A7] transition-colors">
+              <h3 className="text-foreground font-bold text-sm md:text-xl leading-tight line-clamp-2 md:line-clamp-1 group-hover/link:text-[#07B5A7] transition-colors">
                 {deal.title}
               </h3>
             </Link>
@@ -527,12 +527,12 @@ export default function DealCard({
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between mt-2 md:mt-4 w-full gap-1 pt-2 border-t border-white/5">
+          <div className="flex items-center justify-between mt-2 md:mt-4 w-full gap-1 pt-2 border-t border-border">
             <div className="flex-1 flex flex-col justify-center min-w-0 pr-1 gap-1 md:gap-1.5">
               {isCoupon ? (
                 <>
                   <div className="flex items-center flex-nowrap gap-1.5 md:gap-2">
-                    <span className="text-lg md:text-3xl font-black text-white leading-none shrink-0 tracking-tight">
+                    <span className="text-lg md:text-3xl font-black text-foreground leading-none shrink-0 tracking-tight">
                       {deal.discount_percentage ? `${deal.discount_percentage}% OFF` : (deal.discount_amount ? `${formatPrice(deal.discount_amount)} OFF` : 'Cupón')}
                     </span>
                     {deal.coupon_code && (
@@ -562,8 +562,8 @@ export default function DealCard({
 
                   {isFreeShipping ? (
                     <div className="flex w-fit items-center gap-1 bg-lime-500/10 px-1.5 md:px-2 py-0.5 md:py-1 rounded-[4px] text-[9px] md:text-xs font-bold uppercase tracking-wide border border-lime-500/20">
-                      <Truck size={12} className="md:w-3.5 md:h-3.5 text-lime-400" strokeWidth={2.5} />
-                      <span className="text-lime-400">Gratis</span>
+                      <Truck size={12} className="md:w-3.5 md:h-3.5 text-lime-600 dark:text-lime-400" strokeWidth={2.5} />
+                      <span className="text-lime-600 dark:text-lime-400">Gratis</span>
                     </div>
                   ) : (
                     <div className="flex w-fit items-center gap-1 bg-rose-500/10 px-1.5 md:px-2 py-0.5 md:py-1 rounded-[4px] text-[9px] md:text-xs font-bold uppercase tracking-wide border border-rose-500/20">
@@ -605,7 +605,7 @@ export default function DealCard({
           </div>
 
           {variant === 'moderation' && (
-            <div className="flex items-center gap-2 md:gap-3 w-full mt-3 md:mt-4 pt-3 md:pt-4 border-t border-white/5">
+            <div className="flex items-center gap-2 md:gap-3 w-full mt-3 md:mt-4 pt-3 md:pt-4 border-t border-border">
               <button
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); onReject?.(); }}
                 className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-500 h-[32px] md:h-[36px] rounded-[10px] text-[10px] md:text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"

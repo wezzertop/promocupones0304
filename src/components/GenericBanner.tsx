@@ -24,8 +24,8 @@ interface GenericBannerProps {
   iconColorClass?: string // e.g. "text-orange-500"
   iconBgClass?: string // e.g. "bg-orange-500/10"
   iconBorderClass?: string // e.g. "border-orange-500/20"
-  gradientFrom?: string // e.g. "from-[#222222]"
-  gradientTo?: string // e.g. "to-[#222327]"
+  gradientFrom?: string // e.g. "from-surface"
+  gradientTo?: string // e.g. "to-surface-hover"
   glowColorClass?: string // e.g. "bg-orange-500"
 }
 
@@ -38,8 +38,8 @@ export default function GenericBanner({
   iconColorClass = "text-[#07B5A7]",
   iconBgClass = "bg-[#07B5A7]/10",
   iconBorderClass = "border-[#07B5A7]/20",
-  gradientFrom = "from-[#222222]",
-  gradientTo = "to-[#222327]",
+  gradientFrom = "from-surface",
+  gradientTo = "to-surface-hover",
   glowColorClass = "bg-[#07B5A7]"
 }: GenericBannerProps) {
   const [isVisible, setIsVisible] = useState(true)
@@ -68,7 +68,7 @@ export default function GenericBanner({
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
-          className={`bg-gradient-to-r ${gradientFrom} ${gradientTo} rounded-3xl p-8 border border-[#2d2e33] relative overflow-hidden group`}
+          className={`bg-gradient-to-r ${gradientFrom} ${gradientTo} rounded-3xl p-8 border border-border relative overflow-hidden group`}
         >
           <div className={`absolute top-0 right-0 w-64 h-64 ${glowColorClass} opacity-5 blur-[100px] rounded-full pointer-events-none`}></div>
           

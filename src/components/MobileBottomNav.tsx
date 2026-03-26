@@ -60,9 +60,9 @@ export default function MobileBottomNav({ user }: MobileBottomNavProps) {
   return (
     <>
     {isSearchOpen && (
-      <div className="md:hidden fixed inset-0 z-[200] bg-[#161616] flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-200">
-        <div className="flex items-center gap-2 p-3 border-b border-[#2d2e33] bg-[#222222]">
-          <button onClick={() => setIsSearchOpen(false)} className="p-2 text-zinc-400 hover:text-white">
+      <div className="md:hidden fixed inset-0 z-[200] bg-background flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-200">
+        <div className="flex items-center gap-2 p-3 border-b border-border bg-surface">
+          <button onClick={() => setIsSearchOpen(false)} className="p-2 text-zinc-400 hover:text-foreground">
             <ChevronLeft size={24} />
           </button>
           <form onSubmit={handleSearchSubmit} className="flex-1 relative">
@@ -73,11 +73,11 @@ export default function MobileBottomNav({ user }: MobileBottomNavProps) {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Buscar ofertas, tiendas..."
-              className="w-full bg-[#161616] text-white pl-9 pr-4 py-2.5 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#07B5A7]/50"
+              className="w-full bg-background text-foreground pl-9 pr-4 py-2.5 rounded-xl border border-border focus:outline-none focus:border-[#07B5A7]/50"
             />
           </form>
         </div>
-        <div className="flex-1 overflow-y-auto relative bg-[#161616]">
+        <div className="flex-1 overflow-y-auto relative bg-background">
           <SearchSuggestions 
             query={searchQuery}
             isOpen={true}
@@ -88,7 +88,7 @@ export default function MobileBottomNav({ user }: MobileBottomNavProps) {
       </div>
     )}
 
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-[#161616]/90 backdrop-blur-xl border-t border-white/5 pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-background/90 backdrop-blur-xl border-t border-white/5 pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
       <div className="flex items-center justify-around h-16 px-2 relative">
         
         {/* Inicio */}
@@ -96,7 +96,7 @@ export default function MobileBottomNav({ user }: MobileBottomNavProps) {
           href="/" 
           className={cn(
             "flex flex-col items-center justify-center w-14 h-full gap-1 transition-colors",
-            isHome ? "text-[#07B5A7]" : "text-zinc-500 hover:text-white"
+            isHome ? "text-[#07B5A7]" : "text-zinc-500 hover:text-foreground"
           )}
         >
           <Home size={22} className={cn(isHome ? "stroke-[2.5px]" : "stroke-[2px]")} />
@@ -109,7 +109,7 @@ export default function MobileBottomNav({ user }: MobileBottomNavProps) {
           onClick={(e) => handleNavigate(e, '/search')}
           className={cn(
             "flex flex-col items-center justify-center w-14 h-full gap-1 transition-colors",
-            isSearch ? "text-[#07B5A7]" : "text-zinc-500 hover:text-white"
+            isSearch ? "text-[#07B5A7]" : "text-zinc-500 hover:text-foreground"
           )}
         >
           <Search size={22} className={cn(isSearch ? "stroke-[2.5px]" : "stroke-[2px]")} />
@@ -137,7 +137,7 @@ export default function MobileBottomNav({ user }: MobileBottomNavProps) {
           href={user ? "/perfil" : "/auth/login"} 
           className={cn(
             "flex flex-col items-center justify-center w-14 h-full gap-1 transition-colors",
-            isProfile ? "text-[#07B5A7]" : "text-zinc-500 hover:text-white"
+            isProfile ? "text-[#07B5A7]" : "text-zinc-500 hover:text-foreground"
           )}
         >
           {user ? (
@@ -154,7 +154,7 @@ export default function MobileBottomNav({ user }: MobileBottomNavProps) {
                   unoptimized
                 />
               ) : (
-                <div className="w-full h-full bg-zinc-800 flex items-center justify-center text-[10px] text-white font-bold">
+                <div className="w-full h-full bg-zinc-800 flex items-center justify-center text-[10px] text-foreground font-bold">
                   {(user.user_metadata?.username?.[0] || user.email?.[0] || 'U').toUpperCase()}
                 </div>
               )}

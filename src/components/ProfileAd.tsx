@@ -70,7 +70,7 @@ export default function ProfileAd({ className, variant = 'sidebar' }: ProfileAdP
     )}>
       <div 
         className={cn(
-          "flex flex-col items-center justify-center overflow-hidden transition-all duration-300 rounded-xl bg-gradient-to-r from-[#222222] to-[#222327] border border-[#2d2e33] relative group cursor-pointer hover:border-[#07B5A7]/50",
+          "flex flex-col items-center justify-center overflow-hidden transition-all duration-300 rounded-xl bg-gradient-to-r from-surface to-surface-hover border border-border relative group cursor-pointer hover:border-[#07B5A7]/50",
           config.width === 300 ? "w-[300px]" : (config.width === 320 ? "w-full max-w-[320px]" : "w-full max-w-[468px]")
         )}
         style={{ height: `${config.height}px` }}

@@ -419,7 +419,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="flex items-center justify-between sticky top-14 lg:top-0 z-40 bg-[#161616]/80 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg">
+      <div className="flex items-center justify-between sticky top-14 lg:top-0 z-40 bg-background/80 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
             <ShoppingCart className="text-[#07B5A7]" size={28} />
@@ -430,7 +430,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-4 border-b border-[#2d2e33]">
+      <div className="flex gap-4 border-b border-border">
         <button
           onClick={() => setActiveTab('search')}
           className={`pb-4 px-4 font-medium transition-colors relative ${
@@ -496,16 +496,16 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
             <button 
               onClick={loadLogs} 
               disabled={logsLoading}
-              className="p-2 bg-[#222327] rounded-lg text-gray-400 hover:text-white hover:bg-[#2d2e33] transition-colors"
+              className="p-2 bg-surface-hover rounded-lg text-gray-400 hover:text-white hover:bg-[#2d2e33] transition-colors"
             >
               <RefreshCw size={20} className={logsLoading ? 'animate-spin' : ''} />
             </button>
           </div>
           
-          <div className="bg-[#222222] rounded-2xl border border-[#2d2e33] overflow-hidden">
+          <div className="bg-surface rounded-2xl border border-border overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm text-gray-400">
-                <thead className="bg-[#222327] text-white uppercase font-medium">
+                <thead className="bg-surface-hover text-white uppercase font-medium">
                   <tr>
                     <th className="px-6 py-4">Fecha</th>
                     <th className="px-6 py-4">Usuario</th>
@@ -517,7 +517,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
                 </thead>
                 <tbody className="divide-y divide-[#2d2e33]">
                   {logs.map((log) => (
-                    <tr key={log.id} className="hover:bg-[#222327]/50 transition-colors">
+                    <tr key={log.id} className="hover:bg-surface-hover/50 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
                         {formatDistanceToNow(new Date(log.created_at), { addSuffix: true, locale: es })}
                       </td>
@@ -570,7 +570,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
               <button
                 onClick={() => handleBulkScrape('amazon')}
                 disabled={loading}
-                className="flex flex-col items-center justify-center p-8 bg-[#222222] border border-[#2d2e33] rounded-2xl hover:border-[#07B5A7] hover:bg-[#222327] transition-all group disabled:opacity-50 relative overflow-hidden"
+                className="flex flex-col items-center justify-center p-8 bg-surface border border-border rounded-2xl hover:border-[#07B5A7] hover:bg-surface-hover transition-all group disabled:opacity-50 relative overflow-hidden"
               >
                 <div className="absolute top-0 right-0 p-4 opacity-10">
                     <ShoppingCart size={120} />
@@ -586,7 +586,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
               <button
                 onClick={() => handleBulkScrape('mercadolibre')}
                 disabled={loading}
-                className="flex flex-col items-center justify-center p-8 bg-[#222222] border border-[#2d2e33] rounded-2xl hover:border-[#ffe600] hover:bg-[#222327] transition-all group disabled:opacity-50 relative overflow-hidden"
+                className="flex flex-col items-center justify-center p-8 bg-surface border border-border rounded-2xl hover:border-[#ffe600] hover:bg-surface-hover transition-all group disabled:opacity-50 relative overflow-hidden"
               >
                  <div className="absolute top-0 right-0 p-4 opacity-10">
                     <Tag size={120} />
@@ -611,7 +611,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
             </div>
 
             {showHtmlImport && (
-                <div id="html-import-section" className="bg-[#222222] p-6 rounded-2xl border border-[#2d2e33] mb-6 animate-fade-in">
+                <div id="html-import-section" className="bg-surface p-6 rounded-2xl border border-border mb-6 animate-fade-in">
                     <h3 className="text-white font-bold mb-4">Importar HTML Manualmente</h3>
                     <p className="text-sm text-gray-400 mb-4">
                         Si la extracción automática falla (por bloqueos de seguridad), copia el código fuente de la página de ofertas:
@@ -625,13 +625,13 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
                         <div className="flex gap-4">
                             <button 
                                 onClick={() => setSource('amazon')}
-                                className={`px-4 py-2 rounded-lg border ${source === 'amazon' ? 'bg-[#07B5A7]/20 border-[#07B5A7] text-[#07B5A7]' : 'border-[#2d2e33] text-gray-400'}`}
+                                className={`px-4 py-2 rounded-lg border ${source === 'amazon' ? 'bg-[#07B5A7]/20 border-[#07B5A7] text-[#07B5A7]' : 'border-border text-gray-400'}`}
                             >
                                 Amazon
                             </button>
                             <button 
                                 onClick={() => setSource('mercadolibre')}
-                                className={`px-4 py-2 rounded-lg border ${source === 'mercadolibre' ? 'bg-[#ffe600]/20 border-[#ffe600] text-[#ffe600]' : 'border-[#2d2e33] text-gray-400'}`}
+                                className={`px-4 py-2 rounded-lg border ${source === 'mercadolibre' ? 'bg-[#ffe600]/20 border-[#ffe600] text-[#ffe600]' : 'border-border text-gray-400'}`}
                             >
                                 Mercado Libre
                             </button>
@@ -642,7 +642,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
                         value={htmlInput}
                         onChange={(e) => setHtmlInput(e.target.value)}
                         placeholder="Pega el código HTML aquí..."
-                        className="w-full h-40 bg-[#222327] text-white p-4 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#07B5A7] font-mono text-xs mb-4"
+                        className="w-full h-40 bg-surface-hover text-white p-4 rounded-xl border border-border focus:outline-none focus:border-[#07B5A7] font-mono text-xs mb-4"
                     />
                     
                     <button
@@ -657,7 +657,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
             )}
             </>
            ) : (
-          <div className="bg-[#222222] p-6 rounded-2xl border border-[#2d2e33]">
+          <div className="bg-surface p-6 rounded-2xl border border-border">
             <form onSubmit={activeTab === 'search' ? handleSearch : handleUrlScrape} className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
                 {activeTab === 'search' ? (
@@ -668,7 +668,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
                       placeholder="Ej: iPhone 15, Laptop Gamer..."
-                      className="w-full bg-[#222327] text-white pl-10 pr-4 py-3 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#07B5A7]"
+                      className="w-full bg-surface-hover text-white pl-10 pr-4 py-3 rounded-xl border border-border focus:outline-none focus:border-[#07B5A7]"
                     />
                   </>
                 ) : (
@@ -678,7 +678,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
                       value={urlInput}
                       onChange={(e) => setUrlInput(e.target.value)}
                       placeholder="Pega las URLs de Amazon o Mercado Libre (una por línea)..."
-                      className="w-full bg-[#222327] text-white pl-10 pr-4 py-3 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#07B5A7] min-h-[100px]"
+                      className="w-full bg-surface-hover text-white pl-10 pr-4 py-3 rounded-xl border border-border focus:outline-none focus:border-[#07B5A7] min-h-[100px]"
                     />
                   </>
                 )}
@@ -687,7 +687,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
               <select
                 value={source}
                 onChange={(e) => setSource(e.target.value as any)}
-                className={`bg-[#222327] text-white px-4 py-3 rounded-xl border border-[#2d2e33] focus:outline-none focus:border-[#07B5A7] ${
+                className={`bg-surface-hover text-white px-4 py-3 rounded-xl border border-border focus:outline-none focus:border-[#07B5A7] ${
                   activeTab === 'url' ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
                 disabled={activeTab === 'url'} // Auto-detected for URL
@@ -709,14 +709,14 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
           )}
 
           {/* Category Selection for Publishing */}
-          <div className="flex flex-col md:flex-row gap-4 bg-[#222222] p-4 rounded-xl border border-[#2d2e33] sticky top-[136px] lg:top-[88px] z-30 shadow-lg backdrop-blur-md bg-[#222222]/90">
+          <div className="flex flex-col md:flex-row gap-4 bg-surface p-4 rounded-xl border border-border sticky top-[136px] lg:top-[88px] z-30 shadow-lg backdrop-blur-md bg-surface/90">
             <div className="flex items-center gap-2 flex-1">
                 <Tag className="text-[#07B5A7]" size={20} />
                 <span className="text-gray-300 font-medium whitespace-nowrap hidden sm:inline">Categoría:</span>
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="bg-[#222327] text-white px-4 py-2 rounded-lg border border-[#2d2e33] focus:outline-none focus:border-[#07B5A7] w-full"
+                  className="bg-surface-hover text-white px-4 py-2 rounded-lg border border-border focus:outline-none focus:border-[#07B5A7] w-full"
                 >
                   {categories.map(cat => (
                     <option key={cat.id} value={cat.id}>{cat.name}</option>
@@ -729,7 +729,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as any)}
-                  className="bg-[#222327] text-white px-4 py-2 rounded-lg border border-[#2d2e33] focus:outline-none focus:border-[#07B5A7] w-full"
+                  className="bg-surface-hover text-white px-4 py-2 rounded-lg border border-border focus:outline-none focus:border-[#07B5A7] w-full"
                 >
                   <option value="price_asc">Precio: Menor a Mayor</option>
                   <option value="price_desc">Precio: Mayor a Menor</option>
@@ -742,7 +742,7 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
                 <div className="flex items-center gap-2">
                      <button
                         onClick={handleSelectAll}
-                        className="px-4 py-2 bg-[#222327] hover:bg-[#2d2e33] text-gray-300 rounded-lg border border-[#2d2e33] transition-colors text-sm font-medium whitespace-nowrap"
+                        className="px-4 py-2 bg-surface-hover hover:bg-[#2d2e33] text-gray-300 rounded-lg border border-border transition-colors text-sm font-medium whitespace-nowrap"
                     >
                         {selectedDeals.size === sortedResults.length ? 'Deseleccionar' : 'Seleccionar Todo'}
                     </button>
@@ -778,8 +778,8 @@ export default function ScraperClient({ categories }: ScraperClientProps) {
             </div>
           ) : (
             !loading && (query || urlInput) && (
-              <div className="text-center py-20 bg-[#222222] rounded-2xl border border-[#2d2e33] border-dashed">
-                <div className="w-16 h-16 bg-[#222327] rounded-full flex items-center justify-center mx-auto mb-4 text-gray-500">
+              <div className="text-center py-20 bg-surface rounded-2xl border border-border border-dashed">
+                <div className="w-16 h-16 bg-surface-hover rounded-full flex items-center justify-center mx-auto mb-4 text-gray-500">
                   <Search size={32} />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">Sin resultados</h3>

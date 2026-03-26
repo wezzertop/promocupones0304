@@ -73,7 +73,7 @@ export default function LevelProgress({ profile }: LevelProgressProps) {
   }, [supabase])
   
   return (
-    <div className="bg-zinc-900/50 border border-white/10 rounded-2xl p-6 relative overflow-hidden">
+    <div className="bg-surface border border-border rounded-2xl p-6 relative overflow-hidden">
       <div className="absolute top-0 right-0 p-4 opacity-10">
         <Trophy className="w-24 h-24" />
       </div>
@@ -81,8 +81,8 @@ export default function LevelProgress({ profile }: LevelProgressProps) {
       <div className="relative z-10">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
           <div>
-            <div className="text-sm text-zinc-400 uppercase tracking-wider font-semibold">Nivel Actual</div>
-            <div className="text-3xl font-bold text-white flex items-center gap-2">
+            <div className="text-sm text-zinc-500 dark:text-zinc-400 uppercase tracking-wider font-semibold">Nivel Actual</div>
+            <div className="text-3xl font-bold text-foreground flex items-center gap-2">
               <span className="text-[#07B5A7]">{current_level}</span>
               <span className="text-lg font-normal text-zinc-500">/ {level?.title || 'Usuario'}</span>
             </div>
@@ -90,54 +90,54 @@ export default function LevelProgress({ profile }: LevelProgressProps) {
           
           <div className="flex items-center gap-4">
              {/* Streak Badge with Tooltip */}
-             <div className="group relative bg-black/40 px-4 py-2 rounded-xl border border-white/5 flex flex-col items-center min-w-[100px] cursor-help transition-colors hover:border-[#07B5A7]/30">
-                <div className="text-xs text-zinc-400 mb-1 flex items-center gap-1">
+             <div className="group relative bg-surface-hover px-4 py-2 rounded-xl border border-border flex flex-col items-center min-w-[100px] cursor-help transition-colors hover:border-[#07B5A7]/30">
+                <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-1 flex items-center gap-1">
                     <Zap size={12} className="text-yellow-500" fill="currentColor" />
                     Racha
                 </div>
-                <div className="text-xl font-bold text-white">{streak} días</div>
+                <div className="text-xl font-bold text-foreground">{streak} días</div>
                 
                 {/* Tooltip */}
-                <div className="absolute bottom-full mb-2 w-48 bg-zinc-900 border border-white/10 rounded-lg p-3 text-xs text-zinc-300 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
-                    <div className="font-bold text-white mb-1">Bonus Diario</div>
+                <div className="absolute bottom-full mb-2 w-48 bg-surface border border-border rounded-lg p-3 text-xs text-zinc-600 dark:text-zinc-300 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
+                    <div className="font-bold text-foreground mb-1">Bonus Diario</div>
                     Conéctate cada día para ganar más XP. <br/>
                     <span className="text-[#07B5A7]">Máx: 50 XP/día (10 días)</span>
                 </div>
              </div>
 
-             <Link href="/logros" className="flex items-center justify-center w-10 h-10 rounded-xl bg-black/40 border border-white/5 hover:bg-black/60 hover:text-[#07B5A7] transition-colors" title="Reglas y Logros">
+             <Link href="/logros" className="flex items-center justify-center w-10 h-10 rounded-xl bg-surface-hover border border-border hover:bg-surface-hover hover:text-[#07B5A7] transition-colors" title="Reglas y Logros">
                 <HelpCircle size={20} />
              </Link>
           </div>
         </div>
         
-        <div className="mb-2 flex justify-between text-xs text-zinc-400 font-mono">
+        <div className="mb-2 flex justify-between text-xs text-zinc-500 dark:text-zinc-400 font-mono">
           <span>{current_xp.toLocaleString()} XP</span>
           <span>{ceiling.toLocaleString()} XP</span>
         </div>
         
-        <div className="h-4 bg-black/50 rounded-full overflow-hidden border border-white/5 mb-8 relative">
+        <div className="h-4 bg-surface-hover rounded-full overflow-hidden border border-border mb-8 relative">
           <motion.div 
             className="h-full bg-gradient-to-r from-[#07B5A7] to-[#32E865]"
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 1, ease: "easeOut" }}
           />
-          <div className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white drop-shadow-md">
+          <div className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-foreground drop-shadow-md">
             {Math.round(progress)}%
           </div>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Chart Section */}
-            <div className="lg:col-span-2 bg-black/20 rounded-xl border border-white/5 p-4 h-[200px]">
+            <div className="lg:col-span-2 bg-surface-hover rounded-xl border border-border p-4 h-[200px]">
                 <div className="flex items-center justify-between mb-4">
-                    <div className="text-xs text-zinc-400 font-semibold">Actividad Reciente (XP)</div>
+                    <div className="text-xs text-zinc-500 dark:text-zinc-400 font-semibold">Actividad Reciente (XP)</div>
                     <div className="flex gap-3">
-                        <div className="flex items-center gap-1.5 text-xs text-zinc-400" title="Ofertas publicadas">
+                        <div className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400" title="Ofertas publicadas">
                             <ShoppingBag size={12} /> {stats.deals}
                         </div>
-                        <div className="flex items-center gap-1.5 text-xs text-zinc-400" title="Comentarios realizados">
+                        <div className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400" title="Comentarios realizados">
                             <MessageSquare size={12} /> {stats.comments}
                         </div>
                     </div>
@@ -184,9 +184,9 @@ export default function LevelProgress({ profile }: LevelProgressProps) {
 
             {/* Stats / Next Level */}
             <div className="space-y-4">
-                <div className="bg-black/30 p-4 rounded-xl border border-white/5 h-[92px] flex flex-col justify-center relative overflow-hidden group">
+                <div className="bg-surface-hover p-4 rounded-xl border border-border h-[92px] flex flex-col justify-center relative overflow-hidden group">
                     <div className="relative z-10">
-                        <div className="text-xs text-zinc-400 mb-1">Próximo Nivel</div>
+                        <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-1">Próximo Nivel</div>
                         <div className="text-[#07B5A7] font-bold text-lg">
                             {xpNeeded.toLocaleString()} XP
                         </div>
@@ -197,9 +197,9 @@ export default function LevelProgress({ profile }: LevelProgressProps) {
                     </div>
                 </div>
                 
-                <div className="bg-black/30 p-4 rounded-xl border border-white/5 h-[92px] flex flex-col justify-center">
-                    <div className="text-xs text-zinc-400 mb-1">Límite de Referidos</div>
-                    <div className="text-white font-bold flex items-center justify-between">
+                <div className="bg-surface-hover p-4 rounded-xl border border-border h-[92px] flex flex-col justify-center">
+                    <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-1">Límite de Referidos</div>
+                    <div className="text-foreground font-bold flex items-center justify-between">
                         <span>
                         {referralLimit > 0 ? (
                             <span className="text-[#07B5A7] text-lg">{referralLimit} <span className="text-sm text-zinc-500 font-normal">/semana</span></span>

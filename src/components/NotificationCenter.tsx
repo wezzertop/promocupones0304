@@ -93,12 +93,12 @@ export default function NotificationCenter({ isMobile = false }: NotificationCen
       <button 
         onClick={() => setIsOpen(!isOpen)}
         className={isMobile 
-          ? "relative flex items-center justify-center text-zinc-500 hover:text-white transition-colors" 
-          : "relative p-2 text-zinc-400 hover:text-white hover:bg-white/10 rounded-full transition-colors"}
+          ? "relative flex items-center justify-center text-zinc-500 hover:text-foreground transition-colors" 
+          : "relative p-2 text-zinc-500 dark:text-zinc-400 hover:text-foreground hover:bg-white/10 rounded-full transition-colors"}
       >
         <Bell size={isMobile ? 22 : 20} strokeWidth={2} />
         {unreadCount > 0 && (
-          <span className={`absolute bg-red-500 rounded-full border-2 border-[#161616] ${isMobile ? '-top-0.5 -right-0.5 w-2.5 h-2.5' : 'top-1 right-1 w-2.5 h-2.5'}`}></span>
+          <span className={`absolute bg-red-500 rounded-full border-2 border-background ${isMobile ? '-top-0.5 -right-0.5 w-2.5 h-2.5' : 'top-1 right-1 w-2.5 h-2.5'}`}></span>
         )}
       </button>
 
@@ -108,10 +108,10 @@ export default function NotificationCenter({ isMobile = false }: NotificationCen
             className="fixed inset-0 z-40" 
             onClick={() => setIsOpen(false)}
           />
-          <div className={`absolute right-[-60px] sm:right-0 w-[320px] md:w-96 bg-[#222222] border border-white/10 rounded-xl shadow-xl z-50 overflow-hidden ${isMobile ? 'bottom-full mb-3' : 'top-full mt-2'}`}>
+          <div className={`absolute right-[-60px] sm:right-0 w-[320px] md:w-96 bg-surface border border-white/10 rounded-xl shadow-xl z-50 overflow-hidden ${isMobile ? 'bottom-full mb-3' : 'top-full mt-2'}`}>
             <div className="p-4 border-b border-white/5 flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-white">Notificaciones</h3>
+                <h3 className="font-semibold text-foreground">Notificaciones</h3>
                 <Link 
                   href="/perfil/alertas" 
                   onClick={() => setIsOpen(false)} 
@@ -125,7 +125,7 @@ export default function NotificationCenter({ isMobile = false }: NotificationCen
                 <div className="flex justify-start mt-1">
                   <button 
                     onClick={markAllAsRead}
-                    className="text-xs text-zinc-400 hover:text-white transition-colors"
+                    className="text-xs text-zinc-500 dark:text-zinc-400 hover:text-foreground transition-colors"
                   >
                     Marcar todo como leído
                   </button>
@@ -178,10 +178,10 @@ export default function NotificationCenter({ isMobile = false }: NotificationCen
                            <AlertCircle size={16} />}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-white mb-0.5">
+                          <p className="text-sm font-medium text-foreground mb-0.5">
                             {notification.title}
                           </p>
-                          <p className="text-xs text-zinc-400 mb-2 break-words line-clamp-2">
+                          <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-2 break-words line-clamp-2">
                             {notification.message}
                           </p>
                           <div className="flex items-center justify-between">

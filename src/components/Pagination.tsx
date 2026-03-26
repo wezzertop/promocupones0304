@@ -68,7 +68,7 @@ export default function Pagination({ totalPages, currentPage, baseUrl }: Paginat
       <Link
         href={createPageUrl(Math.max(1, currentPage - 1))}
         className={cn(
-          "flex items-center justify-center w-10 h-10 rounded-xl border border-[#2d2e33] bg-[#222222] text-gray-400 transition-all hover:text-white hover:border-[#07B5A7]/50 hover:bg-[#07B5A7]/5",
+          "flex items-center justify-center w-10 h-10 rounded-xl border border-border bg-surface text-gray-400 transition-all hover:text-white hover:border-[#07B5A7]/50 hover:bg-[#07B5A7]/5",
           currentPage === 1 && "pointer-events-none opacity-30"
         )}
         aria-disabled={currentPage === 1}
@@ -98,7 +98,7 @@ export default function Pagination({ totalPages, currentPage, baseUrl }: Paginat
                 "flex items-center justify-center min-w-[40px] h-10 px-3 rounded-xl border text-sm font-bold transition-all",
                 isActive
                   ? "bg-[#07B5A7] border-[#07B5A7] text-black shadow-lg shadow-[#07B5A7]/20"
-                  : "bg-[#222222] border-[#2d2e33] text-gray-400 hover:text-white hover:border-[#07B5A7]/50 hover:bg-[#07B5A7]/5"
+                  : "bg-surface border-border text-gray-400 hover:text-white hover:border-[#07B5A7]/50 hover:bg-[#07B5A7]/5"
               )}
               aria-current={isActive ? 'page' : undefined}
             >
@@ -112,7 +112,7 @@ export default function Pagination({ totalPages, currentPage, baseUrl }: Paginat
       <Link
         href={createPageUrl(Math.min(totalPages, currentPage + 1))}
         className={cn(
-          "flex items-center justify-center w-10 h-10 rounded-xl border border-[#2d2e33] bg-[#222222] text-gray-400 transition-all hover:text-white hover:border-[#07B5A7]/50 hover:bg-[#07B5A7]/5",
+          "flex items-center justify-center w-10 h-10 rounded-xl border border-border bg-surface text-gray-400 transition-all hover:text-white hover:border-[#07B5A7]/50 hover:bg-[#07B5A7]/5",
           currentPage === totalPages && "pointer-events-none opacity-30"
         )}
         aria-disabled={currentPage === totalPages}

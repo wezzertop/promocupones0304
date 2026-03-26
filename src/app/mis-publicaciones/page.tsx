@@ -115,7 +115,7 @@ export default async function MyDealsPage() {
           deals.map((deal) => (
             <div 
               key={deal.id} 
-              className="bg-[#222222] border border-[#2d2e33] rounded-2xl overflow-hidden hover:border-[#07B5A7]/30 transition-all group hover:scale-[1.01] shadow-md hover:shadow-xl transform-gpu"
+              className="bg-surface border border-border rounded-2xl overflow-hidden hover:border-[#07B5A7]/30 transition-all group hover:scale-[1.01] shadow-md hover:shadow-xl transform-gpu"
             >
               <div className="p-4 md:p-6 flex flex-col md:flex-row gap-6">
                 {/* Image */}
@@ -190,10 +190,10 @@ export default async function MyDealsPage() {
                 </div>
 
                 {/* Actions */}
-                <div className="flex flex-row md:flex-col justify-end gap-2 shrink-0 border-t md:border-t-0 md:border-l border-[#2d2e33] pt-4 md:pt-0 md:pl-6 mt-4 md:mt-0">
+                <div className="flex flex-row md:flex-col justify-end gap-2 shrink-0 border-t md:border-t-0 md:border-l border-border pt-4 md:pt-0 md:pl-6 mt-4 md:mt-0">
                   <Link
                     href={`/oferta/${deal.id}`}
-                    className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[#222327] hover:bg-[#2d2e33] text-white text-sm font-medium transition-colors"
+                    className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-surface-hover hover:bg-[#2d2e33] text-white text-sm font-medium transition-colors"
                   >
                     <ExternalLink size={16} />
                     Ver
@@ -201,7 +201,7 @@ export default async function MyDealsPage() {
                   {/* 
                   <Link
                     href={`/oferta/${deal.id}/editar`}
-                    className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[#222327] hover:bg-[#2d2e33] text-white text-sm font-medium transition-colors"
+                    className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-surface-hover hover:bg-[#2d2e33] text-white text-sm font-medium transition-colors"
                   >
                     <Edit size={16} />
                     Editar
@@ -212,8 +212,8 @@ export default async function MyDealsPage() {
             </div>
           ))
         ) : (
-          <div className="py-20 flex flex-col items-center justify-center text-center bg-[#222222] rounded-3xl border border-[#2d2e33] border-dashed">
-            <div className="w-16 h-16 bg-[#222327] rounded-full flex items-center justify-center mb-4 text-gray-500">
+          <div className="py-20 flex flex-col items-center justify-center text-center bg-surface rounded-3xl border border-border border-dashed">
+            <div className="w-16 h-16 bg-surface-hover rounded-full flex items-center justify-center mb-4 text-gray-500">
               <Tag size={32} />
             </div>
             <h3 className="text-xl font-bold text-white mb-2">No tienes publicaciones</h3>

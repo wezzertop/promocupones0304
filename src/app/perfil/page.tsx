@@ -89,14 +89,14 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
   return (
     <div className="space-y-8 animate-fade-in w-full max-w-[100vw] overflow-x-hidden">
       {/* Profile Header Card */}
-      <div className="bg-[#222222] border border-[#2d2e33] rounded-3xl overflow-hidden relative mx-auto max-w-5xl">
+      <div className="bg-surface border border-border rounded-3xl overflow-hidden relative mx-auto max-w-5xl">
         {/* Banner Background */}
         <div className="h-32 bg-gradient-to-r from-[#07B5A7]/20 to-emerald-900/20 w-full absolute top-0 left-0 z-0"></div>
         
         <div className="relative z-10 px-6 pb-6 pt-16 md:px-10 md:pt-20 flex flex-col md:flex-row items-center md:items-end gap-6">
           {/* Avatar */}
           <div className="relative shrink-0">
-            <div className="w-32 h-32 rounded-full border-4 border-[#222222] bg-[#222327] overflow-hidden shadow-xl relative">
+            <div className="w-32 h-32 rounded-full border-4 border-surface bg-surface-hover overflow-hidden shadow-xl relative">
               {profileAvatar ? (
                 <Image 
                   src={profileAvatar} 
@@ -113,7 +113,7 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
             </div>
             <Link 
               href="/ajustes"
-              className="absolute bottom-1 right-1 p-2 bg-[#222327] border border-[#2d2e33] rounded-full text-gray-400 hover:text-white hover:border-[#07B5A7] transition-all shadow-lg"
+              className="absolute bottom-1 right-1 p-2 bg-surface-hover border border-border rounded-full text-zinc-500 dark:text-gray-400 hover:text-foreground hover:border-[#07B5A7] transition-all shadow-lg"
               title="Editar perfil"
             >
               <Settings size={16} />
@@ -122,25 +122,25 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
 
           {/* User Info */}
           <div className="flex-1 text-center md:text-left mb-2">
-            <h1 className="text-3xl font-bold text-white mb-1">
+            <h1 className="text-3xl font-bold text-foreground mb-1">
               {profile?.username || 'Usuario sin nombre'}
             </h1>
-            <p className="text-gray-400 text-sm mb-4 flex items-center justify-center md:justify-start gap-2">
+            <p className="text-zinc-500 dark:text-gray-400 text-sm mb-4 flex items-center justify-center md:justify-start gap-2">
               <Calendar size={14} />
               Miembro desde {formatDistanceToNow(new Date(profile?.created_at || user.created_at || new Date()), { addSuffix: true, locale: es })}
             </p>
 
             {/* Stats Badges */}
             <div className="flex flex-wrap justify-center md:justify-start gap-3">
-              <div className="px-4 py-2 rounded-xl bg-[#222327] border border-[#2d2e33] flex items-center gap-2">
+              <div className="px-4 py-2 rounded-xl bg-surface-hover border border-border flex items-center gap-2">
                 <Tag size={16} className="text-blue-500" />
-                <span className="font-bold text-white">{totalDeals}</span>
-                <span className="text-xs text-gray-400 uppercase tracking-wider font-medium">Publicaciones</span>
+                <span className="font-bold text-foreground">{totalDeals}</span>
+                <span className="text-xs text-zinc-500 dark:text-gray-400 uppercase tracking-wider font-medium">Publicaciones</span>
               </div>
-              <div className="px-4 py-2 rounded-xl bg-[#222327] border border-[#2d2e33] flex items-center gap-2">
+              <div className="px-4 py-2 rounded-xl bg-surface-hover border border-border flex items-center gap-2">
                 <Flame size={16} className="text-orange-500" />
-                <span className="font-bold text-white">{totalVotes}</span>
-                <span className="text-xs text-gray-400 uppercase tracking-wider font-medium">Karma Total</span>
+                <span className="font-bold text-foreground">{totalVotes}</span>
+                <span className="text-xs text-zinc-500 dark:text-gray-400 uppercase tracking-wider font-medium">Karma Total</span>
               </div>
             </div>
           </div>
@@ -156,7 +156,7 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
              </Link>
              <Link 
                 href="/perfil/alertas" 
-                className="w-full md:w-auto px-6 py-3 bg-[#222327] hover:bg-[#2d2e33] text-white font-bold rounded-xl border border-[#2d2e33] transition-all text-center flex items-center justify-center gap-2"
+                className="w-full md:w-auto px-6 py-3 bg-surface-hover hover:bg-black/5 dark:hover:bg-[#2d2e33] text-foreground font-bold rounded-xl border border-border transition-all text-center flex items-center justify-center gap-2"
              >
                 <BellRing size={18} />
                 Mis Alertas
@@ -173,17 +173,17 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
               <AlertCircle className="w-6 h-6 text-yellow-500" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white mb-1">
+              <h3 className="text-lg font-bold text-foreground mb-1">
                 Tienes {pendingDealsCount} {pendingDealsCount === 1 ? 'publicación' : 'publicaciones'} en proceso
               </h3>
-              <p className="text-gray-400 text-sm">
+              <p className="text-zinc-500 dark:text-gray-400 text-sm">
                 Algunas de tus ofertas están pendientes de aprobación o requieren cambios.
               </p>
             </div>
           </div>
           <Link 
             href="/mis-publicaciones"
-            className="w-full md:w-auto px-6 py-3 bg-[#222327] hover:bg-[#2d2e33] text-white font-medium rounded-xl border border-[#2d2e33] flex items-center justify-center gap-2 transition-colors whitespace-nowrap"
+            className="w-full md:w-auto px-6 py-3 bg-surface-hover hover:bg-black/5 dark:hover:bg-[#2d2e33] text-foreground font-medium rounded-xl border border-border flex items-center justify-center gap-2 transition-colors whitespace-nowrap"
           >
             Ver estado detallado
             <ArrowRight size={16} />
@@ -218,17 +218,17 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
             />
           </>
         ) : (
-          <div className="py-20 flex flex-col items-center justify-center text-center bg-[#222222] rounded-3xl border border-[#2d2e33] border-dashed">
-            <div className="w-16 h-16 bg-[#222327] rounded-full flex items-center justify-center mb-4 text-gray-500">
+          <div className="py-20 flex flex-col items-center justify-center text-center bg-surface rounded-3xl border border-border border-dashed">
+            <div className="w-16 h-16 bg-surface-hover rounded-full flex items-center justify-center mb-4 text-gray-500">
               <Tag size={32} />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Aún no has publicado nada</h3>
-            <p className="text-gray-400 max-w-md mb-6">
+            <h3 className="text-xl font-bold text-foreground mb-2">Aún no has publicado nada</h3>
+            <p className="text-zinc-500 dark:text-gray-400 max-w-md mb-6">
               ¡Comparte tu primera oferta con la comunidad y empieza a ganar karma!
             </p>
             <Link 
                 href="/publicar"
-                className="px-6 py-3 bg-[#222327] hover:bg-[#2d2e33] text-white font-medium rounded-xl transition-colors border border-[#2d2e33]"
+                className="px-6 py-3 bg-surface-hover hover:bg-black/5 dark:hover:bg-[#2d2e33] text-foreground font-medium rounded-xl transition-colors border border-border"
             >
               Publicar ahora
             </Link>

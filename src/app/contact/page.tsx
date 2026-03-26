@@ -45,34 +45,34 @@ export default function ContactPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-12 animate-fade-in">
-      <h1 className="text-3xl font-bold text-white mb-8">Contáctanos</h1>
+      <h1 className="text-3xl font-bold text-foreground mb-8">Contáctanos</h1>
       
       <div className="grid md:grid-cols-2 gap-12">
         <div className="space-y-8">
-          <p className="text-zinc-400 leading-relaxed">
+          <p className="text-zinc-500 dark:text-zinc-400 leading-relaxed">
             ¿Tienes alguna pregunta, sugerencia o problema? Estamos aquí para ayudarte.
             Completa el formulario o utiliza nuestros canales de contacto directo.
           </p>
           
           <div className="space-y-6">
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-lg bg-surface-hover flex items-center justify-center shrink-0">
                 <Mail className="text-[#07B5A7]" size={20} />
               </div>
               <div>
-                <h3 className="font-bold text-white mb-1">Email</h3>
-                <p className="text-sm text-zinc-400">soporte@cupoferta.com</p>
-                <p className="text-sm text-zinc-400">negocios@cupoferta.com</p>
+                <h3 className="font-bold text-foreground mb-1">Email</h3>
+                <p className="text-sm text-zinc-500 dark:text-zinc-400">soporte@cupoferta.com</p>
+                <p className="text-sm text-zinc-500 dark:text-zinc-400">negocios@cupoferta.com</p>
               </div>
             </div>
             
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-lg bg-surface-hover flex items-center justify-center shrink-0">
                 <MapPin className="text-[#07B5A7]" size={20} />
               </div>
               <div>
-                <h3 className="font-bold text-white mb-1">Oficina</h3>
-                <p className="text-sm text-zinc-400">
+                <h3 className="font-bold text-foreground mb-1">Oficina</h3>
+                <p className="text-sm text-zinc-500 dark:text-zinc-400">
                   Av. Reforma 123, Piso 4<br />
                   Ciudad de México, CDMX 06500
                 </p>
@@ -81,14 +81,14 @@ export default function ContactPage() {
           </div>
         </div>
         
-        <div className="bg-[#222222] rounded-2xl p-6 border border-[#2d2e33]">
+        <div className="bg-surface rounded-2xl p-6 border border-border">
           {formState?.success ? (
             <div className="h-full flex flex-col items-center justify-center text-center py-12 space-y-4">
               <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center text-green-500 mb-2">
                 <Send size={32} />
               </div>
-              <h3 className="text-xl font-bold text-white">¡Mensaje Enviado!</h3>
-              <p className="text-zinc-400 max-w-xs">
+              <h3 className="text-xl font-bold text-foreground">¡Mensaje Enviado!</h3>
+              <p className="text-zinc-500 dark:text-zinc-400 max-w-xs">
                 Gracias por contactarnos. Hemos recibido tu mensaje y te responderemos lo antes posible.
               </p>
               <button 
@@ -107,13 +107,13 @@ export default function ContactPage() {
               )}
               
               <div>
-                <label htmlFor="name" className="block text-xs font-medium text-zinc-400 mb-1.5">Nombre</label>
+                <label htmlFor="name" className="block text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1.5">Nombre</label>
                 <input 
                   id="name"
                   name="name"
                   type="text" 
                   required
-                  className="w-full bg-[#222327] border border-[#2d2e33] rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#07B5A7]/50 transition-colors"
+                  className="w-full bg-surface-hover border border-border rounded-lg p-2.5 text-sm text-foreground focus:outline-none focus:border-[#07B5A7]/50 transition-colors"
                   placeholder="Tu nombre completo"
                 />
                 {formState?.error?.name && (
@@ -122,13 +122,13 @@ export default function ContactPage() {
               </div>
               
               <div>
-                <label htmlFor="email" className="block text-xs font-medium text-zinc-400 mb-1.5">Email</label>
+                <label htmlFor="email" className="block text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1.5">Email</label>
                 <input 
                   id="email"
                   name="email"
                   type="email" 
                   required
-                  className="w-full bg-[#222327] border border-[#2d2e33] rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#07B5A7]/50 transition-colors"
+                  className="w-full bg-surface-hover border border-border rounded-lg p-2.5 text-sm text-foreground focus:outline-none focus:border-[#07B5A7]/50 transition-colors"
                   placeholder="tu@email.com"
                 />
                 {formState?.error?.email && (
@@ -137,13 +137,13 @@ export default function ContactPage() {
               </div>
               
               <div>
-                <label htmlFor="message" className="block text-xs font-medium text-zinc-400 mb-1.5">Mensaje</label>
+                <label htmlFor="message" className="block text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1.5">Mensaje</label>
                 <textarea 
                   id="message"
                   name="message"
                   required
                   rows={4}
-                  className="w-full bg-[#222327] border border-[#2d2e33] rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-[#07B5A7]/50 resize-none transition-colors"
+                  className="w-full bg-surface-hover border border-border rounded-lg p-2.5 text-sm text-foreground focus:outline-none focus:border-[#07B5A7]/50 resize-none transition-colors"
                   placeholder="¿En qué podemos ayudarte?"
                 />
                 {formState?.error?.message && (

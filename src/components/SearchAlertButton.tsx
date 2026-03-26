@@ -25,7 +25,7 @@ export default function SearchAlertButton({ initialKeyword, userId }: SearchAler
       {/* Botón flotante para móvil (se mostraría cerca del fondo o en resultados) */}
       <button 
         onClick={() => setIsModalOpen(true)}
-        className="md:hidden flex items-center justify-center w-12 h-12 bg-[#07B5A7] text-[#161616] rounded-full fixed bottom-20 right-4 z-[90] active:scale-95 transition-all shadow-lg"
+        className="md:hidden flex items-center justify-center w-12 h-12 bg-[#07B5A7] text-black rounded-full fixed bottom-20 right-4 z-[90] active:scale-95 transition-all shadow-lg"
         aria-label="Crear Alerta"
       >
         <BellRing size={20} className="fill-current" />

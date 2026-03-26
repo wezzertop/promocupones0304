@@ -81,13 +81,13 @@ export default function SettingsClient({ initialPatterns, initialForbiddenWords 
 
   return (
     <div className="space-y-8">
-      <div className="bg-[#161616]/80 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg sticky top-14 lg:top-0 z-40">
+      <div className="bg-background/80 backdrop-blur-md p-4 rounded-xl border border-white/5 shadow-lg sticky top-14 lg:top-0 z-40">
         <h1 className="text-2xl md:text-3xl font-bold text-white">Configuración del Sistema</h1>
         <p className="text-zinc-400 text-sm mt-1">Gestiona las reglas de moderación automática</p>
       </div>
 
       {/* Referral Patterns */}
-      <div className="bg-[#222222] border border-white/5 rounded-2xl p-6">
+      <div className="bg-surface border border-white/5 rounded-2xl p-6">
         <h2 className="text-xl font-bold text-white mb-4">Patrones de Referidos Bloqueados</h2>
         <p className="text-sm text-zinc-400 mb-6">
           Agrega fragmentos de URL que identifiquen enlaces de afiliados no permitidos (ej: "ref=", "amazon.to").
@@ -145,7 +145,7 @@ export default function SettingsClient({ initialPatterns, initialForbiddenWords 
       </div>
 
       {/* Forbidden Words */}
-      <div className="bg-[#222222] border border-white/5 rounded-2xl p-6">
+      <div className="bg-surface border border-white/5 rounded-2xl p-6">
         <h2 className="text-xl font-bold text-white mb-4">Filtro de Palabras Prohibidas</h2>
         <p className="text-sm text-zinc-400 mb-6">
           Define palabras que bloquearán automáticamente la publicación de ofertas o comentarios.

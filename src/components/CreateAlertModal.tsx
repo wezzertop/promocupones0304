@@ -107,7 +107,7 @@ export default function CreateAlertModal({ isOpen, onClose, initialKeyword = '',
         onClick={onClose}
       />
       
-      <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] sm:w-full max-w-md bg-[#161616] rounded-2xl md:rounded-2xl border border-white/10 shadow-2xl flex flex-col max-h-[90vh] md:max-h-[85vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] sm:w-full max-w-md bg-background rounded-2xl md:rounded-2xl border border-white/10 shadow-2xl flex flex-col max-h-[90vh] md:max-h-[85vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
         <div className="flex items-center justify-between p-4 md:p-6 border-b border-white/5">
@@ -147,7 +147,7 @@ export default function CreateAlertModal({ isOpen, onClose, initialKeyword = '',
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 autoFocus
-                className="w-full bg-[#222222] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-[#07B5A7] focus:ring-1 focus:ring-[#07B5A7] transition-all"
+                className="w-full bg-surface border border-white/10 rounded-xl px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-[#07B5A7] focus:ring-1 focus:ring-[#07B5A7] transition-all"
               />
               <p className="text-[11px] text-zinc-500 px-1">Se enviará una notificación si el título contiene esta palabra.</p>
             </div>
@@ -163,7 +163,7 @@ export default function CreateAlertModal({ isOpen, onClose, initialKeyword = '',
                   step="0.01"
                   value={maxPrice}
                   onChange={(e) => setMaxPrice(e.target.value)}
-                  className="w-full bg-[#222222] border border-white/10 rounded-xl pl-8 pr-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-[#07B5A7] focus:ring-1 focus:ring-[#07B5A7] transition-all"
+                  className="w-full bg-surface border border-white/10 rounded-xl pl-8 pr-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-[#07B5A7] focus:ring-1 focus:ring-[#07B5A7] transition-all"
                 />
               </div>
             </div>
@@ -180,7 +180,7 @@ export default function CreateAlertModal({ isOpen, onClose, initialKeyword = '',
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full md:flex-1 py-3 px-6 rounded-xl font-bold bg-[#07B5A7] text-[#161616] hover:bg-[#069c90] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                className="w-full md:flex-1 py-3 px-6 rounded-xl font-bold bg-[#07B5A7] text-black hover:bg-[#069c90] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
               >
                 {loading ? <Loader2 size={18} className="animate-spin" /> : <BellRing size={18} />}
                 {alertToEdit ? 'Guardar Cambios' : 'Crear Alerta'}

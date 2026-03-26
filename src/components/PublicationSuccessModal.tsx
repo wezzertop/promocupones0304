@@ -39,7 +39,7 @@ export default function PublicationSuccessModal({ isOpen, onClose, dealId }: Pub
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-[#222222] border border-[#2d2e33] p-6 text-left align-middle shadow-xl transition-all relative">
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-surface border border-border p-6 text-left align-middle shadow-xl transition-all relative">
                 {/* Background Glow */}
                 <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-[#07B5A7] opacity-10 blur-[60px] rounded-full pointer-events-none"></div>
                 
@@ -60,7 +60,7 @@ export default function PublicationSuccessModal({ isOpen, onClose, dealId }: Pub
                       Tu oferta ha sido enviada correctamente y está pendiente de revisión por nuestro equipo de moderación.
                     </p>
                     
-                    <div className="bg-[#222327] rounded-xl p-4 border border-[#2d2e33] flex items-start gap-3 text-left">
+                    <div className="bg-surface-hover rounded-xl p-4 border border-border flex items-start gap-3 text-left">
                       <Clock className="w-5 h-5 text-yellow-500 shrink-0 mt-0.5" />
                       <div>
                         <h4 className="text-sm font-semibold text-white">Estado: Pendiente</h4>
@@ -83,7 +83,7 @@ export default function PublicationSuccessModal({ isOpen, onClose, dealId }: Pub
                     
                     <button
                       type="button"
-                      className="w-full inline-flex justify-center items-center gap-2 rounded-xl bg-[#222327] px-4 py-3 text-sm font-medium text-gray-300 hover:bg-[#2d2e33] hover:text-white border border-[#2d2e33] transition-all"
+                      className="w-full inline-flex justify-center items-center gap-2 rounded-xl bg-surface-hover px-4 py-3 text-sm font-medium text-gray-300 hover:bg-[#2d2e33] hover:text-white border border-border transition-all"
                       onClick={onClose}
                     >
                       Cerrar y volver al inicio

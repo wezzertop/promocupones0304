@@ -180,8 +180,8 @@ export default function SettingsPage() {
       </div>
 
       {/* Account Settings */}
-      <div className="bg-[#222222] border border-[#2d2e33] rounded-3xl overflow-hidden">
-        <div className="p-6 border-b border-[#2d2e33]">
+      <div className="bg-surface border border-border rounded-3xl overflow-hidden">
+        <div className="p-6 border-b border-border">
           <h2 className="text-xl font-bold text-white flex items-center gap-2">
             <User className="text-[#07B5A7]" size={20} />
             Cuenta
@@ -192,7 +192,7 @@ export default function SettingsPage() {
             {/* Avatar Section */}
             <div className="flex flex-col items-center sm:flex-row gap-6">
                 <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
-                    <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-[#222327] bg-[#222327] relative shadow-xl shadow-black/50">
+                    <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-[#222327] bg-surface-hover relative shadow-xl shadow-black/50">
                         {avatarUrl ? (
                             <Image 
                                 src={avatarUrl} 
@@ -212,7 +212,7 @@ export default function SettingsPage() {
                             <Camera className="text-white" size={24} />
                         </div>
                     </div>
-                    <div className="absolute bottom-0 right-0 bg-[#07B5A7] text-black p-1.5 rounded-full border-4 border-[#222222]">
+                    <div className="absolute bottom-0 right-0 bg-[#07B5A7] text-black p-1.5 rounded-full border-4 border-surface">
                         <Upload size={14} />
                     </div>
                     <input 
@@ -239,14 +239,14 @@ export default function SettingsPage() {
                 </div>
             </div>
 
-          <div className="grid md:grid-cols-2 gap-6 pt-4 border-t border-[#2d2e33]">
+          <div className="grid md:grid-cols-2 gap-6 pt-4 border-t border-border">
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Nombre de usuario</label>
               <input 
                 type="text" 
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full bg-[#222327] border border-[#2d2e33] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#07B5A7] transition-colors"
+                className="w-full bg-surface-hover border border-border rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#07B5A7] transition-colors"
                 placeholder="Tu nombre de usuario"
               />
             </div>
@@ -255,17 +255,17 @@ export default function SettingsPage() {
               <input 
                 type="email" 
                 disabled
-                className="w-full bg-[#222327]/50 border border-[#2d2e33] rounded-xl px-4 py-3 text-gray-500 cursor-not-allowed"
+                className="w-full bg-surface-hover/50 border border-border rounded-xl px-4 py-3 text-gray-500 cursor-not-allowed"
                 value={user?.email || ''}
               />
             </div>
           </div>
           
-          <div className="pt-4 border-t border-[#2d2e33]">
+          <div className="pt-4 border-t border-border">
             <h3 className="text-sm font-bold text-white mb-4">Seguridad</h3>
-            <button className="flex items-center justify-between w-full p-4 bg-[#222327] hover:bg-[#2d2e33] rounded-xl transition-colors border border-[#2d2e33] group">
+            <button className="flex items-center justify-between w-full p-4 bg-surface-hover hover:bg-[#2d2e33] rounded-xl transition-colors border border-border group">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-[#222222] rounded-lg text-gray-400 group-hover:text-white transition-colors">
+                <div className="p-2 bg-surface rounded-lg text-gray-400 group-hover:text-white transition-colors">
                   <Lock size={18} />
                 </div>
                 <div className="text-left">
@@ -281,7 +281,7 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          <div className="pt-4 border-t border-[#2d2e33] flex justify-end">
+          <div className="pt-4 border-t border-border flex justify-end">
             <button 
               onClick={handleSave}
               disabled={saving}
@@ -299,17 +299,17 @@ export default function SettingsPage() {
       </div>
 
       {/* Notifications */}
-      <div className="bg-[#222222] border border-[#2d2e33] rounded-3xl overflow-hidden">
-        <div className="p-6 border-b border-[#2d2e33]">
+      <div className="bg-surface border border-border rounded-3xl overflow-hidden">
+        <div className="p-6 border-b border-border">
           <h2 className="text-xl font-bold text-white flex items-center gap-2">
             <Bell className="text-orange-500" size={20} />
             Notificaciones
           </h2>
         </div>
         <div className="p-6 space-y-4">
-          <div className="flex items-center justify-between p-4 bg-[#222327] rounded-xl border border-[#2d2e33]">
+          <div className="flex items-center justify-between p-4 bg-surface-hover rounded-xl border border-border">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#222222] rounded-lg text-gray-400">
+              <div className="p-2 bg-surface rounded-lg text-gray-400">
                 <Mail size={18} />
               </div>
               <div>
@@ -323,9 +323,9 @@ export default function SettingsPage() {
             </label>
           </div>
 
-          <div className="flex items-center justify-between p-4 bg-[#222327] rounded-xl border border-[#2d2e33]">
+          <div className="flex items-center justify-between p-4 bg-surface-hover rounded-xl border border-border">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#222222] rounded-lg text-gray-400">
+              <div className="p-2 bg-surface rounded-lg text-gray-400">
                 <Bell size={18} />
               </div>
               <div>
@@ -342,17 +342,17 @@ export default function SettingsPage() {
       </div>
 
       {/* Preferences */}
-      <div className="bg-[#222222] border border-[#2d2e33] rounded-3xl overflow-hidden">
-        <div className="p-6 border-b border-[#2d2e33]">
+      <div className="bg-surface border border-border rounded-3xl overflow-hidden">
+        <div className="p-6 border-b border-border">
           <h2 className="text-xl font-bold text-white flex items-center gap-2">
             <Globe className="text-blue-500" size={20} />
             Preferencias
           </h2>
         </div>
         <div className="p-6 space-y-4">
-          <div className="flex items-center justify-between p-4 bg-[#222327] rounded-xl border border-[#2d2e33]">
+          <div className="flex items-center justify-between p-4 bg-surface-hover rounded-xl border border-border">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#222222] rounded-lg text-gray-400">
+              <div className="p-2 bg-surface rounded-lg text-gray-400">
                 <Moon size={18} />
               </div>
               <div>
@@ -363,9 +363,9 @@ export default function SettingsPage() {
             <span className="text-xs font-bold text-[#07B5A7] px-3 py-1 bg-[#07B5A7]/10 rounded-full">Activo</span>
           </div>
 
-          <div className="flex items-center justify-between p-4 bg-[#222327] rounded-xl border border-[#2d2e33]">
+          <div className="flex items-center justify-between p-4 bg-surface-hover rounded-xl border border-border">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#222222] rounded-lg text-gray-400">
+              <div className="p-2 bg-surface rounded-lg text-gray-400">
                 <Globe size={18} />
               </div>
               <div>
@@ -373,7 +373,7 @@ export default function SettingsPage() {
                 <span className="text-xs text-gray-500">Selecciona tu idioma preferido</span>
               </div>
             </div>
-            <select className="bg-[#222222] text-white text-sm rounded-lg border border-[#2d2e33] focus:ring-[#07B5A7] focus:border-[#07B5A7] block p-2.5">
+            <select className="bg-surface text-white text-sm rounded-lg border border-border focus:ring-[#07B5A7] focus:border-[#07B5A7] block p-2.5">
               <option value="es">Español</option>
               <option value="en">English</option>
             </select>

@@ -124,7 +124,7 @@ export default function DealDetailView({
     <div className="max-w-6xl mx-auto space-y-3 md:space-y-4 pb-12 px-3 sm:px-6">
        {/* Back button */}
        {!isPreview && (
-           <Link href={backUrl} className="inline-flex items-center text-zinc-400 hover:text-white transition-colors group text-sm">
+           <Link href={backUrl} className="inline-flex items-center text-zinc-400 hover:text-foreground transition-colors group text-sm">
               <ChevronLeft className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" />
               {backLabel}
            </Link>
@@ -133,7 +133,7 @@ export default function DealDetailView({
        <div className="flex flex-col lg:grid lg:grid-cols-12 gap-3 lg:gap-6">
           {/* Right Column: Info (4 cols) */}
           <div className="lg:col-span-4 space-y-3 md:space-y-4 order-2 lg:order-2 w-full min-w-0">
-             <div className="glass-panel rounded-2xl lg:sticky lg:top-24 border border-white/5 flex flex-col md:flex-row overflow-hidden relative">
+             <div className="glass-panel rounded-2xl lg:sticky lg:top-24 border border-border flex flex-col md:flex-row overflow-hidden relative">
                 <div className={cn(
                   "absolute -top-20 -right-20 w-64 h-64 opacity-5 blur-[80px] rounded-full pointer-events-none",
                   isCoupon ? "bg-purple-500" : "bg-[#07B5A7]"
@@ -142,24 +142,23 @@ export default function DealDetailView({
                 {/* Main Content Info */}
                 <div className="flex-1 p-4 md:p-5 space-y-3 md:space-y-4 min-w-0 relative z-10">
                    <div>
-                      <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold tracking-wider mb-2 uppercase">
+                      <div className="flex flex-wrap items-center gap-2 mb-3">
                          {/* Store Name */}
-                         <div className="flex items-center gap-1.5 text-zinc-300">
+                         <div className="flex items-center gap-1.5 bg-surface-hover border border-border px-2 py-1 rounded-md text-[10px] font-bold tracking-wider uppercase text-secondary">
                             <StoreIcon className="w-3 h-3 text-zinc-500" />
-                            <span className="text-white">{storeName}</span>
+                            <span className="text-foreground">{storeName}</span>
                          </div>
-                         <span className="text-zinc-700">|</span>
 
                          {/* Location Type */}
-                         <div className="flex items-center gap-1.5 text-blue-400">
+                         <div className="flex items-center gap-1.5 bg-blue-500/10 border border-blue-500/20 px-2 py-1 rounded-md text-[10px] font-bold tracking-wider uppercase text-blue-400">
                             {deal.availability === 'in_store' ? (
                                <>
-                                  <StoreIcon className="w-3 h-3 text-zinc-500" />
-                                  <span className="text-zinc-400">Local</span>
+                                  <StoreIcon className="w-3 h-3 text-blue-400" />
+                                  <span>Local</span>
                                </>
                             ) : (
                                <>
-                                  <Globe className="w-3 h-3 text-blue-400" />
+                                  <Globe className="w-3 h-3" />
                                   <span>Online</span>
                                </>
                             )}
@@ -167,49 +166,48 @@ export default function DealDetailView({
 
                          {/* Category */}
                          {categoryName && (
-                           <>
-                             <span className="text-zinc-700">|</span>
-                             <div className={cn("flex items-center gap-1.5", isCoupon ? "text-purple-500" : "text-[#07B5A7]")}>
+                             <div className={cn("flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] font-bold tracking-wider uppercase border", isCoupon ? "bg-purple-500/10 text-purple-400 border-purple-500/20" : "bg-[#07B5A7]/10 text-[#07B5A7] border-[#07B5A7]/20")}>
                                 <Tag className="w-3 h-3" />
                                 <span>{categoryName}</span>
                              </div>
-                           </>
                          )}
 
-                         <span className="text-zinc-700">|</span>
-
                          {/* Shipping info */}
-                         <div className="flex items-center gap-1.5 text-zinc-500">
-                           <Truck className="w-3 h-3" />
-                           <span className="whitespace-nowrap max-w-[120px] truncate" title={shippingCostDisplay}>
-                             {shippingCostDisplay}
-                           </span>
-                         </div>
+                         {isFreeShipping ? (
+                             <div className="flex items-center gap-1 bg-lime-500/10 px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border border-lime-500/20">
+                                 <Truck size={12} className="text-lime-600 dark:text-lime-400" strokeWidth={2.5}/>
+                                 <span className="text-lime-600 dark:text-lime-400">Gratis</span>
+                             </div>
+                         ) : (
+                             <div className="flex items-center gap-1 bg-rose-500/10 px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border border-rose-500/20">
+                                 <Truck size={12} className="text-rose-500" strokeWidth={2.5}/>
+                                 <span className="text-rose-500 whitespace-nowrap max-w-[120px] truncate" title={shippingCostDisplay}>
+                                     {shippingCostDisplay === 'Envío no incl.' ? 'Ver' : shippingCostDisplay}
+                                 </span>
+                             </div>
+                         )}
                       </div>
                       
-                      <h1 className="text-xl md:text-2xl font-bold text-white leading-tight mb-3">
+                      <h1 className="text-xl md:text-2xl font-bold text-foreground leading-tight mb-3">
                          {deal.title}
                       </h1>
                       
-                      <div className="flex flex-wrap items-center justify-between gap-3 mb-5 bg-black/20 p-3 rounded-xl border border-white/5">
-                         <div className="flex flex-col min-w-0">
-                            <span className="text-2xl md:text-3xl font-bold text-white tracking-tight truncate">
-                               ${dealPrice.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                      <div className="flex flex-wrap items-center justify-start gap-2 md:gap-3 mb-5 bg-surface-hover p-3 md:p-4 rounded-xl border border-border">
+                         <span className={cn("text-2xl md:text-3xl font-black leading-none shrink-0 tracking-tight", isCoupon ? "text-foreground" : "text-[#07B5A7]")}>
+                            {dealPrice > 0 ? `$${dealPrice.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : 'Gratis'}
+                         </span>
+                         {originalPrice > 0 && originalPrice > dealPrice && (
+                            <span className="text-sm md:text-base font-medium text-zinc-500 line-through decoration-red-500 decoration-1 shrink-0">
+                               ${originalPrice.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                             </span>
-                            {originalPrice > 0 && (
-                               <span className="text-xs md:text-sm text-zinc-500 line-through">
-                                  ${originalPrice.toLocaleString('es-MX', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-                               </span>
-                            )}
-                         </div>
-                         
+                         )}
                          {(discount > 0 || deal.discount_amount) && (
-                            <div className={cn(
-                                "px-2.5 py-1 rounded-lg font-black text-xs md:text-sm shadow-lg transform -rotate-2",
-                                isCoupon ? "bg-purple-500 text-white shadow-purple-500/20" : "bg-[#07B5A7] text-black shadow-[#07B5A7]/20"
+                            <span className={cn(
+                                "font-black text-xs md:text-sm px-2 py-0.5 md:py-1 rounded-[10px] leading-none flex items-center shrink-0",
+                                isCoupon ? "bg-purple-500 text-foreground" : "bg-[#f5cb17] text-black"
                             )}>
                                {discount > 0 ? `-${discount}%` : `$${deal.discount_amount} OFF`}
-                            </div>
+                            </span>
                          )}
                       </div>
 
@@ -217,17 +215,17 @@ export default function DealDetailView({
                       {(hasPrime || hasMeliPlus || hasFull || isFreeShipping || hasCoupon || hasMSI) && (
                           <div className="flex flex-wrap gap-2 mb-4">
                               {hasPrime && (
-                                  <span className="bg-[#00A8E1] text-white text-xs px-2 py-0.5 rounded font-bold flex items-center gap-1">
+                                  <span className="bg-[#00A8E1] text-foreground text-xs px-2 py-0.5 rounded font-bold flex items-center gap-1">
                                       <span className="italic font-black">prime</span>
                                   </span>
                               )}
                               {hasMeliPlus && (
-                                  <span className="bg-[#9c27b0] text-white text-xs px-2 py-0.5 rounded font-bold flex items-center gap-1">
+                                  <span className="bg-[#9c27b0] text-foreground text-xs px-2 py-0.5 rounded font-bold flex items-center gap-1">
                                       <span>Meli+</span>
                                   </span>
                               )}
                               {hasFull && (
-                                  <span className="bg-[#00a650] text-white text-xs px-2 py-0.5 rounded font-bold flex items-center gap-1">
+                                  <span className="bg-[#00a650] text-foreground text-xs px-2 py-0.5 rounded font-bold flex items-center gap-1">
                                       <span className="italic font-black">FULL</span>
                                   </span>
                               )}
@@ -255,15 +253,15 @@ export default function DealDetailView({
                                     navigator.clipboard.writeText(deal.coupon_code)
                                     // Could add toast here
                                   }}
-                                  className="text-white bg-purple-500 hover:bg-purple-600 px-3 py-1 rounded-lg text-xs font-bold transition-colors"
+                                  className="text-foreground bg-purple-500 hover:bg-purple-600 px-3 py-1 rounded-lg text-xs font-bold transition-colors"
                                 >
                                   Copiar
                                 </button>
                               )}
                            </div>
                            {deal.coupon_code ? (
-                             <div className="bg-black/40 border border-purple-500/30 border-dashed rounded-lg p-3 text-center">
-                                <span className="text-xl font-mono font-bold text-white tracking-widest select-all">
+                             <div className="bg-surface-hover border border-purple-500/30 border-dashed rounded-lg p-3 text-center">
+                                <span className="text-xl font-mono font-bold text-foreground tracking-widest select-all">
                                   {deal.coupon_code}
                                 </span>
                              </div>
@@ -276,7 +274,7 @@ export default function DealDetailView({
                                 {deal.usage_limit && (
                                   <div className="flex justify-between text-xs">
                                     <span className="text-zinc-400">Usos disponibles:</span>
-                                    <span className="text-white font-medium">{deal.usage_limit}</span>
+                                    <span className="text-foreground font-medium">{deal.usage_limit}</span>
                                   </div>
                                 )}
                                 {deal.restrictions && (
@@ -291,7 +289,7 @@ export default function DealDetailView({
                       )}
 
                       {isExpired ? (
-                         <div className="w-full flex items-center justify-center gap-2 bg-zinc-800 text-zinc-400 font-bold py-3 rounded-xl cursor-not-allowed border border-white/5 text-sm">
+                         <div className="w-full flex items-center justify-center gap-2 bg-surface-hover text-zinc-400 font-bold py-3 rounded-xl cursor-not-allowed border border-border text-sm">
                             <AlertCircle className="w-4 h-4" /> Oferta Expirada
                          </div>
                       ) : (
@@ -302,7 +300,7 @@ export default function DealDetailView({
                              className={cn(
                                 "w-full flex items-center justify-center gap-2 font-bold py-3 rounded-xl transition-all shadow-lg hover:-translate-y-0.5 text-sm md:text-base",
                                 isCoupon 
-                                    ? "bg-purple-500 hover:bg-purple-600 text-white shadow-purple-500/20 hover:shadow-purple-500/40" 
+                                    ? "bg-purple-500 hover:bg-purple-600 text-foreground shadow-purple-500/20 hover:shadow-purple-500/40" 
                                     : "bg-[#07B5A7] hover:bg-[#25b84e] text-black shadow-[#07B5A7]/20 hover:shadow-[#07B5A7]/40"
                              )}
                          >
@@ -331,7 +329,7 @@ export default function DealDetailView({
 
                    </div>
 
-                   <div className="pt-4 border-t border-white/5 space-y-3">
+                   <div className="pt-4 border-t border-border space-y-3">
                       {/* Location Map */}
                       {latitude && longitude && (
                          <div className="space-y-2">
@@ -362,8 +360,8 @@ export default function DealDetailView({
 
                       <div className="flex items-center justify-between text-sm gap-2">
                          {deal.user?.username ? (
-                            <Link href={`/usuario/${encodeURIComponent(deal.user.username)}`} className="flex items-center gap-2.5 min-w-0 overflow-hidden group/author hover:bg-white/5 p-1 -ml-1 rounded-lg transition-colors">
-                              <div className="shrink-0 w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center overflow-hidden ring-2 ring-black">
+                            <Link href={`/usuario/${encodeURIComponent(deal.user.username)}`} className="flex items-center gap-2.5 min-w-0 overflow-hidden group/author hover:bg-surface-hover p-1 -ml-1 rounded-lg transition-colors">
+                              <div className="shrink-0 w-9 h-9 rounded-full bg-surface-hover flex items-center justify-center overflow-hidden ring-2 ring-black">
                                  {userAvatar ? (
                                     <img src={userAvatar} alt={userName} className="w-full h-full object-cover" />
                                  ) : (
@@ -372,17 +370,17 @@ export default function DealDetailView({
                               </div>
                               <div className="flex flex-col min-w-0 overflow-hidden">
                                  <span className="text-[10px] text-zinc-500 uppercase tracking-wider truncate">Publicado por</span>
-                                 <span className="text-white font-medium text-xs md:text-sm truncate group-hover/author:text-yellow-500 transition-colors">{userName}</span>
+                                 <span className="text-foreground font-medium text-xs md:text-sm truncate group-hover/author:text-yellow-500 transition-colors">{userName}</span>
                               </div>
                            </Link>
                          ) : (
                            <div className="flex items-center gap-2.5 min-w-0 overflow-hidden p-1 -ml-1">
-                              <div className="shrink-0 w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center overflow-hidden ring-2 ring-black">
+                              <div className="shrink-0 w-9 h-9 rounded-full bg-surface-hover flex items-center justify-center overflow-hidden ring-2 ring-black">
                                  <span className="font-bold text-zinc-400 text-xs">U</span>
                               </div>
                               <div className="flex flex-col min-w-0 overflow-hidden">
                                  <span className="text-[10px] text-zinc-500 uppercase tracking-wider truncate">Publicado por</span>
-                                 <span className="text-white font-medium text-xs md:text-sm truncate">Anónimo</span>
+                                 <span className="text-foreground font-medium text-xs md:text-sm truncate">Anónimo</span>
                               </div>
                            </div>
                          )}
@@ -398,7 +396,7 @@ export default function DealDetailView({
                                       "p-2 rounded-lg transition-colors",
                                       deal.status === 'paused' 
                                           ? "text-yellow-500 hover:bg-yellow-500/10" 
-                                          : "text-zinc-500 hover:text-white hover:bg-white/5"
+                                          : "text-zinc-500 hover:text-foreground hover:bg-surface-hover"
                                   )}
                                   title={deal.status === 'paused' ? "Reactivar oferta" : "Pausar oferta"}
                                >
@@ -413,7 +411,7 @@ export default function DealDetailView({
                              )}
                              <Link 
                                 href={`/oferta/${deal.id}/edit`}
-                                className="p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                                className="p-2 text-zinc-500 hover:text-foreground hover:bg-surface-hover rounded-lg transition-colors"
                                 title="Editar oferta"
                              >
                                 <Edit2 className="w-3.5 h-3.5" />
@@ -421,13 +419,13 @@ export default function DealDetailView({
                            </div>
                          )}
                       </div>
-                      <div className="flex items-center gap-2 text-[10px] text-zinc-500 bg-white/5 p-2 rounded-lg">
+                      <div className="flex items-center gap-2 text-[10px] text-zinc-500 bg-surface-hover p-2 rounded-lg">
                         <Clock className="w-3 h-3" />
                         <span>Publicado {deal.created_at ? new Date(deal.created_at).toLocaleDateString() : 'Hoy'}</span>
                       </div>
                    </div>
 
-                   <div className="pt-3 border-t border-white/5">
+                   <div className="pt-3 border-t border-border">
                       <h4 className="text-xs font-medium text-zinc-300 mb-1.5 uppercase tracking-wider">Descripción</h4>
                       <div className="relative">
                         <p className={cn("text-zinc-400 text-sm leading-relaxed whitespace-pre-line", !isDescriptionExpanded && "line-clamp-6")}>
@@ -445,7 +443,7 @@ export default function DealDetailView({
                    </div>
 
                    <div className="pt-3">
-                      <button className="w-full flex items-center justify-center gap-2 text-zinc-400 hover:text-white py-2 transition-colors text-xs font-medium hover:bg-white/5 rounded-lg">
+                      <button className="w-full flex items-center justify-center gap-2 text-zinc-400 hover:text-foreground py-2 transition-colors text-xs font-medium hover:bg-surface-hover rounded-lg">
                          <Share2 className="w-3.5 h-3.5" /> Compartir oferta
                       </button>
                    </div>
@@ -478,7 +476,7 @@ export default function DealDetailView({
                 {expiresAt && !isExpired && deal.status !== 'paused' && (
                    <Countdown 
                      targetDate={expiresAt} 
-                     className={cn("relative bg-black/40 rounded-xl mb-4 border", isCoupon ? "border-purple-500/20" : "border-[#07B5A7]/20")} 
+                     className={cn("relative bg-surface-hover rounded-xl mb-4 border", isCoupon ? "border-purple-500/20" : "border-[#07B5A7]/20")} 
                      size="md" 
                      isCoupon={isCoupon}
                    />
@@ -486,7 +484,7 @@ export default function DealDetailView({
 
                 <div className="flex flex-col md:flex-row gap-3 relative">
                    {/* Voting Sidebar */}
-                   <div className="flex flex-row md:flex-col items-center justify-center gap-4 md:gap-2 w-full md:w-14 bg-black/20 border border-white/5 rounded-xl py-3 px-4 md:px-0 backdrop-blur-sm shrink-0 order-2 md:order-1">
+                   <div className="flex flex-row md:flex-col items-center justify-center gap-4 md:gap-2 w-full md:w-14 bg-surface border border-border rounded-xl py-3 px-4 md:px-0 backdrop-blur-sm shrink-0 order-2 md:order-1">
                       <button 
                         onClick={() => onVote?.('hot')}
                         disabled={isPreview || !onVote}
@@ -510,7 +508,7 @@ export default function DealDetailView({
                           <span className={cn(
                               "font-black text-xs md:text-sm",
                               userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") :
-                              userVote === 'cold' ? "text-blue-500" : "text-white"
+                              userVote === 'cold' ? "text-blue-500" : "text-foreground"
                           )}>
                               {votes}°
                           </span>
@@ -530,7 +528,7 @@ export default function DealDetailView({
                    </div>
                    
                    {/* Image Container */}
-                   <div className="relative flex-1 rounded-xl overflow-hidden bg-white flex items-center justify-center w-full aspect-video group/image order-1 md:order-2 border border-white/5 touch-pan-y">
+                   <div className="relative flex-1 rounded-xl overflow-hidden bg-surface flex items-center justify-center w-full aspect-video group/image order-1 md:order-2 border border-border touch-pan-y">
                       <AnimatePresence mode="wait">
                         <motion.div
                             key={currentImageIndex}
@@ -560,7 +558,7 @@ export default function DealDetailView({
                       {/* Zoom Button */}
                       <button 
                         onClick={() => setIsLightboxOpen(true)}
-                        className="absolute bottom-3 right-3 p-2 bg-black/60 text-white rounded-full opacity-0 group-hover/image:opacity-100 transition-opacity hover:bg-black/80 z-20"
+                        className="absolute bottom-3 right-3 p-2 bg-foreground/80 text-foreground rounded-full opacity-0 group-hover/image:opacity-100 transition-opacity hover:bg-black/80 z-20"
                       >
                         <Maximize2 className="w-4 h-4" />
                       </button>
@@ -570,26 +568,26 @@ export default function DealDetailView({
                         <>
                           <button 
                             onClick={(e) => { e.stopPropagation(); prevImage(); }}
-                            className="absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-black/40 text-white rounded-full hover:bg-black/60 transition-colors z-20 opacity-0 group-hover/image:opacity-100"
+                            className="absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-surface-hover text-foreground rounded-full hover:bg-foreground/80 transition-colors z-20 opacity-0 group-hover/image:opacity-100"
                           >
                             <ChevronLeft className="w-5 h-5" />
                           </button>
                           <button 
                             onClick={(e) => { e.stopPropagation(); nextImage(); }}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-black/40 text-white rounded-full hover:bg-black/60 transition-colors z-20 opacity-0 group-hover/image:opacity-100"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-surface-hover text-foreground rounded-full hover:bg-foreground/80 transition-colors z-20 opacity-0 group-hover/image:opacity-100"
                           >
                             <ChevronRight className="w-5 h-5" />
                           </button>
                           
                           {/* Dots Indicator */}
-                          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-20 bg-black/40 px-2.5 py-1 rounded-full backdrop-blur-sm">
+                          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-20 bg-surface-hover px-2.5 py-1 rounded-full backdrop-blur-sm">
                             {dealImages.map((_: any, idx: number) => (
                               <button
                                 key={idx}
                                 onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(idx); }}
                                 className={cn(
                                   "w-1.5 h-1.5 rounded-full transition-all",
-                                  idx === currentImageIndex ? (isCoupon ? "bg-purple-500 w-3" : "bg-[#07B5A7] w-3") : "bg-white/50 hover:bg-white/80"
+                                  idx === currentImageIndex ? (isCoupon ? "bg-purple-500 w-3" : "bg-[#07B5A7] w-3") : "bg-surface-hover0 hover:bg-white/80"
                                 )}
                               />
                             ))}
@@ -625,7 +623,7 @@ export default function DealDetailView({
                 <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 animate-in fade-in duration-200 backdrop-blur-sm">
                   <button 
                     onClick={() => setIsLightboxOpen(false)}
-                    className="absolute top-4 right-4 p-2 bg-black/50 text-white/80 hover:text-white rounded-full transition-colors z-[110]"
+                    className="absolute top-4 right-4 p-2 bg-black/50 text-foreground/80 hover:text-foreground rounded-full transition-colors z-[110]"
                   >
                     <X className="w-8 h-8" />
                   </button>
@@ -655,13 +653,13 @@ export default function DealDetailView({
                       <>
                         <button 
                           onClick={(e) => { e.stopPropagation(); prevImage(); }}
-                          className="absolute left-2 top-1/2 -translate-y-1/2 p-4 bg-black/50 text-white rounded-full hover:bg-black/80 transition-colors z-[110]"
+                          className="absolute left-2 top-1/2 -translate-y-1/2 p-4 bg-black/50 text-foreground rounded-full hover:bg-black/80 transition-colors z-[110]"
                         >
                           <ChevronLeft className="w-8 h-8" />
                         </button>
                         <button 
                           onClick={(e) => { e.stopPropagation(); nextImage(); }}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 p-4 bg-black/50 text-white rounded-full hover:bg-black/80 transition-colors z-[110]"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 p-4 bg-black/50 text-foreground rounded-full hover:bg-black/80 transition-colors z-[110]"
                         >
                           <ChevronRight className="w-8 h-8" />
                         </button>
@@ -669,7 +667,7 @@ export default function DealDetailView({
                     )}
                   </div>
                   
-                  <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-black/50 px-4 py-2 rounded-full text-white font-medium z-[110]">
+                  <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-black/50 px-4 py-2 rounded-full text-foreground font-medium z-[110]">
                     {currentImageIndex + 1} / {dealImages.length}
                   </div>
                 </div>
@@ -682,7 +680,7 @@ export default function DealDetailView({
 
              {/* Comments (Hidden in Preview if desired, or mocked) */}
              {!isPreview && deal.id && (
-                <div className="glass-panel p-4 md:p-5 rounded-2xl space-y-4 border border-white/5 order-3 w-full overflow-hidden">
+                <div className="glass-panel p-4 md:p-5 rounded-2xl space-y-4 border border-border order-3 w-full overflow-hidden">
                     <CommentsSection dealId={deal.id} isCoupon={isCoupon} />
                 </div>
              )}

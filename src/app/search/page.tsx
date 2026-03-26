@@ -90,7 +90,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
 
   return (
     <div className="space-y-8 animate-fade-in max-w-5xl mx-auto">
-      <div className="bg-[#222222] border border-[#2d2e33] rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative">
+      <div className="bg-surface border border-border rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative">
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-3">
             <Search className="text-[#07B5A7]" />
@@ -119,8 +119,8 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             />
           </>
         ) : (
-          <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-[#222222] rounded-3xl border border-[#2d2e33] border-dashed">
-            <div className="w-16 h-16 bg-[#222327] rounded-full flex items-center justify-center mb-4 text-gray-500">
+          <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-surface rounded-3xl border border-border border-dashed">
+            <div className="w-16 h-16 bg-surface-hover rounded-full flex items-center justify-center mb-4 text-gray-500">
               <Search size={32} />
             </div>
             <h3 className="text-xl font-bold text-white mb-2">Sin resultados</h3>

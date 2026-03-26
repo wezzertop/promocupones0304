@@ -2,10 +2,10 @@ import { cn } from '@/lib/utils'
 
 export default function DealCardSkeleton() {
   return (
-    <div className="flex flex-col md:grid md:grid-cols-[50px_180px_1fr] bg-[#161616] rounded-[10px] overflow-hidden border border-white/5 h-auto animate-pulse w-full max-w-[calc(100%-1rem)] mx-auto md:max-w-none md:mx-0 mb-4 min-h-[140px] md:min-h-[200px]">
+    <div className="flex flex-col md:grid md:grid-cols-[50px_180px_1fr] bg-background rounded-[10px] overflow-hidden border border-white/5 h-auto animate-pulse w-full max-w-[calc(100%-1rem)] mx-auto md:max-w-none md:mx-0 mb-4 min-h-[140px] md:min-h-[200px]">
       
       {/* Mobile Top Header */}
-      <div className="flex md:hidden items-center justify-between p-2.5 pb-2 border-b border-white/5 w-full bg-[#161616]">
+      <div className="flex md:hidden items-center justify-between p-2.5 pb-2 border-b border-white/5 w-full bg-background">
         <div className="flex items-center gap-1.5">
            <div className="w-[16px] h-[16px] rounded-[10px] bg-white/5" />
            <div className="w-16 h-3 rounded-[4px] bg-white/5" />
@@ -17,7 +17,7 @@ export default function DealCardSkeleton() {
       </div>
 
       {/* Component A: Vertical Voting Sidebar */}
-      <div className="hidden md:flex flex-col items-center justify-between gap-1 md:gap-2 w-full bg-[#161616] border-r border-white/5 py-3 md:py-4">
+      <div className="hidden md:flex flex-col items-center justify-between gap-1 md:gap-2 w-full bg-background border-r border-white/5 py-3 md:py-4">
         <div className="w-[28px] h-[28px] md:w-[32px] md:h-[32px] rounded-[10px] bg-white/5" />
         <div className="w-5 h-4 md:h-5 rounded-[4px] bg-white/5" />
         <div className="w-[28px] h-[28px] md:w-[32px] md:h-[32px] rounded-[10px] bg-white/5" />

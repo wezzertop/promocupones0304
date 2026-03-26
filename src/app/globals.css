@@ -1,20 +1,15 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #0E0E0E;
-  /* Negro Tinta */
-  --color-surface: #222222;
-  /* Negro Carbón */
-  --color-surface-hover: #2a2a2a;
-  --color-foreground: #FDFDFD;
-  /* Blanco Zinc */
-  --color-primary: #07B5A7;
-  /* Verde Mar Claro */
-  --color-primary-glow: rgba(7, 181, 167, 0.3);
-  --color-secondary: #CECECE;
-  /* Gris Lobo */
-  --color-muted: #333333;
-  --color-border: #333333;
+  --color-background: var(--bg-color);
+  --color-surface: var(--surface-color);
+  --color-surface-hover: var(--surface-hover-color);
+  --color-foreground: var(--fg-color);
+  --color-primary: var(--primary-color);
+  --color-primary-glow: var(--primary-glow-color);
+  --color-secondary: var(--secondary-color);
+  --color-muted: var(--muted-color);
+  --color-border: var(--border-color);
 
   --font-sans: 'Inter', system-ui, sans-serif;
 
@@ -45,8 +40,39 @@
 }
 
 :root {
+  --bg-color: #F8F9FA;
+  --surface-color: #FFFFFF;
+  --surface-hover-color: #F1F3F5;
+  --fg-color: #1A1A1A;
+  --primary-color: #07B5A7;
+  --primary-glow-color: rgba(7, 181, 167, 0.2);
+  --secondary-color: #666666;
+  --muted-color: #E5E7EB;
+  --border-color: #E5E7EB;
+
+  --background: #F8F9FA;
+  --foreground: #1A1A1A;
+  
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(0, 0, 0, 0.05);
+}
+
+.dark {
+  --bg-color: #0E0E0E;
+  --surface-color: #222222;
+  --surface-hover-color: #2a2a2a;
+  --fg-color: #FDFDFD;
+  --primary-color: #07B5A7;
+  --primary-glow-color: rgba(7, 181, 167, 0.3);
+  --secondary-color: #CECECE;
+  --muted-color: #333333;
+  --border-color: #333333;
+
   --background: #161616;
   --foreground: #FDFDFD;
+
+  --glass-bg: rgba(24, 25, 28, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.05);
 }
 
 html {
@@ -81,9 +107,9 @@ body {
 }
 
 @utility glass-panel {
-  background: rgba(24, 25, 28, 0.7);
+  background: var(--glass-bg);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
 }
 
 @utility card-hover {
@@ -130,3 +156,9 @@ body {
   scrollbar-width: none;
   /* Firefox */
 }
+
+.hide-on-dark { display: block !important; }
+.dark .hide-on-dark { display: none !important; }
+
+.show-on-dark { display: none !important; }
+.dark .show-on-dark { display: block !important; }

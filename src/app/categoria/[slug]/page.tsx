@@ -76,7 +76,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   return (
     <div className="space-y-8 animate-fade-in max-w-5xl mx-auto">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-[#222222] to-[#222327] rounded-3xl p-8 border border-[#2d2e33] relative overflow-hidden">
+      <div className="bg-gradient-to-r from-surface to-surface-hover rounded-3xl p-8 border border-border relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-green-500 opacity-5 blur-[100px] rounded-full pointer-events-none"></div>
         <div className="relative z-10 max-w-2xl">
           <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 text-green-500 text-xs font-bold uppercase tracking-wider mb-4 border border-green-500/20">
@@ -120,8 +120,8 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
             />
           </>
         ) : (
-          <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-[#222222] rounded-3xl border border-[#2d2e33] border-dashed">
-            <div className="w-16 h-16 bg-[#222327] rounded-full flex items-center justify-center mb-4 text-gray-500">
+          <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-surface rounded-3xl border border-border border-dashed">
+            <div className="w-16 h-16 bg-surface-hover rounded-full flex items-center justify-center mb-4 text-gray-500">
               <AlertCircle size={32} />
             </div>
             <h3 className="text-xl font-bold text-white mb-2">No hay ofertas en esta categoría</h3>

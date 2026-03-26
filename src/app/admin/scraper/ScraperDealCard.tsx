@@ -29,7 +29,7 @@ export default function ScraperDealCard({
 
   return (
     <div className={cn(
-      "group relative flex flex-col md:flex-row bg-[#161616] rounded-xl md:rounded-3xl overflow-hidden border border-white/5 transition-all duration-300 md:hover:scale-[1.01] shadow-xl shadow-black/50 hover:shadow-2xl h-auto w-full",
+      "group relative flex flex-col md:flex-row bg-background rounded-xl md:rounded-3xl overflow-hidden border border-white/5 transition-all duration-300 md:hover:scale-[1.01] shadow-xl shadow-black/50 hover:shadow-2xl h-auto w-full",
       isPublished ? "border-green-500/20 shadow-green-500/5" : "hover:border-[#07B5A7]/50 hover:shadow-[#07B5A7]/10",
       deal.availability === 'out_of_stock' && "opacity-60 grayscale",
       isSelected && "border-[#07B5A7] ring-1 ring-[#07B5A7]"
@@ -42,7 +42,7 @@ export default function ScraperDealCard({
             checked={isSelected}
             onChange={() => onToggleSelect(deal.id)}
             disabled={isPublished || deal.availability === 'out_of_stock'}
-            className="w-5 h-5 rounded border-gray-600 bg-[#222327] text-[#07B5A7] focus:ring-[#07B5A7] cursor-pointer"
+            className="w-5 h-5 rounded border-gray-600 bg-surface-hover text-[#07B5A7] focus:ring-[#07B5A7] cursor-pointer"
         />
       </div>
 
@@ -77,7 +77,7 @@ export default function ScraperDealCard({
       </div>
 
       {/* Content Section */}
-      <div className="flex-1 flex flex-col p-4 md:p-6 justify-between relative bg-gradient-to-br from-[#161616] to-black">
+      <div className="flex-1 flex flex-col p-4 md:p-6 justify-between relative bg-gradient-to-br from-background to-black">
         
         <div onClick={() => setExpanded(!expanded)} className="cursor-pointer">
             {/* Header / Badges */}

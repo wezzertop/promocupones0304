@@ -133,8 +133,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
             />
           </>
         ) : (
-          <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-[#222222] rounded-3xl border border-[#2d2e33] border-dashed">
-            <div className="w-16 h-16 bg-[#222327] rounded-full flex items-center justify-center mb-4 text-gray-500">
+          <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-surface rounded-3xl border border-border border-dashed">
+            <div className="w-16 h-16 bg-surface-hover rounded-full flex items-center justify-center mb-4 text-gray-500">
               <Tag size={32} />
             </div>
             <h3 className="text-xl font-bold text-white mb-2">No hay ofertas por el momento</h3>
