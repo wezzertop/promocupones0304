@@ -37,9 +37,11 @@ export default function SmartAdUnit({
   useEffect(() => {
     setIsMounted(true)
     
-    // Disable timeout based blocking by default as it causes issues with ads disappearing
-    // even when they are loaded correctly. We rely on 'onerror' events from the iframe.
-    // timeoutRef.current = setTimeout(() => { ... }, 10000)
+    // Re-enabled timeout for mobile data silent packet drops (ISPs block without firing onerror)
+    timeoutRef.current = setTimeout(() => { 
+        console.log('Ad load timed out, falling back:', config.key)
+        setAdBlocked(true)
+    }, 8000)
 
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current)

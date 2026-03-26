@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence, PanInfo } from 'framer-motion'
 import {
   MessageSquare,
@@ -24,7 +25,8 @@ import {
   Check,
   Ticket,
   X,
-  ArrowUpRight
+  ArrowUpRight,
+  Snowflake
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -59,6 +61,7 @@ export default function DealCard({
   const [isReportModalOpen, setIsReportModalOpen] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
   const { addToast } = useUIStore()
+  const router = useRouter()
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
@@ -320,18 +323,26 @@ export default function DealCard({
         <span className="font-medium align-middle">{deal.comments_count || 0}</span>
       </Link>
       <span className="text-border mx-0.5 hidden sm:inline">|</span>
-      <button onClick={(e) => { e.preventDefault(); handleShare(); }} className="p-1.5 rounded-[6px] hover:bg-surface-hover hover:text-zinc-300 transition-colors" title="Compartir">
+      <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleShare(); }} className="p-1.5 rounded-[6px] hover:bg-surface-hover hover:text-zinc-300 transition-colors" title="Compartir">
         <Share2 size={14} className="md:w-4 md:h-4 stroke-[2px]" />
       </button>
-      <button onClick={(e) => { e.preventDefault(); handleSave(); }} className={cn("p-1.5 rounded-[6px] hover:bg-surface-hover transition-colors", isSaved ? "text-[#07B5A7]" : "hover:text-zinc-300")} title="Guardar">
+      <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleSave(); }} className={cn("p-1.5 rounded-[6px] hover:bg-surface-hover transition-colors", isSaved ? "text-[#07B5A7]" : "hover:text-zinc-300")} title="Guardar">
         <Bookmark size={14} className={cn("md:w-4 md:h-4 stroke-[2px]", isSaved ? "fill-current" : "")} />
       </button>
     </div>
   )
 
   return (
-    <div className={cn(
-      "group relative flex flex-col md:grid md:grid-cols-[50px_180px_1fr] bg-background rounded-[10px] overflow-hidden border border-border transition-all duration-300 md:hover:scale-[1.01] hover:border-white/10 shadow-xl shadow-black/50 hover:shadow-2xl w-full mx-auto md:mx-0",
+    <div 
+      onClick={(e) => {
+        const selection = window.getSelection();
+        if (selection && selection.toString().length > 0) {
+          return;
+        }
+        router.push(dealLink);
+      }}
+      className={cn(
+      "group relative flex flex-col md:grid md:grid-cols-[50px_180px_1fr] bg-background rounded-[10px] overflow-hidden border border-border transition-all duration-300 md:hover:scale-[1.01] hover:border-white/10 shadow-xl shadow-black/50 hover:shadow-2xl w-full mx-auto md:mx-0 cursor-pointer",
       isCoupon ? "hover:border-purple-500/50 hover:shadow-purple-500/10" : "hover:border-[#07B5A7]/50 hover:shadow-[#07B5A7]/10",
       isExpired && "opacity-60 grayscale"
     )}>
@@ -346,31 +357,36 @@ export default function DealCard({
       {variant === 'default' && (
         <div className="hidden md:flex flex-col items-center justify-between gap-1 md:gap-2 w-full bg-surface-hover border-r border-border py-2 md:py-4 z-10">
           <button
-            onClick={(e) => { e.preventDefault(); handleVote('hot'); }}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleVote('hot'); }}
             className={cn(
-              "p-1.5 rounded-[10px] transition-all hover:bg-surface-hover active:scale-95",
-              userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") : "text-zinc-500 hover:text-foreground"
+              "p-1.5 rounded-[10px] transition-all active:scale-95",
+              userVote === 'hot' ? "text-orange-500 bg-orange-500/20" : "text-zinc-400 hover:text-orange-500 hover:bg-orange-500/10"
             )}
           >
-            <ArrowUp size={20} strokeWidth={3} />
+            <ArrowUp size={20} className={cn(userVote === 'hot' && "drop-shadow-sm")} strokeWidth={3} />
           </button>
 
-          <span className={cn(
-            "font-black text-xs md:text-sm",
-            userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") :
+          <div className={cn(
+            "flex flex-col items-center justify-center gap-0.5 font-black text-xs md:text-sm transition-colors",
+            userVote === 'hot' ? "text-orange-500" :
               userVote === 'cold' ? "text-blue-500" : "text-foreground"
           )}>
-            {votes}°
-          </span>
+            {votes >= 0 ? (
+              <Flame size={16} strokeWidth={2.5} className={cn(userVote === 'hot' ? "fill-orange-500/20 text-orange-500" : "text-orange-500/70")} />
+            ) : (
+              <Snowflake size={16} strokeWidth={2.5} className={cn(userVote === 'cold' ? "fill-blue-500/20 text-blue-500" : "text-blue-500/70")} />
+            )}
+            <span>{votes}°</span>
+          </div>
 
           <button
-            onClick={(e) => { e.preventDefault(); handleVote('cold'); }}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleVote('cold'); }}
             className={cn(
-              "p-1.5 rounded-[10px] transition-all hover:bg-surface-hover active:scale-95",
-              userVote === 'cold' ? "text-blue-500" : "text-zinc-500 hover:text-foreground"
+              "p-1.5 rounded-[10px] transition-all active:scale-95",
+              userVote === 'cold' ? "text-blue-500 bg-blue-500/20" : "text-zinc-400 hover:text-blue-500 hover:bg-blue-500/10"
             )}
           >
-            <ArrowDown size={20} strokeWidth={3} />
+            <ArrowDown size={20} className={cn(userVote === 'cold' && "drop-shadow-sm")} strokeWidth={3} />
           </button>
         </div>
       )}
@@ -467,31 +483,38 @@ export default function DealCard({
 
           {/* Mobile Voting */}
           {variant === 'default' && (
-            <div className="flex md:hidden items-center justify-between w-full mt-2 bg-surface-hover rounded-[6px] p-1 border border-border shrink-0 shadow-lg">
+            <div className="flex md:hidden items-center justify-between w-full mt-2 bg-surface-hover rounded-[8px] p-1 border border-border shrink-0 shadow-lg px-2">
               <button
-                onClick={(e) => { e.preventDefault(); handleVote('cold'); }}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleVote('cold'); }}
                 className={cn(
-                  "p-1.5 rounded-[4px] transition-all hover:bg-surface-hover active:scale-95",
-                  userVote === 'cold' ? "text-blue-500" : "text-zinc-500 hover:text-foreground"
+                  "p-1.5 rounded-[6px] transition-all active:scale-95",
+                  userVote === 'cold' ? "text-blue-500 bg-blue-500/20" : "text-zinc-400 hover:text-blue-500 hover:bg-blue-500/10"
                 )}
               >
-                <ArrowDown size={14} strokeWidth={3} />
+                <ArrowDown size={16} className={cn(userVote === 'cold' && "drop-shadow-sm")} strokeWidth={3} />
               </button>
-              <span className={cn(
-                "font-black text-[10px] sm:text-xs",
-                userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") :
+              
+              <div className={cn(
+                "flex items-center justify-center gap-1 font-black text-xs transition-colors",
+                userVote === 'hot' ? "text-orange-500" :
                   userVote === 'cold' ? "text-blue-500" : "text-foreground"
               )}>
-                {votes}°
-              </span>
+                {votes >= 0 ? (
+                  <Flame size={14} strokeWidth={2.5} className={cn(userVote === 'hot' ? "fill-orange-500/20 text-orange-500" : "text-orange-500/70")} />
+                ) : (
+                  <Snowflake size={14} strokeWidth={2.5} className={cn(userVote === 'cold' ? "fill-blue-500/20 text-blue-500" : "text-blue-500/70")} />
+                )}
+                <span>{votes}°</span>
+              </div>
+
               <button
-                onClick={(e) => { e.preventDefault(); handleVote('hot'); }}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleVote('hot'); }}
                 className={cn(
-                  "p-1.5 rounded-[4px] transition-all hover:bg-surface-hover active:scale-95",
-                  userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") : "text-zinc-500 hover:text-foreground"
+                  "p-1.5 rounded-[6px] transition-all active:scale-95",
+                  userVote === 'hot' ? "text-orange-500 bg-orange-500/20" : "text-zinc-400 hover:text-orange-500 hover:bg-orange-500/10"
                 )}
               >
-                <ArrowUp size={14} strokeWidth={3} />
+                <ArrowUp size={16} className={cn(userVote === 'hot' && "drop-shadow-sm")} strokeWidth={3} />
               </button>
             </div>
           )}

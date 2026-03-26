@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion, AnimatePresence, PanInfo } from 'framer-motion'
-import { ExternalLink, Share2, Clock, Tag, ChevronLeft, ChevronRight, Calendar, MapPin, AlertCircle, ArrowUp, ArrowDown, Edit2, Flame, Maximize2, X, Store as StoreIcon, Globe, Truck, Upload, Loader2, PauseCircle, PlayCircle } from 'lucide-react'
+import { ExternalLink, Share2, Clock, Tag, ChevronLeft, ChevronRight, Calendar, MapPin, AlertCircle, ArrowUp, ArrowDown, Edit2, Flame, Maximize2, X, Store as StoreIcon, Globe, Truck, Upload, Loader2, PauseCircle, PlayCircle, Snowflake } from 'lucide-react'
 import CommentsSection from '@/components/CommentsSection'
 import Map from '@/components/DynamicMap'
 import ProfileAd from '@/components/ProfileAd'
@@ -489,8 +489,8 @@ export default function DealDetailView({
                         onClick={() => onVote?.('hot')}
                         disabled={isPreview || !onVote}
                         className={cn(
-                          "p-2 rounded-xl transition-all hover:scale-110 active:scale-95 hover:bg-white/10",
-                          userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") : "text-zinc-500",
+                          "p-2 rounded-xl transition-all hover:scale-110 active:scale-95",
+                          userVote === 'hot' ? "text-orange-500 bg-orange-500/20" : "text-zinc-400 hover:text-orange-500 hover:bg-orange-500/10",
                           (isPreview || !onVote) && "opacity-50 cursor-not-allowed"
                         )}
                       >
@@ -498,16 +498,26 @@ export default function DealDetailView({
                       </button>
                       
                       <div className="flex flex-col items-center gap-0.5 min-w-[3ch] text-center">
-                          <Flame 
-                              className={cn(
-                                  "transition-colors w-4 h-4 mb-0.5",
-                                  userVote === 'hot' ? (isCoupon ? "text-purple-500 fill-purple-500" : "text-[#07B5A7] fill-[#07B5A7]") :
-                                  userVote === 'cold' ? "text-blue-500 fill-blue-500" : "text-zinc-600"
-                              )} 
-                          />
+                          {votes >= 0 ? (
+                            <Flame 
+                                className={cn(
+                                    "transition-colors w-4 h-4 mb-0.5",
+                                    userVote === 'hot' ? "fill-orange-500/20 text-orange-500" : "text-orange-500/70"
+                                )} 
+                                strokeWidth={2.5}
+                            />
+                          ) : (
+                            <Snowflake 
+                                className={cn(
+                                    "transition-colors w-4 h-4 mb-0.5",
+                                    userVote === 'cold' ? "fill-blue-500/20 text-blue-500" : "text-blue-500/70"
+                                )}
+                                strokeWidth={2.5}
+                            />
+                          )}
                           <span className={cn(
                               "font-black text-xs md:text-sm",
-                              userVote === 'hot' ? (isCoupon ? "text-purple-500" : "text-[#07B5A7]") :
+                              userVote === 'hot' ? "text-orange-500" :
                               userVote === 'cold' ? "text-blue-500" : "text-foreground"
                           )}>
                               {votes}°
@@ -518,8 +528,8 @@ export default function DealDetailView({
                         onClick={() => onVote?.('cold')}
                         disabled={isPreview || !onVote}
                         className={cn(
-                          "p-2 rounded-xl transition-all hover:scale-110 active:scale-95 hover:bg-white/10",
-                          userVote === 'cold' ? "text-blue-500" : "text-zinc-500",
+                          "p-2 rounded-xl transition-all hover:scale-110 active:scale-95",
+                          userVote === 'cold' ? "text-blue-500 bg-blue-500/20" : "text-zinc-400 hover:text-blue-500 hover:bg-blue-500/10",
                           (isPreview || !onVote) && "opacity-50 cursor-not-allowed"
                         )}
                       >
