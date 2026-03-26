@@ -154,7 +154,7 @@ export default function SmartAdUnit({
           height={config.height}
           style={{ border: 'none', overflow: 'hidden', maxWidth: '100%', display: 'block' }}
           scrolling="no"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation-by-user-activation"
+          sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
         />
       </div>
     </div>

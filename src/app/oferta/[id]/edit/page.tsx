@@ -34,7 +34,7 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [categories, setCategories] = useState<Category[]>([])
-  
+
   // Form State
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -48,7 +48,7 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
   const [availability, setAvailability] = useState('online')
   const [startDate, setStartDate] = useState('')
   const [expiresAt, setExpiresAt] = useState('')
-  
+
   // Images
   // Unified state for dnd: { id: string, type: 'existing' | 'new', url: string, file?: File }
   interface ImageItem {
@@ -58,13 +58,13 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
     file?: File
   }
   const [items, setItems] = useState<ImageItem[]>([])
-  
+
   const MAX_TITLE = 100
   const MAX_DESC = 2000
 
   const [location, setLocation] = useState<[number, number] | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  
+
   const router = useRouter()
   const supabase = createClient()
 
@@ -100,10 +100,10 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
       // Check permissions (basic check, real check on server)
       const { data: { user } } = await supabase.auth.getUser()
       if (!user || user.id !== deal.user_id) {
-         // Ideally verify admin here too, but for now redirect if not owner
-         alert('No tienes permiso para editar esta oferta')
-         router.push(`/oferta/${id}`)
-         return
+        // Ideally verify admin here too, but for now redirect if not owner
+        alert('No tienes permiso para editar esta oferta')
+        router.push(`/oferta/${id}`)
+        return
       }
 
       // Populate Form
@@ -117,10 +117,10 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
       setShippingCost(deal.shipping_cost || '')
       setShippingCountry(deal.shipping_country || 'México')
       setAvailability(deal.availability || 'online')
-      
+
       if (deal.start_date) setStartDate(new Date(deal.start_date).toISOString().slice(0, 16))
       if (deal.expires_at) setExpiresAt(new Date(deal.expires_at).toISOString().slice(0, 16))
-      
+
       if (deal.image_urls && Array.isArray(deal.image_urls)) {
         const initialItems = deal.image_urls.map((url: string, index: number) => ({
           id: `existing-${index}`,
@@ -153,7 +153,7 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
         const objectUrl = URL.createObjectURL(file)
         const compressedBlob = await compressImage(file)
         const newFile = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, "") + ".webp", { type: 'image/webp' })
-        
+
         newItems.push({
           id: `new-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           type: 'new',
@@ -200,7 +200,7 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
 
       // Upload new images
       const finalImages: string[] = []
-      
+
       for (const item of items) {
         if (item.type === 'existing') {
           finalImages.push(item.url)
@@ -211,8 +211,8 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
             .upload(fileName, item.file, { contentType: 'image/webp' })
 
           if (!uploadError) {
-             const { data: { publicUrl } } = supabase.storage.from('deals').getPublicUrl(fileName)
-             finalImages.push(publicUrl)
+            const { data: { publicUrl } } = supabase.storage.from('deals').getPublicUrl(fileName)
+            finalImages.push(publicUrl)
           }
         }
       }
@@ -282,7 +282,7 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
 
         <div className="glass-panel p-8 rounded-2xl border border-white/10">
           <form onSubmit={handleSubmit} className="space-y-6">
-            
+
             {/* Título */}
             <div>
               <label className="text-sm font-medium text-zinc-300 mb-1.5 block">Título</label>
@@ -337,7 +337,7 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
 
             {/* URL y Categoría */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-               <div>
+              <div>
                 <label className="text-sm font-medium text-zinc-300 mb-1.5 block">URL</label>
                 <div className="relative">
                   <LinkIcon className="absolute left-3 top-3 h-5 w-5 text-zinc-500" />
@@ -349,8 +349,8 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
                     className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#07B5A7]/50 outline-none"
                   />
                 </div>
-               </div>
-               <div>
+              </div>
+              <div>
                 <label className="text-sm font-medium text-zinc-300 mb-1.5 block">Categoría</label>
                 <div className="relative">
                   <Tag className="absolute left-3 top-3 h-5 w-5 text-zinc-500" />
@@ -366,37 +366,37 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
                     ))}
                   </select>
                 </div>
-               </div>
+              </div>
             </div>
 
             {/* Cupón y Disponibilidad */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-               <div>
-                  <label className="text-sm font-medium text-zinc-300 mb-1.5 block">Cupón (Opcional)</label>
-                  <div className="relative">
-                    <Tag className="absolute left-3 top-3 h-5 w-5 text-zinc-500" />
-                    <input
-                      value={couponCode}
-                      onChange={e => setCouponCode(e.target.value)}
-                      placeholder="Código de descuento"
-                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#07B5A7]/50 outline-none uppercase"
-                    />
-                  </div>
-               </div>
-               <div>
-                  <label className="text-sm font-medium text-zinc-300 mb-1.5 block">Disponibilidad</label>
-                  <div className="relative">
-                    <ShoppingBag className="absolute left-3 top-3 h-5 w-5 text-zinc-500" />
-                    <select
-                      value={availability}
-                      onChange={e => setAvailability(e.target.value)}
-                      className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#07B5A7]/50 outline-none appearance-none"
-                    >
-                      <option value="online" className="bg-zinc-900">Online</option>
-                      <option value="in_store" className="bg-zinc-900">Tienda Física</option>
-                    </select>
-                  </div>
-               </div>
+              <div>
+                <label className="text-sm font-medium text-zinc-300 mb-1.5 block">Cupón (Opcional)</label>
+                <div className="relative">
+                  <Tag className="absolute left-3 top-3 h-5 w-5 text-zinc-500" />
+                  <input
+                    value={couponCode}
+                    onChange={e => setCouponCode(e.target.value)}
+                    placeholder="Código de descuento"
+                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#07B5A7]/50 outline-none uppercase"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-zinc-300 mb-1.5 block">Disponibilidad</label>
+                <div className="relative">
+                  <ShoppingBag className="absolute left-3 top-3 h-5 w-5 text-zinc-500" />
+                  <select
+                    value={availability}
+                    onChange={e => setAvailability(e.target.value)}
+                    className="w-full bg-black/20 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-[#07B5A7]/50 outline-none appearance-none"
+                  >
+                    <option value="online" className="bg-zinc-900">Online</option>
+                    <option value="in_store" className="bg-zinc-900">Tienda Física</option>
+                  </select>
+                </div>
+              </div>
             </div>
 
             {/* Envío y País */}
@@ -463,27 +463,27 @@ export default function EditDealPage({ params }: { params: Promise<{ id: string 
             {/* Imágenes */}
             <div>
               <label className="text-sm font-medium text-zinc-300 mb-1.5 block">Imágenes (Arrastra para ordenar)</label>
-              
-              <DndContext 
+
+              <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
                 onDragEnd={handleDragEnd}
               >
-                <SortableContext 
+                <SortableContext
                   items={items.map(item => item.id)}
                   strategy={rectSortingStrategy}
                 >
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                     {items.map((item, index) => (
-                      <SortableItem 
-                        key={item.id} 
-                        id={item.id} 
-                        url={item.url} 
+                      <SortableItem
+                        key={item.id}
+                        id={item.id}
+                        url={item.url}
                         index={index}
-                        onRemove={removeItem} 
+                        onRemove={removeItem}
                       />
                     ))}
-                    
+
                     <label className="aspect-square bg-black/20 border border-white/10 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-[#07B5A7]/50 transition-colors">
                       <ImageIcon className="h-6 w-6 text-zinc-500" />
                       <span className="text-xs text-zinc-500 mt-2">Agregar</span>

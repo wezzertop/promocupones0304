@@ -11,14 +11,27 @@ import { User as SupabaseUser } from '@supabase/supabase-js'
 import { usePathname } from 'next/navigation'
 import GamificationToast from '@/components/gamification/GamificationToast'
 import ToastSystem from '@/components/ui/ToastSystem'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
+import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import GoogleTermsModal from '@/components/GoogleTermsModal'
 
+const NativeAppBridge = dynamic(() => import('@/components/NativeAppBridge'), { ssr: false })
+
 interface ClientLayoutProps {
   children: React.ReactNode;
   user: SupabaseUser | null;
+}
+
+function TermsCheck({ onShowTerms }: { onShowTerms: () => void }) {
+  const searchParams = useSearchParams()
+  useEffect(() => {
+    if (searchParams?.get('showTerms') === 'true') {
+      onShowTerms()
+    }
+  }, [searchParams, onShowTerms])
+  return null
 }
 
 export default function ClientLayout({ children, user: initialUser }: ClientLayoutProps) {
@@ -26,16 +39,8 @@ export default function ClientLayout({ children, user: initialUser }: ClientLayo
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false)
   const { isHeaderVisible, setHeaderVisible } = useUIStore()
   const pathname = usePathname()
-  const searchParams = useSearchParams()
   const supabase = createClient()
   const router = useRouter()
-
-  // Check for showTerms flag in URL
-  useEffect(() => {
-    if (searchParams?.get('showTerms') === 'true') {
-      setIsTermsModalOpen(true)
-    }
-  }, [searchParams])
 
   // Update user when prop changes (server-side sync)
   useEffect(() => {
@@ -77,7 +82,9 @@ export default function ClientLayout({ children, user: initialUser }: ClientLayo
     <div className="flex">
       <Sidebar />
       <div className={`flex-1 flex flex-col min-h-screen transition-[padding] duration-300 ease-in-out ${isHeaderVisible ? 'lg:pl-64' : 'lg:pl-0'}`}>
-        <Header user={user} />
+        <Suspense fallback={<div className="h-14 bg-background/80 w-full border-b border-border"></div>}>
+          <Header user={user} />
+        </Suspense>
         <main className="flex-1 p-2 pt-14 pb-20 md:p-4 md:pt-[80px] md:pb-4 lg:p-8 lg:pt-8 lg:pb-8 max-w-[1920px] mx-auto w-full">
           {children}
         </main>
@@ -88,6 +95,10 @@ export default function ClientLayout({ children, user: initialUser }: ClientLayo
       <AdSidebars />
       <GamificationToast />
       <ToastSystem />
+      <Suspense fallback={null}>
+        <TermsCheck onShowTerms={() => setIsTermsModalOpen(true)} />
+      </Suspense>
+      <NativeAppBridge user={user} />
       <GoogleTermsModal 
         isOpen={isTermsModalOpen}
         onClose={() => setIsTermsModalOpen(false)}

@@ -550,7 +550,7 @@ export default function DealCard({
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between mt-2 md:mt-4 w-full gap-1 pt-2 border-t border-border">
+          <div className="flex items-end justify-between mt-2 md:mt-4 w-full gap-1 pt-2 border-t border-border">
             <div className="flex-1 flex flex-col justify-center min-w-0 pr-1 gap-1 md:gap-1.5">
               {isCoupon ? (
                 <>
@@ -584,14 +584,14 @@ export default function DealCard({
                   </div>
 
                   {isFreeShipping ? (
-                    <div className="flex w-fit items-center gap-1 bg-lime-500/10 px-1.5 md:px-2 py-0.5 md:py-1 rounded-[4px] text-[9px] md:text-xs font-bold uppercase tracking-wide border border-lime-500/20">
-                      <Truck size={12} className="md:w-3.5 md:h-3.5 text-lime-600 dark:text-lime-400" strokeWidth={2.5} />
-                      <span className="text-lime-600 dark:text-lime-400">Gratis</span>
+                    <div className="flex w-fit items-center gap-1 bg-lime-500/10 px-2 md:px-3 h-[28px] md:h-[36px] rounded-[10px] text-[9px] md:text-xs font-black uppercase tracking-wide border border-lime-500/20">
+                      <Truck size={12} className="md:w-3.5 md:h-3.5 text-lime-600 dark:text-lime-400 shrink-0" strokeWidth={2.5} />
+                      <span className="text-lime-600 dark:text-lime-400 hover:opacity-100">GRATIS</span>
                     </div>
                   ) : (
-                    <div className="flex w-fit items-center gap-1 bg-rose-500/10 px-1.5 md:px-2 py-0.5 md:py-1 rounded-[4px] text-[9px] md:text-xs font-bold uppercase tracking-wide border border-rose-500/20">
-                      <Truck size={12} className="md:w-3.5 md:h-3.5 text-rose-500" strokeWidth={2.5} />
-                      <span className="text-rose-500">Ver</span>
+                    <div className="flex w-fit items-center gap-1 bg-rose-500/10 px-2 md:px-3 h-[28px] md:h-[36px] rounded-[10px] text-[9px] md:text-xs font-black uppercase tracking-wide border border-rose-500/20">
+                      <Truck size={12} className="md:w-3.5 md:h-3.5 text-rose-500 shrink-0" strokeWidth={2.5} />
+                      <span className="text-rose-500 hover:opacity-100">VER</span>
                     </div>
                   )}
                 </>

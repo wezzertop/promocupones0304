@@ -129,7 +129,10 @@ export default function Header({ user }: HeaderProps) {
 
       {/* Mobile Nav Filters (Home Only) */}
       {isHome && (
-        <div className="sm:hidden flex-1 flex flex-row items-center gap-1.5 overflow-x-auto scrollbar-hide px-1 justify-end opacity-90 pr-2">
+        <div 
+          className="sm:hidden flex-1 flex flex-row items-center gap-1.5 overflow-x-auto scrollbar-hide px-2 justify-start opacity-90"
+          style={{ maskImage: 'linear-gradient(to right, transparent, black 12px, black calc(100% - 12px), transparent)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 12px, black calc(100% - 12px), transparent)' }}
+        >
           <button onClick={() => handleFilterChange('foryou')} className={`shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-[10px] text-[11px] font-bold transition-all ${currentFilter === 'foryou' ? 'bg-surface-hover text-foreground shadow-md' : 'text-gray-400'}`}>
             <Sparkles size={14} className={currentFilter === 'foryou' ? 'text-[#07B5A7]' : ''}/> Para ti
           </button>
@@ -297,7 +300,7 @@ export default function Header({ user }: HeaderProps) {
       </div>
 
       {/* Mobile Right Actions */}
-      <div className="sm:hidden flex flex-1 justify-end items-center gap-1 shrink-0 ml-1">
+      <div className="sm:hidden flex justify-end items-center gap-1 shrink-0 ml-auto">
         {user && <SearchAlertButton initialKeyword={searchQuery} userId={user.id} />}
       </div>
     </header>

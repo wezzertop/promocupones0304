@@ -70,10 +70,16 @@ export default function RegisterPage() {
   const handleGoogleLogin = async () => {
     setIsGoogleModalOpen(false)
     setLoading(true)
+    
+    let redirectUrl = `${window.location.origin}/auth/callback?terms_accepted=true`
+    if (typeof window !== 'undefined' && (window as any).Capacitor?.isNativePlatform()) {
+      redirectUrl = 'com.promocupones.cupoferta://auth/callback?terms_accepted=true'
+    }
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?terms_accepted=true`,
+        redirectTo: redirectUrl,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
