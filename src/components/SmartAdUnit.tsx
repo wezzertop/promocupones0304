@@ -49,8 +49,6 @@ export default function SmartAdUnit({
   }, [config.key])
 
   useEffect(() => {
-    if (!iframeRef.current) return
-
     const handleMessage = (event: MessageEvent) => {
       // Verify origin if possible, but ad scripts might come from various CDNs.
       // For now, check the data payload.
@@ -97,11 +95,6 @@ export default function SmartAdUnit({
           function notifyError() {
             window.parent.postMessage('ad-error-${config.key}', '*');
           }
-
-          // Global error handler
-          window.onerror = function() {
-            notifyError();
-          };
 
           atOptions = {
             'key' : '${config.key}',
