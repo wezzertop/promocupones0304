@@ -293,7 +293,7 @@ export default function DealCard({
               <Image src={deal.user.avatar_url} alt="" width={20} height={20} className="object-cover" unoptimized />
             </div>
           ) : (
-            <div className="w-[16px] h-[16px] md:w-[20px] md:h-[20px] shrink-0 rounded-[10px] bg-zinc-800 flex items-center justify-center text-[10px] text-zinc-300 font-bold">
+            <div className="w-[16px] h-[16px] md:w-[20px] md:h-[20px] shrink-0 rounded-[10px] bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-[10px] text-zinc-600 dark:text-zinc-300 font-bold">
               {deal.user.username[0]?.toUpperCase() || 'U'}
             </div>
           )}
@@ -301,7 +301,7 @@ export default function DealCard({
         </Link>
       ) : (
         <div className="flex items-center gap-1.5 shrink-0">
-          <div className="w-[16px] h-[16px] md:w-[20px] md:h-[20px] shrink-0 rounded-[10px] bg-zinc-800 flex items-center justify-center text-[10px] text-zinc-300 font-bold">U</div>
+          <div className="w-[16px] h-[16px] md:w-[20px] md:h-[20px] shrink-0 rounded-[10px] bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center text-[10px] text-zinc-600 dark:text-zinc-300 font-bold">U</div>
           <span className="text-[11px] sm:text-xs text-zinc-400 font-medium truncate">Anónimo</span>
         </div>
       )}
@@ -347,20 +347,20 @@ export default function DealCard({
         }
       }}
       className={cn(
-        "group relative flex flex-col md:grid md:grid-cols-[50px_180px_1fr] bg-[#121212] rounded-[10px] overflow-hidden border border-white/5 transition-all duration-300 md:hover:scale-[1.01] hover:border-white/10 shadow-xl shadow-black/50 hover:shadow-2xl w-full mx-auto md:mx-0 cursor-pointer",
+        "group relative flex flex-col md:grid md:grid-cols-[50px_180px_1fr] bg-white dark:bg-[#0a0a0a] rounded-[10px] overflow-hidden border border-black/5 dark:border-white/10 transition-all duration-300 md:hover:scale-[1.01] hover:border-black/10 dark:hover:border-white/20 shadow-xl shadow-black/5 dark:shadow-black/50 hover:shadow-2xl w-full mx-auto md:mx-0 cursor-pointer",
         deal.status === 'expired' && "opacity-80 grayscale-[20%]",
         deal.status !== 'active' && "opacity-75"
       )}>
 
       {/* --- MOBILE HEADER --- */}
-      <div className="flex md:hidden items-center justify-between w-full p-2.5 pb-2 border-b border-white/5 relative z-10 bg-[#0a0a0a] overflow-hidden">
+      <div className="flex md:hidden items-center justify-between w-full p-2.5 pb-2 border-b border-black/5 dark:border-white/10 relative z-10 bg-zinc-50 dark:bg-[#000000] overflow-hidden">
         {renderHeaderLeft()}
         {renderHeaderRight()}
       </div>
 
       {/* Component A: Vertical Voting Sidebar */}
       {variant === 'default' && (
-        <div className="hidden md:flex flex-col items-center justify-between gap-1 md:gap-2 w-full bg-[#0a0a0a] border-r border-white/5 py-2 md:py-4 z-10">
+        <div className="hidden md:flex flex-col items-center justify-between gap-1 md:gap-2 w-full bg-zinc-50 dark:bg-[#000000] border-r border-black/5 dark:border-white/10 py-2 md:py-4 z-10">
           <button
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleVote('hot'); }}
             className={cn(
@@ -374,7 +374,7 @@ export default function DealCard({
           <div className={cn(
             "flex flex-col items-center justify-center gap-0.5 font-black text-xs md:text-sm transition-colors",
             userVote === 'hot' ? "text-orange-500" :
-              userVote === 'cold' ? "text-blue-500" : "text-zinc-100"
+              userVote === 'cold' ? "text-blue-500" : "text-zinc-900 dark:text-zinc-100"
           )}>
             {votes >= 0 ? (
               <Flame size={16} strokeWidth={2.5} className={cn(userVote === 'hot' ? "fill-orange-500/20 text-orange-500" : "text-orange-500/70")} />
@@ -397,10 +397,10 @@ export default function DealCard({
       )}
 
       {/* --- MD CONTENTS WRAPPER --- */}
-      <div className="grid grid-cols-[115px_minmax(0,1fr)] sm:grid-cols-[130px_minmax(0,1fr)] w-full md:contents p-2.5 md:p-0 gap-3 md:gap-0 h-full bg-[#121212] md:bg-transparent">
+      <div className="grid grid-cols-[115px_minmax(0,1fr)] sm:grid-cols-[130px_minmax(0,1fr)] w-full md:contents p-2.5 md:p-0 gap-3 md:gap-0 h-full bg-white md:bg-transparent dark:bg-[#0a0a0a] dark:md:bg-transparent">
 
         {/* Component B: Image Area */}
-        <div className="w-full flex flex-col items-center justify-start md:justify-center p-1.5 md:p-3 relative group/image md:border-r border-white/5 bg-[#171717] rounded-xl md:rounded-none border shadow-sm md:shadow-none md:border-t-0 md:border-b-0 md:border-l-0">
+        <div className="w-full flex flex-col items-center justify-start md:justify-center p-1.5 md:p-3 relative group/image md:border-r border-black/5 dark:border-white/10 bg-zinc-50/80 dark:bg-[#121212] rounded-xl md:rounded-none border shadow-sm md:shadow-none md:border-t-0 md:border-b-0 md:border-l-0">
           {deal.status !== 'active' && (
             <div className="absolute top-2 left-2 z-30 pointer-events-none">
               <span className={cn(
@@ -479,7 +479,7 @@ export default function DealCard({
                 )}
               </>
             ) : (
-              <div className="text-zinc-600 flex flex-col items-center justify-center h-full bg-[#171717]">
+              <div className="text-zinc-600 flex flex-col items-center justify-center h-full bg-zinc-100 dark:bg-[#171717]">
                 <Tag size={24} className="mb-2 text-zinc-400" />
                 <span className="text-[8px] md:text-[10px] font-black uppercase tracking-wider text-center text-zinc-500">Sin imagen</span>
               </div>
@@ -488,12 +488,12 @@ export default function DealCard({
 
           {/* Mobile Voting */}
           {variant === 'default' && (
-            <div className="flex md:hidden items-center justify-between w-full mt-2 bg-[#262626] rounded-lg p-0.5 px-1 border border-white/5 shrink-0 shadow-sm">
+            <div className="flex md:hidden items-center justify-between w-full mt-2 bg-zinc-100 dark:bg-[#1a1a1a] rounded-lg p-0.5 px-1 border border-black/5 dark:border-white/10 shrink-0 shadow-sm">
               <button
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleVote('cold'); }}
                 className={cn(
                   "p-1.5 rounded-md transition-all active:scale-95",
-                  userVote === 'cold' ? "text-blue-400 bg-blue-500/20" : "text-zinc-400 hover:text-blue-400"
+                  userVote === 'cold' ? "text-blue-500 bg-blue-500/10 dark:bg-blue-500/20" : "text-zinc-400 hover:text-blue-500 hover:bg-blue-500/5 dark:hover:bg-blue-500/10"
                 )}
               >
                 <ArrowDown size={14} className={cn(userVote === 'cold' && "drop-shadow-sm")} strokeWidth={3} />
@@ -502,12 +502,12 @@ export default function DealCard({
               <div className={cn(
                 "flex items-center justify-center gap-0.5 font-black text-[11px] transition-colors",
                 userVote === 'hot' ? "text-orange-500" :
-                  userVote === 'cold' ? "text-blue-400" : "text-zinc-100"
+                  userVote === 'cold' ? "text-blue-500" : "text-zinc-900 dark:text-zinc-100"
               )}>
                 {votes >= 0 ? (
-                  <Flame size={12} strokeWidth={2.5} className={cn(userVote === 'hot' ? "fill-orange-500/20 text-orange-500" : "text-orange-500/70")} />
+                  <Flame size={12} strokeWidth={2.5} className={cn(userVote === 'hot' ? "fill-orange-500/10 dark:fill-orange-500/20 text-orange-500" : "text-orange-500/70")} />
                 ) : (
-                  <Snowflake size={12} strokeWidth={2.5} className={cn(userVote === 'cold' ? "fill-blue-500/20 text-blue-400" : "text-blue-500/70")} />
+                  <Snowflake size={12} strokeWidth={2.5} className={cn(userVote === 'cold' ? "fill-blue-500/10 dark:fill-blue-500/20 text-blue-500" : "text-blue-500/70")} />
                 )}
                 <span>{votes}°</span>
               </div>
@@ -516,7 +516,7 @@ export default function DealCard({
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleVote('hot'); }}
                 className={cn(
                   "p-1.5 rounded-md transition-all active:scale-95",
-                  userVote === 'hot' ? "text-orange-500 bg-orange-500/20" : "text-zinc-400 hover:text-orange-500"
+                  userVote === 'hot' ? "text-orange-500 bg-orange-500/10 dark:bg-orange-500/20" : "text-zinc-400 hover:text-orange-500 hover:bg-orange-500/5 dark:hover:bg-orange-500/10"
                 )}
               >
                 <ArrowUp size={14} className={cn(userVote === 'hot' && "drop-shadow-sm")} strokeWidth={3} />
@@ -544,27 +544,27 @@ export default function DealCard({
             )}
 
             <Link href={dealLink} className="block group/link" onClick={(e) => e.stopPropagation()}>
-              <h3 className="text-zinc-100 font-bold text-[13px] md:text-xl leading-snug md:leading-tight line-clamp-3 md:line-clamp-1 group-hover/link:text-[#07B5A7] transition-colors">
+              <h3 className="text-zinc-900 dark:text-zinc-100 font-bold text-[13px] md:text-xl leading-snug md:leading-tight line-clamp-3 md:line-clamp-1 group-hover/link:text-[#07B5A7] transition-colors">
                 {deal.title}
               </h3>
             </Link>
 
-            <p className="text-zinc-400 text-[10px] md:text-sm line-clamp-1 md:line-clamp-2 mt-0.5 md:mt-1 leading-relaxed">
+            <p className="text-zinc-500 dark:text-zinc-400 text-[10px] md:text-sm line-clamp-1 md:line-clamp-2 mt-0.5 md:mt-1 leading-relaxed">
               {deal.description}
             </p>
           </div>
 
           {/* Footer */}
-          <div className="flex items-end justify-between mt-2 md:mt-4 w-full gap-1 pt-2 border-t border-white/5">
+          <div className="flex items-end justify-between mt-2 md:mt-4 w-full gap-1 pt-2 border-t border-black/5 dark:border-white/10">
             <div className="flex-1 flex flex-col justify-center min-w-0 pr-1 gap-1 md:gap-1.5">
               {isCoupon ? (
                 <>
                   <div className="flex items-center flex-nowrap gap-1.5 md:gap-2">
-                    <span className="text-lg md:text-3xl font-black text-zinc-100 leading-none shrink-0 tracking-tight">
+                    <span className="text-lg md:text-3xl font-black text-zinc-900 dark:text-zinc-100 leading-none shrink-0 tracking-tight">
                       {deal.discount_percentage ? `${deal.discount_percentage}% OFF` : (deal.discount_amount ? `${formatPrice(deal.discount_amount)} OFF` : 'Cupón')}
                     </span>
                     {deal.coupon_code && (
-                      <span className="bg-purple-500/20 text-purple-400 px-1.5 py-0.5 md:px-2 md:py-0.5 rounded-[10px] text-[10px] md:text-xs font-black uppercase font-mono border border-purple-500/30 shrink-0">
+                      <span className="bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 px-1.5 py-0.5 md:px-2 md:py-0.5 rounded-[10px] text-[10px] md:text-xs font-black uppercase font-mono border border-purple-200 dark:border-purple-500/30 shrink-0">
                         {deal.coupon_code}
                       </span>
                     )}
@@ -577,26 +577,26 @@ export default function DealCard({
                       {deal.deal_price ? formatPrice(deal.deal_price) : 'Gratis'}
                     </span>
                     {deal.original_price && deal.original_price > (deal.deal_price || 0) && (
-                      <span className="text-[10px] md:text-sm font-medium text-zinc-500 line-through decoration-red-500/50 decoration-1 shrink-0">
+                      <span className="text-[10px] md:text-sm font-medium text-zinc-400 dark:text-zinc-500 line-through decoration-red-500/50 decoration-1 shrink-0">
                         {formatPrice(deal.original_price)}
                       </span>
                     )}
                     {deal.discount_percentage && (
-                      <span className="bg-[#f5cb17] text-black text-[9px] sm:text-[11px] md:text-xs font-black px-1.5 py-0.5 rounded-md leading-none flex items-center shrink-0">
+                      <span className="bg-zinc-900 dark:bg-[#f5cb17] text-white dark:text-zinc-900 text-[9px] sm:text-[11px] md:text-xs font-black px-1.5 py-0.5 rounded-[6px] leading-none flex items-center shrink-0">
                         -{deal.discount_percentage}%
                       </span>
                     )}
                   </div>
 
                   {isFreeShipping ? (
-                    <div className="flex w-fit items-center gap-0.5 bg-lime-500/10 px-1.5 h-[20px] md:h-[24px] rounded-[6px] text-[9px] md:text-[10px] font-bold uppercase tracking-wide border border-lime-500/20">
+                    <div className="flex w-fit items-center gap-0.5 bg-lime-100 dark:bg-lime-500/10 px-1.5 h-[20px] md:h-[24px] rounded-[6px] text-[9px] md:text-[10px] font-bold uppercase tracking-wide border border-lime-200 dark:border-lime-500/20">
                       <Truck size={10} className="md:w-3 md:h-3 text-lime-600 shrink-0" strokeWidth={2} />
-                      <span className="text-lime-600 hover:opacity-100">GRATIS</span>
+                      <span className="text-lime-700 dark:text-lime-500 hover:opacity-100">GRATIS</span>
                     </div>
                   ) : (
-                    <div className="flex w-fit items-center gap-0.5 bg-rose-500/10 px-1.5 h-[20px] md:h-[24px] rounded-[6px] text-[9px] md:text-[10px] font-bold uppercase tracking-wide border border-rose-500/20">
+                    <div className="flex w-fit items-center gap-0.5 bg-rose-100 dark:bg-rose-500/10 px-1.5 h-[20px] md:h-[24px] rounded-[6px] text-[9px] md:text-[10px] font-bold uppercase tracking-wide border border-rose-200 dark:border-rose-500/20">
                       <Truck size={10} className="md:w-3 md:h-3 text-rose-500 shrink-0" strokeWidth={2} />
-                      <span className="text-rose-500 hover:opacity-100">OFF</span>
+                      <span className="text-rose-600 dark:text-rose-500 hover:opacity-100">OFF</span>
                     </div>
                   )}
                 </>
@@ -608,7 +608,7 @@ export default function DealCard({
                 onClick={handleCopyCode}
                 className={cn(
                   "flex items-center gap-1 md:gap-1.5 px-2 md:px-4 h-[28px] md:h-[36px] shrink-0 rounded-[8px] font-black text-[9px] md:text-xs uppercase tracking-wider transition-all ml-1 md:ml-2 shadow-md",
-                  isCopied ? "bg-white text-black border border-white/20" : "bg-purple-600 text-white hover:opacity-90 border border-transparent"
+                  isCopied ? "bg-zinc-100 dark:bg-white text-zinc-900 dark:text-black border border-black/10 dark:border-white/20" : "bg-zinc-900 dark:bg-purple-600 text-white dark:text-white hover:opacity-90 border border-transparent"
                 )}
                 onClickCapture={(e) => e.stopPropagation()}
               >
@@ -622,7 +622,7 @@ export default function DealCard({
                 href={deal.deal_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-1 md:gap-1.5 px-2 md:px-4 h-[28px] md:h-[36px] bg-[#07B5A7] hover:bg-[#07B5A7]/90 text-black font-black text-[9px] md:text-xs shrink-0 rounded-[8px] uppercase tracking-wider transition-colors ml-1 md:ml-2 shadow-md hover:shadow-[#07B5A7]/20"
+                className="flex items-center justify-center gap-1 md:gap-1.5 px-2 md:px-4 h-[28px] md:h-[36px] bg-[#07B5A7] hover:bg-[#07B5A7]/90 text-white dark:text-black font-black text-[9px] md:text-xs shrink-0 rounded-[8px] uppercase tracking-wider transition-colors ml-1 md:ml-2 shadow-md hover:shadow-[#07B5A7]/20"
                 onClick={(e) => e.stopPropagation()}
               >
                 <span className="hidden sm:inline">IR A OFERTA</span>
@@ -633,16 +633,16 @@ export default function DealCard({
           </div>
 
           {variant === 'moderation' && (
-            <div className="flex items-center gap-2 md:gap-3 w-full mt-3 md:mt-4 pt-3 md:pt-4 border-t border-white/5">
+            <div className="flex items-center gap-2 md:gap-3 w-full mt-3 md:mt-4 pt-3 md:pt-4 border-t border-black/5 dark:border-white/10">
               <button
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); onReject?.(); }}
-                className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-500 h-[32px] md:h-[36px] rounded-[10px] text-[10px] md:text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
+                className="flex-1 bg-red-50 hover:bg-red-100 dark:bg-red-500/10 dark:hover:bg-red-500/20 text-red-600 dark:text-red-500 h-[32px] md:h-[36px] rounded-[10px] text-[10px] md:text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
               >
                 <X size={14} className="md:w-4 md:h-4" /> Rechazar
               </button>
               <button
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); onApprove?.(); }}
-                className="flex-1 bg-[#07B5A7]/10 hover:bg-[#07B5A7]/20 text-[#07B5A7] h-[32px] md:h-[36px] rounded-[10px] text-[10px] md:text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
+                className="flex-1 bg-emerald-50 hover:bg-emerald-100 dark:bg-[#07B5A7]/10 dark:hover:bg-[#07B5A7]/20 text-emerald-600 dark:text-[#07B5A7] h-[32px] md:h-[36px] rounded-[10px] text-[10px] md:text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
               >
                 <Check size={14} className="md:w-4 md:h-4" /> Aprobar
               </button>
