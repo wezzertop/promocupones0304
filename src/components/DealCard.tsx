@@ -333,29 +333,34 @@ export default function DealCard({
   )
 
   return (
-    <div 
+    <div
       onClick={(e) => {
         const selection = window.getSelection();
         if (selection && selection.toString().length > 0) {
           return;
         }
-        router.push(dealLink);
+        // Redirigir al hacer clic en el contenedor principal si no estamos haciendo clic en algo interactivo
+        const target = e.target as HTMLElement
+        const isInteractive = target.closest('button, a, svg, span:not(.pointer-events-none)')
+        if (!isInteractive && !isCoupon) {
+          window.open(deal.deal_url, '_blank', 'noopener,noreferrer')
+        }
       }}
       className={cn(
-      "group relative flex flex-col md:grid md:grid-cols-[50px_180px_1fr] bg-background rounded-[10px] overflow-hidden border border-border transition-all duration-300 md:hover:scale-[1.01] hover:border-white/10 shadow-xl shadow-black/50 hover:shadow-2xl w-full mx-auto md:mx-0 cursor-pointer",
-      isCoupon ? "hover:border-purple-500/50 hover:shadow-purple-500/10" : "hover:border-[#07B5A7]/50 hover:shadow-[#07B5A7]/10",
-      isExpired && "opacity-60 grayscale"
-    )}>
+        "group relative flex flex-col md:grid md:grid-cols-[50px_180px_1fr] bg-background dark:bg-[#171717] rounded-[10px] overflow-hidden border border-border dark:border-white/5 transition-all duration-300 md:hover:scale-[1.01] hover:border-white/10 shadow-xl shadow-black/50 hover:shadow-2xl w-full mx-auto md:mx-0 cursor-pointer",
+        deal.status === 'expired' && "opacity-80 grayscale-[20%]",
+        deal.status !== 'active' && "opacity-75"
+      )}>
 
       {/* --- MOBILE HEADER --- */}
-      <div className="flex md:hidden items-center justify-between w-full p-2.5 pb-2 border-b border-border relative z-10 bg-background overflow-hidden">
+      <div className="flex md:hidden items-center justify-between w-full p-2.5 pb-2 border-b border-border dark:border-white/5 relative z-10 bg-background dark:bg-[#0f0f11] overflow-hidden">
         {renderHeaderLeft()}
         {renderHeaderRight()}
       </div>
 
       {/* Component A: Vertical Voting Sidebar */}
       {variant === 'default' && (
-        <div className="hidden md:flex flex-col items-center justify-between gap-1 md:gap-2 w-full bg-surface-hover border-r border-border py-2 md:py-4 z-10">
+        <div className="hidden md:flex flex-col items-center justify-between gap-1 md:gap-2 w-full bg-surface-hover dark:bg-[#0f0f11] border-r border-border dark:border-white/5 py-2 md:py-4 z-10">
           <button
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleVote('hot'); }}
             className={cn(
@@ -392,10 +397,10 @@ export default function DealCard({
       )}
 
       {/* --- MD CONTENTS WRAPPER --- */}
-      <div className="grid grid-cols-[115px_minmax(0,1fr)] sm:grid-cols-[130px_minmax(0,1fr)] w-full md:contents p-2.5 md:p-0 gap-3 md:gap-0 h-full bg-background md:bg-transparent">
+      <div className="grid grid-cols-[115px_minmax(0,1fr)] sm:grid-cols-[130px_minmax(0,1fr)] w-full md:contents p-2.5 md:p-0 gap-3 md:gap-0 h-full bg-background md:bg-transparent dark:bg-[#141417] dark:md:bg-[#141417]">
 
         {/* Component B: Image Area */}
-        <div className="w-full flex flex-col items-center justify-start md:justify-center p-1.5 md:p-3 relative group/image md:border-r border-border bg-surface rounded-xl md:rounded-none border shadow-sm md:shadow-none md:border-0">
+        <div className="w-full flex flex-col items-center justify-start md:justify-center p-1.5 md:p-3 relative group/image md:border-r border-border dark:border-white/5 bg-surface dark:bg-[#181819] rounded-xl md:rounded-none border shadow-sm md:shadow-none md:border-t-0 md:border-b-0 md:border-l-0">
           {deal.status !== 'active' && (
             <div className="absolute top-2 left-2 z-30 pointer-events-none">
               <span className={cn(
@@ -415,7 +420,7 @@ export default function DealCard({
             </div>
           )}
 
-          <div className="relative w-full aspect-square bg-white md:bg-transparent rounded-lg flex items-center justify-center overflow-hidden shrink-0 border border-border md:border-0">
+          <div className="relative w-full aspect-square bg-white rounded-lg flex items-center justify-center overflow-hidden shrink-0 border border-border md:border-0 dark:border-white/10 dark:md:border-0">
             {deal.image_urls && deal.image_urls.length > 0 ? (
               <>
                 <AnimatePresence mode="wait">
@@ -474,7 +479,7 @@ export default function DealCard({
                 )}
               </>
             ) : (
-              <div className="text-zinc-600 flex flex-col items-center justify-center h-full bg-surface-hover/50">
+              <div className="text-zinc-600 flex flex-col items-center justify-center h-full bg-surface-hover/50 dark:bg-[#141417]">
                 <Tag size={24} className="mb-2 text-zinc-400" />
                 <span className="text-[8px] md:text-[10px] font-black uppercase tracking-wider text-center text-zinc-500">Sin imagen</span>
               </div>
@@ -483,7 +488,7 @@ export default function DealCard({
 
           {/* Mobile Voting */}
           {variant === 'default' && (
-            <div className="flex md:hidden items-center justify-between w-full mt-2 bg-surface-hover rounded-lg p-0.5 px-1 border border-border shrink-0 shadow-sm">
+            <div className="flex md:hidden items-center justify-between w-full mt-2 bg-surface-hover dark:bg-[#2a2a30] rounded-lg p-0.5 px-1 border border-border dark:border-white/5 shrink-0 shadow-sm">
               <button
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleVote('cold'); }}
                 className={cn(
@@ -493,7 +498,7 @@ export default function DealCard({
               >
                 <ArrowDown size={14} className={cn(userVote === 'cold' && "drop-shadow-sm")} strokeWidth={3} />
               </button>
-              
+
               <div className={cn(
                 "flex items-center justify-center gap-0.5 font-black text-[11px] transition-colors",
                 userVote === 'hot' ? "text-orange-500" :
@@ -530,7 +535,6 @@ export default function DealCard({
               {renderHeaderRight()}
             </div>
 
-            {/* Body */}
             {deal.expires_at && !isExpired && (
               <div className="flex items-center gap-1.5 text-rose-500 mb-0.5 mt-0.5">
                 <Clock size={12} className="stroke-[2.5px] shrink-0 md:w-3.5 md:h-3.5" />
@@ -539,18 +543,18 @@ export default function DealCard({
             )}
 
             <Link href={dealLink} className="block group/link" onClick={(e) => e.stopPropagation()}>
-              <h3 className="text-foreground font-bold text-[13px] md:text-xl leading-snug md:leading-tight line-clamp-3 md:line-clamp-1 group-hover/link:text-[#07B5A7] transition-colors">
+              <h3 className="text-foreground dark:text-zinc-100 font-bold text-[13px] md:text-xl leading-snug md:leading-tight line-clamp-3 md:line-clamp-1 group-hover/link:text-[#07B5A7] transition-colors">
                 {deal.title}
               </h3>
             </Link>
 
-            <p className="text-zinc-400 text-[10px] md:text-sm line-clamp-1 md:line-clamp-2 mt-0.5 md:mt-1 leading-relaxed">
+            <p className="text-zinc-500 dark:text-zinc-400 text-[10px] md:text-sm line-clamp-1 md:line-clamp-2 mt-0.5 md:mt-1 leading-relaxed">
               {deal.description}
             </p>
           </div>
 
           {/* Footer */}
-          <div className="flex items-end justify-between mt-2 md:mt-4 w-full gap-1 pt-2 border-t border-border">
+          <div className="flex items-end justify-between mt-2 md:mt-4 w-full gap-1 pt-2 border-t border-border dark:border-white/5">
             <div className="flex-1 flex flex-col justify-center min-w-0 pr-1 gap-1 md:gap-1.5">
               {isCoupon ? (
                 <>
@@ -628,7 +632,7 @@ export default function DealCard({
           </div>
 
           {variant === 'moderation' && (
-            <div className="flex items-center gap-2 md:gap-3 w-full mt-3 md:mt-4 pt-3 md:pt-4 border-t border-border">
+            <div className="flex items-center gap-2 md:gap-3 w-full mt-3 md:mt-4 pt-3 md:pt-4 border-t border-border dark:border-white/5">
               <button
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); onReject?.(); }}
                 className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-500 h-[32px] md:h-[36px] rounded-[10px] text-[10px] md:text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
