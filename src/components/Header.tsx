@@ -130,17 +130,19 @@ export default function Header({ user }: HeaderProps) {
       {/* Mobile Nav Filters (Home Only) */}
       {isHome && (
         <div 
-          className="sm:hidden flex-1 flex flex-row items-center gap-1.5 overflow-x-auto scrollbar-hide px-2 justify-start opacity-90"
-          style={{ maskImage: 'linear-gradient(to right, transparent, black 12px, black calc(100% - 12px), transparent)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 12px, black calc(100% - 12px), transparent)' }}
+          className="sm:hidden flex-1 flex flex-row items-center justify-center gap-1 px-1 opacity-90 mx-1"
         >
-          <button onClick={() => handleFilterChange('foryou')} className={`shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-[10px] text-[11px] font-bold transition-all ${currentFilter === 'foryou' ? 'bg-surface-hover text-foreground shadow-md' : 'text-gray-400'}`}>
-            <Sparkles size={14} className={currentFilter === 'foryou' ? 'text-[#07B5A7]' : ''}/> Para ti
+          <button onClick={() => handleFilterChange('foryou')} className={`flex flex-1 items-center justify-center gap-1 px-1.5 py-1.5 rounded-[10px] text-[10px] font-bold transition-all whitespace-nowrap ${currentFilter === 'foryou' ? 'bg-surface-hover text-foreground shadow-md' : 'text-gray-400'}`}>
+            <Sparkles size={12} className={`shrink-0 ${currentFilter === 'foryou' ? 'text-[#07B5A7]' : ''}`}/> 
+            <span className="truncate">Para ti</span>
           </button>
-          <button onClick={() => handleFilterChange('popular')} className={`shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-[10px] text-[11px] font-bold transition-all ${currentFilter === 'popular' ? 'bg-surface-hover text-foreground shadow-md' : 'text-gray-400'}`}>
-            <Flame size={14} className={currentFilter === 'popular' ? 'text-orange-500' : ''}/> Más votadas
+          <button onClick={() => handleFilterChange('popular')} className={`flex flex-1 items-center justify-center gap-1 px-1.5 py-1.5 rounded-[10px] text-[10px] font-bold transition-all whitespace-nowrap ${currentFilter === 'popular' ? 'bg-surface-hover text-foreground shadow-md' : 'text-gray-400'}`}>
+            <Flame size={12} className={`shrink-0 ${currentFilter === 'popular' ? 'text-orange-500' : ''}`}/> 
+            <span className="truncate">Más votadas</span>
           </button>
-          <button onClick={() => handleFilterChange('recent')} className={`shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-[10px] text-[11px] font-bold transition-all ${currentFilter === 'recent' ? 'bg-surface-hover text-foreground shadow-md' : 'text-gray-400'}`}>
-            <Clock size={14} className={currentFilter === 'recent' ? 'text-blue-500' : ''}/> Recientes
+          <button onClick={() => handleFilterChange('recent')} className={`flex flex-1 items-center justify-center gap-1 px-1.5 py-1.5 rounded-[10px] text-[10px] font-bold transition-all whitespace-nowrap ${currentFilter === 'recent' ? 'bg-surface-hover text-foreground shadow-md' : 'text-gray-400'}`}>
+            <Clock size={12} className={`shrink-0 ${currentFilter === 'recent' ? 'text-blue-500' : ''}`}/> 
+            <span className="truncate">Recientes</span>
           </button>
         </div>
       )}

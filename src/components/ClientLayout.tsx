@@ -66,6 +66,40 @@ export default function ClientLayout({ children, user: initialUser }: ClientLayo
     }
   }, [supabase, pathname, router])
 
+  // Native App Deep Link Listener for OAuth
+  useEffect(() => {
+    if (typeof window !== 'undefined' && (window as any).Capacitor?.isNativePlatform()) {
+      import('@capacitor/app').then(({ App }) => {
+        const listener = App.addListener('appUrlOpen', async (event) => {
+          const url = event.url;
+          
+          if (url.includes('auth/callback')) {
+            // Usually tokens are passed in the hash: #access_token=...&refresh_token=...
+            const hashIndex = url.indexOf('#');
+            if (hashIndex !== -1) {
+              const hashParams = new URLSearchParams(url.substring(hashIndex + 1));
+              const access_token = hashParams.get('access_token');
+              const refresh_token = hashParams.get('refresh_token');
+              
+              if (access_token && refresh_token) {
+                await supabase.auth.setSession({
+                  access_token,
+                  refresh_token
+                });
+                router.push('/');
+                router.refresh();
+              }
+            }
+          }
+        });
+        
+        return () => {
+          listener.then(l => l.remove());
+        }
+      }).catch(console.error);
+    }
+  }, [supabase, router]);
+
   // Force header/sidebar visible on specific routes
   useEffect(() => {
     const alwaysVisibleRoutes = ['/oferta', '/perfil', '/ajustes', '/usuario']

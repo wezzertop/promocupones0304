@@ -1,14 +1,13 @@
 'use client'
 
 import { createClient } from '@/lib/supabase/client'
-import { useEffect, useState, use } from 'react'
+import { useEffect, useState, use, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useUIStore } from '@/lib/store'
 import { toggleDealStatus } from '../actions'
 import DealDetailView from '@/components/DealDetailView'
 
-export default function DealPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+function DealPageContent({ id }: { id: string }) {
   const searchParams = useSearchParams()
   const from = searchParams.get('from')
   const label = searchParams.get('label')
@@ -204,5 +203,15 @@ export default function DealPage({ params }: { params: Promise<{ id: string }> }
         backLabel={label || (from ? 'Volver' : 'Volver a ofertas')}
       />
     </>
+  )
+}
+
+export default function DealPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
+  
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-zinc-500">Cargando oferta...</div>}>
+      <DealPageContent id={id} />
+    </Suspense>
   )
 }

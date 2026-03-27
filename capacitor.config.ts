@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'cupoferta',
   webDir: 'public', // Cambiamos a 'public' porque no usaremos 'out' local
   server: {
-    url: 'http://192.168.1.74:3000', // Conectando a local dev server para pruebas
+    url: 'http://10.185.147.59:3000', // Conectando por la IP local para soporte Next.js CSS / HMR
     cleartext: true
   }
 };
