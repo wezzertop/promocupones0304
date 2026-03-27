@@ -348,7 +348,7 @@ export default function DealCard({
     )}>
 
       {/* --- MOBILE HEADER --- */}
-      <div className="flex md:hidden items-center justify-between w-full p-2.5 pb-2 border-b border-border/40 relative z-10 bg-[#0f0f11] overflow-hidden">
+      <div className="flex md:hidden items-center justify-between w-full p-2.5 pb-2 border-b border-border relative z-10 bg-background overflow-hidden">
         {renderHeaderLeft()}
         {renderHeaderRight()}
       </div>
@@ -392,10 +392,10 @@ export default function DealCard({
       )}
 
       {/* --- MD CONTENTS WRAPPER --- */}
-      <div className="grid grid-cols-[115px_minmax(0,1fr)] sm:grid-cols-[130px_minmax(0,1fr)] w-full md:contents p-2.5 md:p-0 gap-3 md:gap-0 h-full bg-[#141417] md:bg-transparent">
+      <div className="grid grid-cols-[115px_minmax(0,1fr)] sm:grid-cols-[130px_minmax(0,1fr)] w-full md:contents p-2.5 md:p-0 gap-3 md:gap-0 h-full bg-background md:bg-transparent">
 
         {/* Component B: Image Area */}
-        <div className="w-full flex flex-col items-center justify-start md:justify-center p-1.5 md:p-3 relative group/image md:border-r border-border/40 bg-[#1c1c21] md:bg-surface rounded-xl md:rounded-none border border-border/30 md:border-0 shadow-inner">
+        <div className="w-full flex flex-col items-center justify-start md:justify-center p-1.5 md:p-3 relative group/image md:border-r border-border bg-surface rounded-xl md:rounded-none border shadow-sm md:shadow-none md:border-0">
           {deal.status !== 'active' && (
             <div className="absolute top-2 left-2 z-30 pointer-events-none">
               <span className={cn(
@@ -415,7 +415,7 @@ export default function DealCard({
             </div>
           )}
 
-          <div className="relative w-full aspect-square bg-white md:bg-transparent rounded-lg flex items-center justify-center overflow-hidden shrink-0 border border-white/10 md:border-0">
+          <div className="relative w-full aspect-square bg-white md:bg-transparent rounded-lg flex items-center justify-center overflow-hidden shrink-0 border border-border md:border-0">
             {deal.image_urls && deal.image_urls.length > 0 ? (
               <>
                 <AnimatePresence mode="wait">
@@ -474,7 +474,7 @@ export default function DealCard({
                 )}
               </>
             ) : (
-              <div className="text-zinc-600 flex flex-col items-center justify-center h-full bg-[#141417]">
+              <div className="text-zinc-600 flex flex-col items-center justify-center h-full bg-surface-hover/50">
                 <Tag size={24} className="mb-2 text-zinc-400" />
                 <span className="text-[8px] md:text-[10px] font-black uppercase tracking-wider text-center text-zinc-500">Sin imagen</span>
               </div>
@@ -483,7 +483,7 @@ export default function DealCard({
 
           {/* Mobile Voting */}
           {variant === 'default' && (
-            <div className="flex md:hidden items-center justify-between w-full mt-2 bg-[#2a2a30] rounded-lg p-0.5 px-1 border border-white/5 shrink-0 shadow-sm">
+            <div className="flex md:hidden items-center justify-between w-full mt-2 bg-surface-hover rounded-lg p-0.5 px-1 border border-border shrink-0 shadow-sm">
               <button
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleVote('cold'); }}
                 className={cn(
@@ -497,7 +497,7 @@ export default function DealCard({
               <div className={cn(
                 "flex items-center justify-center gap-0.5 font-black text-[11px] transition-colors",
                 userVote === 'hot' ? "text-orange-500" :
-                  userVote === 'cold' ? "text-blue-400" : "text-zinc-300"
+                  userVote === 'cold' ? "text-blue-400" : "text-foreground"
               )}>
                 {votes >= 0 ? (
                   <Flame size={12} strokeWidth={2.5} className={cn(userVote === 'hot' ? "fill-orange-500/20 text-orange-500" : "text-orange-500/70")} />
@@ -539,7 +539,7 @@ export default function DealCard({
             )}
 
             <Link href={dealLink} className="block group/link" onClick={(e) => e.stopPropagation()}>
-              <h3 className="text-zinc-100 font-bold text-[13px] md:text-xl leading-snug md:leading-tight line-clamp-3 md:line-clamp-1 group-hover/link:text-[#07B5A7] transition-colors">
+              <h3 className="text-foreground font-bold text-[13px] md:text-xl leading-snug md:leading-tight line-clamp-3 md:line-clamp-1 group-hover/link:text-[#07B5A7] transition-colors">
                 {deal.title}
               </h3>
             </Link>
@@ -550,7 +550,7 @@ export default function DealCard({
           </div>
 
           {/* Footer */}
-          <div className="flex items-end justify-between mt-2 md:mt-4 w-full gap-1 pt-2 border-t border-border/40">
+          <div className="flex items-end justify-between mt-2 md:mt-4 w-full gap-1 pt-2 border-t border-border">
             <div className="flex-1 flex flex-col justify-center min-w-0 pr-1 gap-1 md:gap-1.5">
               {isCoupon ? (
                 <>
@@ -628,7 +628,7 @@ export default function DealCard({
           </div>
 
           {variant === 'moderation' && (
-            <div className="flex items-center gap-2 md:gap-3 w-full mt-3 md:mt-4 pt-3 md:pt-4 border-t border-border/40">
+            <div className="flex items-center gap-2 md:gap-3 w-full mt-3 md:mt-4 pt-3 md:pt-4 border-t border-border">
               <button
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); onReject?.(); }}
                 className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-500 h-[32px] md:h-[36px] rounded-[10px] text-[10px] md:text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
