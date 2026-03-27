@@ -13,7 +13,7 @@ export async function middleware(request: NextRequest) {
   // 1. CSP (Content Security Policy)
   // Domains for external services
   const GOOGLE_DOMAINS = 'https://apis.google.com https://www.google.com https://www.gstatic.com https://fonts.googleapis.com https://fonts.gstatic.com https://accounts.google.com'
-  const SUPABASE_DOMAINS = 'https://*.supabase.co'
+  const SUPABASE_DOMAINS = 'https://*.supabase.co wss://*.supabase.co'
   const ANALYTICS_DOMAINS = 'https://va.vercel-scripts.com'
   const CLOUDFLARE_DOMAINS = 'https://challenges.cloudflare.com'
   const AD_DOMAINS = 'https://crateworkshop.com https://www.highperformanceformat.com'

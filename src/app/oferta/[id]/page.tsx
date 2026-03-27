@@ -206,12 +206,15 @@ function DealPageContent({ id }: { id: string }) {
   )
 }
 
-export default function DealPage({ params }: { params: Promise<{ id: string }> }) {
+function DealPageWrapper({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
-  
+  return <DealPageContent id={id} />
+}
+
+export default function DealPage({ params }: { params: Promise<{ id: string }> }) {
   return (
     <Suspense fallback={<div className="p-8 text-center text-zinc-500">Cargando oferta...</div>}>
-      <DealPageContent id={id} />
+      <DealPageWrapper params={params} />
     </Suspense>
   )
 }
