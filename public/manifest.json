@@ -1,0 +1,16 @@
+{
+  "name": "CupOferta",
+  "short_name": "CupOferta",
+  "description": "Comunidad de Ofertas y Descuentos",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#07B5A7",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}

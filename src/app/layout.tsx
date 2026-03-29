@@ -4,6 +4,7 @@ import "./globals.css";
 import ClientLayout from "@/components/ClientLayout";
 import { createClient } from "@/lib/supabase/server";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import SwRegister from "@/components/SwRegister";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,6 +17,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "Cupoferta - Comunidad de Ofertas y Descuentos",
   description: "Descubre y comparte las mejores ofertas, cupones y promociones en México.",
+  manifest: "/manifest.json",
   other: {
     clckd: "ddbbc72fe192c1cf3befc20b85938043",
   },
@@ -32,6 +34,7 @@ export default async function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <body className={`${inter.className} min-h-screen bg-background text-foreground`}>
+        <SwRegister />
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <ClientLayout user={user}>
             {children}
