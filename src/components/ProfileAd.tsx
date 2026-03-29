@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import SmartAdUnit from './SmartAdUnit'
+import NativeAdUnit from './NativeAdUnit'
 
 interface ProfileAdProps {
   className?: string
@@ -86,6 +87,15 @@ export default function ProfileAd({ className, variant = 'sidebar' }: ProfileAdP
       </div>
     </div>
   )
+
+  if (isMobile) {
+    return (
+      <NativeAdUnit 
+        className={className}
+        fallback={fallback}
+      />
+    )
+  }
 
   return (
     <SmartAdUnit 

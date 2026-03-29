@@ -6,7 +6,6 @@ import { ExternalLink, Share2, Clock, Tag, ChevronLeft, ChevronRight, Calendar, 
 import CommentsSection from '@/components/CommentsSection'
 import Map from '@/components/DynamicMap'
 import ProfileAd from '@/components/ProfileAd'
-import FeedAd from '@/components/FeedAd'
 import { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import Countdown from '@/components/ui/Countdown'
@@ -682,11 +681,6 @@ export default function DealDetailView({
                   </div>
                 </div>
              )}
-
-             {/* Ad between content and comments */}
-             <div className="w-full">
-                <FeedAd variant="banner2" className="my-6" />
-             </div>
 
              {/* Comments (Hidden in Preview if desired, or mocked) */}
              {!isPreview && deal.id && (

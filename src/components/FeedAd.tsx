@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import SmartAdUnit from './SmartAdUnit'
+import NativeAdUnit from './NativeAdUnit'
 
 interface FeedAdProps {
   className?: string
@@ -88,6 +89,15 @@ export default function FeedAd({ className, variant = 'banner1' }: FeedAdProps) 
       </div>
     </div>
   )
+
+  if (isMobile) {
+    return (
+      <NativeAdUnit 
+        className={className}
+        fallback={fallback}
+      />
+    )
+  }
 
   return (
     <SmartAdUnit 

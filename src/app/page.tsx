@@ -107,11 +107,6 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
       <div className="flex flex-col items-center md:items-stretch gap-2 md:gap-4 mt-2 md:mt-4">
         {deals && deals.length > 0 ? (
           <>
-            {/* Top Ad */}
-            <div className="w-full">
-               <FeedAd className="mb-2 md:mb-4" />
-            </div>
-
             {deals.map((deal, index) => (
               <div key={deal.id} className="w-full">
                 <DealCard 
