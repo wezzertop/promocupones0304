@@ -136,15 +136,10 @@ export default function SmartAdUnit({
     )}>
       <div 
         className={cn(
-          "bg-transparent flex items-center justify-center overflow-hidden transition-all duration-300",
-          "min-h-[50px] rounded-lg", // Add rounded corners and min-height
-           // Responsive widths based on config
-           config.width === 300 ? "w-[300px]" : 
-           config.width === 320 ? "w-full max-w-[320px]" : 
-           config.width === 728 ? "w-full max-w-[728px]" : 
-           "w-full max-w-[468px]"
+          "bg-transparent flex items-center justify-center transition-all duration-300",
+          "min-h-[50px] shrink-0"
         )}
-        style={{ height: `${config.height}px` }}
+        style={{ height: `${config.height}px`, width: `${config.width}px`, minWidth: `${config.width}px` }}
       >
         <iframe
           ref={iframeRef}

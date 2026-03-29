@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import SmartAdUnit from './SmartAdUnit'
-import NativeAdUnit from './NativeAdUnit'
 
 interface FeedAdProps {
   className?: string
@@ -71,7 +70,7 @@ export default function FeedAd({ className, variant = 'banner1' }: FeedAdProps) 
     )}>
       <div 
         className={cn(
-          "flex flex-col items-center justify-center overflow-hidden transition-all duration-300 rounded-xl bg-gradient-to-r from-surface to-surface-hover border border-border relative group cursor-pointer hover:border-[#07B5A7]/50",
+          "flex flex-col items-center justify-center transition-all duration-300 bg-gradient-to-r from-surface to-surface-hover border border-border relative group cursor-pointer hover:border-[#07B5A7]/50",
           config.width === 320 ? "w-full max-w-[320px]" : (config.width === 728 ? "w-full max-w-[728px]" : "w-full max-w-[468px]")
         )}
         style={{ height: `${config.height}px` }}
@@ -89,16 +88,6 @@ export default function FeedAd({ className, variant = 'banner1' }: FeedAdProps) 
       </div>
     </div>
   )
-
-  if (isMobile) {
-    return (
-      <NativeAdUnit 
-        className={className}
-        fallback={fallback}
-      />
-    )
-  }
-
   return (
     <SmartAdUnit 
       config={config} 
