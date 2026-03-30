@@ -63,12 +63,12 @@ export default function Pagination({ totalPages, currentPage, baseUrl }: Paginat
   }
 
   return (
-    <nav className="flex items-center justify-center gap-1 md:gap-2 mt-12 mb-8" aria-label="Paginación">
+    <nav className="flex items-center justify-center gap-1 md:gap-2 mt-12 mb-20 md:mb-8 relative z-50" aria-label="Paginación">
       {/* Previous Button */}
       <Link
         href={createPageUrl(Math.max(1, currentPage - 1))}
         className={cn(
-          "flex items-center justify-center w-10 h-10 rounded-xl border border-border bg-surface text-gray-400 transition-all hover:text-white hover:border-[#07B5A7]/50 hover:bg-[#07B5A7]/5",
+          "flex items-center justify-center w-10 h-10 rounded-xl border border-border bg-surface text-gray-400 transition-all hover:text-white hover:border-[#07B5A7]/50 hover:bg-[#07B5A7]/5 active:scale-95",
           currentPage === 1 && "pointer-events-none opacity-30"
         )}
         aria-disabled={currentPage === 1}
@@ -95,9 +95,9 @@ export default function Pagination({ totalPages, currentPage, baseUrl }: Paginat
               key={pageNum}
               href={createPageUrl(pageNum)}
               className={cn(
-                "flex items-center justify-center min-w-[40px] h-10 px-3 rounded-xl border text-sm font-bold transition-all",
+                "flex items-center justify-center min-w-[40px] h-10 px-3 rounded-xl border text-sm font-bold transition-all active:scale-95",
                 isActive
-                  ? "bg-[#07B5A7] border-[#07B5A7] text-black shadow-lg shadow-[#07B5A7]/20"
+                  ? "bg-[#07B5A7] border-[#07B5A7] text-black shadow-lg shadow-[#07B5A7]/20 pointer-events-none"
                   : "bg-surface border-border text-gray-400 hover:text-white hover:border-[#07B5A7]/50 hover:bg-[#07B5A7]/5"
               )}
               aria-current={isActive ? 'page' : undefined}
@@ -112,7 +112,7 @@ export default function Pagination({ totalPages, currentPage, baseUrl }: Paginat
       <Link
         href={createPageUrl(Math.min(totalPages, currentPage + 1))}
         className={cn(
-          "flex items-center justify-center w-10 h-10 rounded-xl border border-border bg-surface text-gray-400 transition-all hover:text-white hover:border-[#07B5A7]/50 hover:bg-[#07B5A7]/5",
+          "flex items-center justify-center w-10 h-10 rounded-xl border border-border bg-surface text-gray-400 transition-all hover:text-white hover:border-[#07B5A7]/50 hover:bg-[#07B5A7]/5 active:scale-95",
           currentPage === totalPages && "pointer-events-none opacity-30"
         )}
         aria-disabled={currentPage === totalPages}
