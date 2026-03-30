@@ -555,7 +555,7 @@ export default function DealCard({
           </div>
 
           {/* Footer */}
-          <div className="flex items-end justify-between mt-2 md:mt-4 w-full gap-1 pt-2 border-t border-zinc-200 dark:border-zinc-800">
+          <div className="flex items-end justify-between mt-2 md:mt-4 w-full gap-3 md:gap-1 pt-2 border-t border-zinc-200 dark:border-zinc-800">
             <div className="flex-1 flex flex-col justify-center min-w-0 pr-1 gap-1 md:gap-1.5">
               {isCoupon ? (
                 <>
@@ -572,7 +572,8 @@ export default function DealCard({
                 </>
               ) : (
                 <>
-                  <div className="flex items-center flex-nowrap gap-1.5 md:gap-2">
+                  {/* Row 1: Price + original price (no discount badge inline) */}
+                  <div className="flex items-center flex-wrap gap-1.5 md:gap-2">
                     <span className="text-[17px] md:text-2xl font-black text-[#07B5A7] leading-none shrink-0 tracking-tight">
                       {deal.deal_price ? formatPrice(deal.deal_price) : 'Gratis'}
                     </span>
@@ -581,24 +582,35 @@ export default function DealCard({
                         {formatPrice(deal.original_price)}
                       </span>
                     )}
+                    {/* Show discount badge inline on desktop only */}
                     {deal.discount_percentage && (
-                      <span className="bg-zinc-900 dark:bg-[#f5cb17] text-white dark:text-zinc-900 text-[9px] sm:text-[11px] md:text-xs font-black px-1.5 py-0.5 rounded-[6px] leading-none flex items-center shrink-0">
+                      <span className="hidden md:flex bg-zinc-900 dark:bg-[#f5cb17] text-white dark:text-zinc-900 text-xs font-black px-1.5 py-0.5 rounded-[6px] leading-none items-center shrink-0">
                         -{deal.discount_percentage}%
                       </span>
                     )}
                   </div>
 
-                  {isFreeShipping ? (
-                    <div className="flex w-fit items-center gap-0.5 bg-lime-100 dark:bg-lime-500/10 px-1.5 h-[20px] md:h-[24px] rounded-[6px] text-[9px] md:text-[10px] font-bold uppercase tracking-wide border border-lime-200 dark:border-lime-500/20">
-                      <Truck size={10} className="md:w-3 md:h-3 text-lime-600 shrink-0" strokeWidth={2} />
-                      <span className="text-lime-700 dark:text-lime-500 hover:opacity-100">GRATIS</span>
-                    </div>
-                  ) : (
-                    <div className="flex w-fit items-center gap-0.5 bg-rose-100 dark:bg-rose-500/10 px-1.5 h-[20px] md:h-[24px] rounded-[6px] text-[9px] md:text-[10px] font-bold uppercase tracking-wide border border-rose-200 dark:border-rose-500/20">
-                      <Truck size={10} className="md:w-3 md:h-3 text-rose-500 shrink-0" strokeWidth={2} />
-                      <span className="text-rose-600 dark:text-rose-500 hover:opacity-100">OFF</span>
-                    </div>
-                  )}
+                  {/* Row 2: Shipping badge + discount badge (mobile only) */}
+                  <div className="flex items-center gap-1.5">
+                    {/* Discount badge first on mobile */}
+                    {deal.discount_percentage && (
+                      <span className="md:hidden bg-zinc-900 dark:bg-[#f5cb17] text-white dark:text-zinc-900 text-[9px] font-black px-1.5 py-0.5 rounded-[6px] leading-none flex items-center shrink-0">
+                        -{deal.discount_percentage}%
+                      </span>
+                    )}
+                    {/* Shipping badge second */}
+                    {isFreeShipping ? (
+                      <div className="flex w-fit items-center gap-0.5 bg-lime-100 dark:bg-lime-500/10 px-1.5 h-[20px] md:h-[24px] rounded-[6px] text-[9px] md:text-[10px] font-bold uppercase tracking-wide border border-lime-200 dark:border-lime-500/20">
+                        <Truck size={10} className="md:w-3 md:h-3 text-lime-600 shrink-0" strokeWidth={2} />
+                        <span className="text-lime-700 dark:text-lime-500 hover:opacity-100">GRATIS</span>
+                      </div>
+                    ) : (
+                      <div className="flex w-fit items-center gap-0.5 bg-rose-100 dark:bg-rose-500/10 px-1.5 h-[20px] md:h-[24px] rounded-[6px] text-[9px] md:text-[10px] font-bold uppercase tracking-wide border border-rose-200 dark:border-rose-500/20">
+                        <Truck size={10} className="md:w-3 md:h-3 text-rose-500 shrink-0" strokeWidth={2} />
+                        <span className="text-rose-600 dark:text-rose-500 hover:opacity-100">OFF</span>
+                      </div>
+                    )}
+                  </div>
                 </>
               )}
             </div>
@@ -622,7 +634,7 @@ export default function DealCard({
                 href={deal.deal_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-1 md:gap-1.5 px-2 md:px-4 h-[28px] md:h-[36px] bg-[#07B5A7] hover:bg-[#07B5A7]/90 text-white dark:text-black font-black text-[9px] md:text-xs shrink-0 rounded-[8px] uppercase tracking-wider transition-colors ml-1 md:ml-2 shadow-md hover:shadow-[#07B5A7]/20"
+                className="flex items-center justify-center gap-1 md:gap-1.5 px-3 md:px-4 h-[30px] md:h-[36px] bg-[#07B5A7] hover:bg-[#07B5A7]/90 text-white dark:text-black font-black text-[9px] md:text-xs shrink-0 rounded-[8px] uppercase tracking-wider transition-colors ml-2 md:ml-2 shadow-md hover:shadow-[#07B5A7]/20"
                 onClick={(e) => e.stopPropagation()}
               >
                 <span className="hidden sm:inline">IR A OFERTA</span>
