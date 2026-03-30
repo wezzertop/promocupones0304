@@ -5,6 +5,7 @@ import ClientLayout from "@/components/ClientLayout";
 import { createClient } from "@/lib/supabase/server";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import SwRegister from "@/components/SwRegister";
+import TopDealsSidebar from "@/components/TopDealsSidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -36,7 +37,7 @@ export default async function RootLayout({
       <body className={`${inter.className} min-h-screen bg-background text-foreground`}>
         <SwRegister />
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-          <ClientLayout user={user}>
+          <ClientLayout user={user} rightSidebar={<TopDealsSidebar />}>
             {children}
           </ClientLayout>
         </ThemeProvider>

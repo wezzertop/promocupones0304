@@ -19,7 +19,6 @@ import {
 import { useUIStore } from '@/lib/store'
 import Image from 'next/image'
 import Logo from '@/components/Logo'
-import { useEffect, useState } from 'react'
 
 const MENU_ITEMS = [
   { icon: Home, label: 'Inicio', href: '/' },
@@ -40,28 +39,19 @@ const CATEGORIES = [
 
 export default function Sidebar() {
   const pathname = usePathname()
-  const { isSidebarOpen, isHeaderVisible, closeSidebar } = useUIStore()
-  const [isLg, setIsLg] = useState(false)
+  const { isSidebarOpen, closeSidebar } = useUIStore()
 
-  useEffect(() => {
-    const check = () => setIsLg(window.innerWidth >= 1024)
-    check()
-    window.addEventListener('resize', check)
-    return () => window.removeEventListener('resize', check)
-  }, [])
-
-  // Use inline transform to guarantee correct behavior on Android WebView.
-  // Tailwind v4 uses CSS custom properties for transforms which can fail in WebViews.
-  const isVisible = isLg ? isHeaderVisible : isSidebarOpen
+  // The sidebar is always an overlay (never pushes content)
+  // Controlled by isSidebarOpen for both mobile and desktop
   const sidebarStyle: React.CSSProperties = {
-    transform: isVisible ? 'translateX(0)' : 'translateX(-100%)',
+    transform: isSidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
     transition: 'transform 300ms ease-in-out',
   }
 
   return (
     <>
-      {/* Mobile Backdrop */}
-      {isSidebarOpen && !isLg && (
+      {/* Backdrop for both mobile and desktop */}
+      {isSidebarOpen && (
         <div 
           style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 45 }}
           onClick={closeSidebar}

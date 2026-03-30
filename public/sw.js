@@ -31,6 +31,15 @@ self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
 
+  // Ignorar las peticiones de desarrollo para que F5 funcione siempre y no cachear en local
+  if (
+    url.hostname === 'localhost' || 
+    url.pathname.includes('/_next/webpack-hmr') ||
+    url.pathname.includes('.hot-update.')
+  ) {
+    return; // Bypass service worker
+  }
+
   // 2. Reglas CACHE-FIRST (Imágenes pesadas y Next.js Statics)
   const isImageDomain = [
     'lh3.googleusercontent.com',

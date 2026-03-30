@@ -96,7 +96,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
   }
 
   return (
-    <div className="space-y-2 md:space-y-8 animate-fade-in max-w-5xl mx-auto">
+    <div className="space-y-2 md:space-y-8 animate-fade-in w-full max-w-5xl">
       {/* Featured Banner (Dismissible) */}
       <HeroBanner />
 

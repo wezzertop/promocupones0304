@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import Sidebar from "@/components/Sidebar";
 import FloatingActionButton from "@/components/FloatingActionButton";
 import MobileBottomNav from "@/components/MobileBottomNav";
-import AdSidebars from "@/components/AdSidebars";
+
 import { useUIStore } from '@/lib/store'
 import { User as SupabaseUser } from '@supabase/supabase-js'
 import { usePathname } from 'next/navigation'
@@ -22,6 +22,7 @@ const NativeAppBridge = dynamic(() => import('@/components/NativeAppBridge'), { 
 interface ClientLayoutProps {
   children: React.ReactNode;
   user: SupabaseUser | null;
+  rightSidebar?: React.ReactNode;
 }
 
 function TermsCheck({ onShowTerms }: { onShowTerms: () => void }) {
@@ -34,7 +35,7 @@ function TermsCheck({ onShowTerms }: { onShowTerms: () => void }) {
   return null
 }
 
-export default function ClientLayout({ children, user: initialUser }: ClientLayoutProps) {
+export default function ClientLayout({ children, user: initialUser, rightSidebar }: ClientLayoutProps) {
   const [user, setUser] = useState<SupabaseUser | null>(initialUser)
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false)
   const { isHeaderVisible, setHeaderVisible } = useUIStore()
@@ -115,18 +116,23 @@ export default function ClientLayout({ children, user: initialUser }: ClientLayo
   return (
     <div className="flex">
       <Sidebar />
-      <div className={`flex-1 flex flex-col min-h-screen transition-[padding] duration-300 ease-in-out ${isHeaderVisible ? 'lg:pl-64' : 'lg:pl-0'}`}>
+      <div className={`flex-1 flex flex-col min-h-screen`}>
         <Suspense fallback={<div className="h-14 bg-background/80 w-full border-b border-border"></div>}>
           <Header user={user} />
         </Suspense>
-        <main className="flex-1 p-2 pt-14 pb-20 md:p-4 md:pt-[80px] md:pb-4 lg:p-8 lg:pt-8 lg:pb-8 max-w-[1920px] mx-auto w-full">
-          {children}
-        </main>
+        <div className="flex-1 flex max-w-[1400px] mx-auto w-full">
+          <main className="flex-1 p-2 pt-14 pb-20 md:p-4 md:pt-[80px] md:pb-4 lg:p-8 lg:pt-8 lg:pb-8 min-w-0">
+            {children}
+          </main>
+          
+          <aside className="hidden xl:block w-[300px] flex-shrink-0 pt-[112px] pb-8 pr-4 lg:pr-0">
+            {rightSidebar}
+          </aside>
+        </div>
         <Footer />
         <MobileBottomNav user={user} />
       </div>
       <FloatingActionButton />
-      <AdSidebars />
       <GamificationToast />
       <ToastSystem />
       <Suspense fallback={null}>

@@ -112,12 +112,13 @@ export default function Header({ user }: HeaderProps) {
 
   return (
     <header className={`fixed lg:sticky top-0 z-40 h-14 bg-background/80 backdrop-blur-md border-b border-border flex items-center px-2 md:px-4 transition-transform duration-300 w-full ${isHeaderVisible ? 'translate-y-0' : '-translate-y-full'}`}>
-      {/* Mobile Menu Trigger & Theme Toggle */}
-      <div className="lg:hidden flex items-center shrink-0 mr-1 md:mr-2">
+      {/* Menu Toggle - visible on all screen sizes */}
+      <div className="flex items-center shrink-0 mr-1 md:mr-2">
         <div className="w-10 h-10 flex items-center justify-center">
           <button 
-            className="p-2 text-gray-400 hover:text-foreground"
+            className="p-2 text-gray-400 hover:text-foreground transition-colors"
             onClick={toggleSidebar}
+            aria-label="Toggle sidebar"
           >
             <Menu size={24} />
           </button>
