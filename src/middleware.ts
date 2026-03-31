@@ -56,16 +56,25 @@ export async function middleware(request: NextRequest) {
 
   // --- SUPABASE AUTH ---
 
+  // Validate env vars are present before attempting connection
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.error('[Middleware] Missing Supabase env vars. Skipping auth check.')
+    return response
+  }
+
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseKey,
     {
       cookies: {
         getAll() {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
           response = NextResponse.next({
             request,
           })
@@ -77,9 +86,15 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  let user = null
+  try {
+    const { data } = await supabase.auth.getUser()
+    user = data?.user ?? null
+  } catch (error) {
+    // Supabase is unreachable (timeout, no internet, etc.)
+    // Log once and continue without auth check — app remains accessible
+    console.error('[Middleware] Supabase auth check failed, continuing without auth:', (error as Error).message)
+  }
 
   // --- ROUTE PROTECTION ---
 

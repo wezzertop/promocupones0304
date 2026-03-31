@@ -29,6 +29,14 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+debug.log
+
+# test results
+/test-results/
+/testsprite_tests/
+
+# supabase
+/supabase/.temp/
 
 # env files (can opt-in for committing if needed)
 .env*
